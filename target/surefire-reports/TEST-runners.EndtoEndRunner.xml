@@ -1,0 +1,743 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="runners.EndtoEndRunner" time="210.816" tests="34" errors="0" skipped="0" failures="5">
+  <properties>
+    <property name="java.specification.version" value="21"/>
+    <property name="sun.cpu.isalist" value="amd64"/>
+    <property name="sun.jnu.encoding" value="Cp1252"/>
+    <property name="java.class.path" value="C:\Users\cpatil\eclipse-workspace\Issue_persistence\target\test-classes;C:\Users\cpatil\eclipse-workspace\Issue_persistence\target\classes;C:\Users\cpatil\.m2\repository\io\cucumber\cucumber-java\7.15.0\cucumber-java-7.15.0.jar;C:\Users\cpatil\.m2\repository\io\cucumber\cucumber-core\7.15.0\cucumber-core-7.15.0.jar;C:\Users\cpatil\.m2\repository\io\cucumber\cucumber-gherkin\7.15.0\cucumber-gherkin-7.15.0.jar;C:\Users\cpatil\.m2\repository\io\cucumber\cucumber-gherkin-messages\7.15.0\cucumber-gherkin-messages-7.15.0.jar;C:\Users\cpatil\.m2\repository\io\cucumber\gherkin\26.2.0\gherkin-26.2.0.jar;C:\Users\cpatil\.m2\repository\io\cucumber\messages\22.0.0\messages-22.0.0.jar;C:\Users\cpatil\.m2\repository\io\cucumber\tag-expressions\6.0.0\tag-expressions-6.0.0.jar;C:\Users\cpatil\.m2\repository\io\cucumber\cucumber-expressions\17.0.1\cucumber-expressions-17.0.1.jar;C:\Users\cpatil\.m2\repository\io\cucumber\datatable\7.15.0\datatable-7.15.0.jar;C:\Users\cpatil\.m2\repository\io\cucumber\cucumber-plugin\7.15.0\cucumber-plugin-7.15.0.jar;C:\Users\cpatil\.m2\repository\io\cucumber\docstring\7.15.0\docstring-7.15.0.jar;C:\Users\cpatil\.m2\repository\io\cucumber\html-formatter\20.4.0\html-formatter-20.4.0.jar;C:\Users\cpatil\.m2\repository\io\cucumber\junit-xml-formatter\0.2.0\junit-xml-formatter-0.2.0.jar;C:\Users\cpatil\.m2\repository\io\cucumber\ci-environment\10.0.0\ci-environment-10.0.0.jar;C:\Users\cpatil\.m2\repository\org\apiguardian\apiguardian-api\1.1.2\apiguardian-api-1.1.2.jar;C:\Users\cpatil\.m2\repository\org\seleniumhq\selenium\selenium-java\4.20.0\selenium-java-4.20.0.jar;C:\Users\cpatil\.m2\repository\org\seleniumhq\selenium\selenium-api\4.20.0\selenium-api-4.20.0.jar;C:\Users\cpatil\.m2\repository\org\seleniumhq\selenium\selenium-chrome-driver\4.20.0\selenium-chrome-driver-4.20.0.jar;C:\Users\cpatil\.m2\repository\com\google\auto\service\auto-service-annotations\1.1.1\auto-service-annotations-1.1.1.jar;C:\Users\cpatil\.m2\repository\org\seleniumhq\selenium\selenium-chromium-driver\4.20.0\selenium-chromium-driver-4.20.0.jar;C:\Users\cpatil\.m2\repository\org\seleniumhq\selenium\selenium-json\4.20.0\selenium-json-4.20.0.jar;C:\Users\cpatil\.m2\repository\org\seleniumhq\selenium\selenium-manager\4.20.0\selenium-manager-4.20.0.jar;C:\Users\cpatil\.m2\repository\org\seleniumhq\selenium\selenium-devtools-v122\4.20.0\selenium-devtools-v122-4.20.0.jar;C:\Users\cpatil\.m2\repository\org\seleniumhq\selenium\selenium-devtools-v123\4.20.0\selenium-devtools-v123-4.20.0.jar;C:\Users\cpatil\.m2\repository\org\seleniumhq\selenium\selenium-devtools-v124\4.20.0\selenium-devtools-v124-4.20.0.jar;C:\Users\cpatil\.m2\repository\org\seleniumhq\selenium\selenium-devtools-v85\4.20.0\selenium-devtools-v85-4.20.0.jar;C:\Users\cpatil\.m2\repository\org\seleniumhq\selenium\selenium-edge-driver\4.20.0\selenium-edge-driver-4.20.0.jar;C:\Users\cpatil\.m2\repository\org\seleniumhq\selenium\selenium-firefox-driver\4.20.0\selenium-firefox-driver-4.20.0.jar;C:\Users\cpatil\.m2\repository\org\seleniumhq\selenium\selenium-http\4.20.0\selenium-http-4.20.0.jar;C:\Users\cpatil\.m2\repository\dev\failsafe\failsafe\3.3.2\failsafe-3.3.2.jar;C:\Users\cpatil\.m2\repository\org\seleniumhq\selenium\selenium-ie-driver\4.20.0\selenium-ie-driver-4.20.0.jar;C:\Users\cpatil\.m2\repository\org\seleniumhq\selenium\selenium-remote-driver\4.20.0\selenium-remote-driver-4.20.0.jar;C:\Users\cpatil\.m2\repository\com\google\guava\guava\33.1.0-jre\guava-33.1.0-jre.jar;C:\Users\cpatil\.m2\repository\com\google\guava\failureaccess\1.0.2\failureaccess-1.0.2.jar;C:\Users\cpatil\.m2\repository\com\google\guava\listenablefuture\9999.0-empty-to-avoid-conflict-with-guava\listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar;C:\Users\cpatil\.m2\repository\com\google\code\findbugs\jsr305\3.0.2\jsr305-3.0.2.jar;C:\Users\cpatil\.m2\repository\org\checkerframework\checker-qual\3.42.0\checker-qual-3.42.0.jar;C:\Users\cpatil\.m2\repository\com\google\j2objc\j2objc-annotations\3.0.0\j2objc-annotations-3.0.0.jar;C:\Users\cpatil\.m2\repository\io\opentelemetry\semconv\opentelemetry-semconv\1.25.0-alpha\opentelemetry-semconv-1.25.0-alpha.jar;C:\Users\cpatil\.m2\repository\io\opentelemetry\opentelemetry-api\1.37.0\opentelemetry-api-1.37.0.jar;C:\Users\cpatil\.m2\repository\io\opentelemetry\opentelemetry-context\1.37.0\opentelemetry-context-1.37.0.jar;C:\Users\cpatil\.m2\repository\io\opentelemetry\opentelemetry-exporter-logging\1.37.0\opentelemetry-exporter-logging-1.37.0.jar;C:\Users\cpatil\.m2\repository\io\opentelemetry\opentelemetry-sdk-common\1.37.0\opentelemetry-sdk-common-1.37.0.jar;C:\Users\cpatil\.m2\repository\io\opentelemetry\opentelemetry-sdk-extension-autoconfigure-spi\1.37.0\opentelemetry-sdk-extension-autoconfigure-spi-1.37.0.jar;C:\Users\cpatil\.m2\repository\io\opentelemetry\opentelemetry-sdk-extension-autoconfigure\1.37.0\opentelemetry-sdk-extension-autoconfigure-1.37.0.jar;C:\Users\cpatil\.m2\repository\io\opentelemetry\opentelemetry-api-incubator\1.37.0-alpha\opentelemetry-api-incubator-1.37.0-alpha.jar;C:\Users\cpatil\.m2\repository\io\opentelemetry\opentelemetry-sdk-trace\1.37.0\opentelemetry-sdk-trace-1.37.0.jar;C:\Users\cpatil\.m2\repository\io\opentelemetry\opentelemetry-sdk\1.37.0\opentelemetry-sdk-1.37.0.jar;C:\Users\cpatil\.m2\repository\io\opentelemetry\opentelemetry-sdk-metrics\1.37.0\opentelemetry-sdk-metrics-1.37.0.jar;C:\Users\cpatil\.m2\repository\io\opentelemetry\opentelemetry-sdk-logs\1.37.0\opentelemetry-sdk-logs-1.37.0.jar;C:\Users\cpatil\.m2\repository\net\bytebuddy\byte-buddy\1.14.14\byte-buddy-1.14.14.jar;C:\Users\cpatil\.m2\repository\org\seleniumhq\selenium\selenium-os\4.20.0\selenium-os-4.20.0.jar;C:\Users\cpatil\.m2\repository\org\apache\commons\commons-exec\1.4.0\commons-exec-1.4.0.jar;C:\Users\cpatil\.m2\repository\org\seleniumhq\selenium\selenium-safari-driver\4.20.0\selenium-safari-driver-4.20.0.jar;C:\Users\cpatil\.m2\repository\org\seleniumhq\selenium\selenium-support\4.20.0\selenium-support-4.20.0.jar;C:\Users\cpatil\.m2\repository\io\github\bonigarcia\webdrivermanager\5.9.2\webdrivermanager-5.9.2.jar;C:\Users\cpatil\.m2\repository\org\slf4j\slf4j-api\2.0.13\slf4j-api-2.0.13.jar;C:\Users\cpatil\.m2\repository\com\google\code\gson\gson\2.11.0\gson-2.11.0.jar;C:\Users\cpatil\.m2\repository\com\google\errorprone\error_prone_annotations\2.27.0\error_prone_annotations-2.27.0.jar;C:\Users\cpatil\.m2\repository\com\github\docker-java\docker-java\3.4.0\docker-java-3.4.0.jar;C:\Users\cpatil\.m2\repository\com\github\docker-java\docker-java-core\3.4.0\docker-java-core-3.4.0.jar;C:\Users\cpatil\.m2\repository\com\github\docker-java\docker-java-api\3.4.0\docker-java-api-3.4.0.jar;C:\Users\cpatil\.m2\repository\com\fasterxml\jackson\core\jackson-annotations\2.10.3\jackson-annotations-2.10.3.jar;C:\Users\cpatil\.m2\repository\com\fasterxml\jackson\core\jackson-databind\2.10.3\jackson-databind-2.10.3.jar;C:\Users\cpatil\.m2\repository\com\fasterxml\jackson\core\jackson-core\2.10.3\jackson-core-2.10.3.jar;C:\Users\cpatil\.m2\repository\org\slf4j\jcl-over-slf4j\1.7.30\jcl-over-slf4j-1.7.30.jar;C:\Users\cpatil\.m2\repository\com\github\docker-java\docker-java-transport-httpclient5\3.4.0\docker-java-transport-httpclient5-3.4.0.jar;C:\Users\cpatil\.m2\repository\com\github\docker-java\docker-java-transport\3.4.0\docker-java-transport-3.4.0.jar;C:\Users\cpatil\.m2\repository\net\java\dev\jna\jna\5.13.0\jna-5.13.0.jar;C:\Users\cpatil\.m2\repository\org\brotli\dec\0.1.2\dec-0.1.2.jar;C:\Users\cpatil\.m2\repository\org\apache\commons\commons-lang3\3.15.0\commons-lang3-3.15.0.jar;C:\Users\cpatil\.m2\repository\org\apache\commons\commons-compress\1.26.2\commons-compress-1.26.2.jar;C:\Users\cpatil\.m2\repository\commons-codec\commons-codec\1.17.0\commons-codec-1.17.0.jar;C:\Users\cpatil\.m2\repository\commons-io\commons-io\2.16.1\commons-io-2.16.1.jar;C:\Users\cpatil\.m2\repository\org\apache\httpcomponents\client5\httpclient5\5.2.1\httpclient5-5.2.1.jar;C:\Users\cpatil\.m2\repository\org\apache\httpcomponents\core5\httpcore5\5.2\httpcore5-5.2.jar;C:\Users\cpatil\.m2\repository\org\apache\httpcomponents\core5\httpcore5-h2\5.2\httpcore5-h2-5.2.jar;C:\Users\cpatil\.m2\repository\com\sun\mail\jakarta.mail\2.0.1\jakarta.mail-2.0.1.jar;C:\Users\cpatil\.m2\repository\com\sun\activation\jakarta.activation\2.0.1\jakarta.activation-2.0.1.jar;C:\Users\cpatil\.m2\repository\org\json\json\20230227\json-20230227.jar;C:\Users\cpatil\.m2\repository\com\github\javafaker\javafaker\1.0.2\javafaker-1.0.2.jar;C:\Users\cpatil\.m2\repository\org\yaml\snakeyaml\1.23\snakeyaml-1.23-android.jar;C:\Users\cpatil\.m2\repository\com\github\mifmif\generex\1.0.2\generex-1.0.2.jar;C:\Users\cpatil\.m2\repository\dk\brics\automaton\automaton\1.11-8\automaton-1.11-8.jar;C:\Users\cpatil\.m2\repository\javax\activation\activation\1.1.1\activation-1.1.1.jar;C:\Users\cpatil\.m2\repository\io\cucumber\cucumber-junit\7.15.0\cucumber-junit-7.15.0.jar;C:\Users\cpatil\.m2\repository\junit\junit\4.13.2\junit-4.13.2.jar;C:\Users\cpatil\.m2\repository\org\hamcrest\hamcrest-core\1.3\hamcrest-core-1.3.jar;C:\Users\cpatil\.m2\repository\io\rest-assured\rest-assured\5.3.2\rest-assured-5.3.2.jar;C:\Users\cpatil\.m2\repository\org\apache\groovy\groovy\4.0.11\groovy-4.0.11.jar;C:\Users\cpatil\.m2\repository\org\apache\groovy\groovy-xml\4.0.11\groovy-xml-4.0.11.jar;C:\Users\cpatil\.m2\repository\org\apache\httpcomponents\httpclient\4.5.13\httpclient-4.5.13.jar;C:\Users\cpatil\.m2\repository\org\apache\httpcomponents\httpcore\4.4.13\httpcore-4.4.13.jar;C:\Users\cpatil\.m2\repository\commons-logging\commons-logging\1.2\commons-logging-1.2.jar;C:\Users\cpatil\.m2\repository\org\apache\httpcomponents\httpmime\4.5.13\httpmime-4.5.13.jar;C:\Users\cpatil\.m2\repository\org\hamcrest\hamcrest\2.2\hamcrest-2.2.jar;C:\Users\cpatil\.m2\repository\org\ccil\cowan\tagsoup\tagsoup\1.2.1\tagsoup-1.2.1.jar;C:\Users\cpatil\.m2\repository\io\rest-assured\json-path\5.3.2\json-path-5.3.2.jar;C:\Users\cpatil\.m2\repository\org\apache\groovy\groovy-json\4.0.11\groovy-json-4.0.11.jar;C:\Users\cpatil\.m2\repository\io\rest-assured\rest-assured-common\5.3.2\rest-assured-common-5.3.2.jar;C:\Users\cpatil\.m2\repository\io\rest-assured\xml-path\5.3.2\xml-path-5.3.2.jar;C:\Users\cpatil\.m2\repository\com\aventstack\extentreports\5.0.9\extentreports-5.0.9.jar;C:\Users\cpatil\.m2\repository\io\reactivex\rxjava3\rxjava\3.0.4\rxjava-3.0.4.jar;C:\Users\cpatil\.m2\repository\org\reactivestreams\reactive-streams\1.0.3\reactive-streams-1.0.3.jar;C:\Users\cpatil\.m2\repository\org\freemarker\freemarker\2.3.30\freemarker-2.3.30.jar;C:\Users\cpatil\.m2\repository\org\projectlombok\lombok\1.18.32\lombok-1.18.32.jar;C:\Users\cpatil\.m2\repository\com\mysql\mysql-connector-j\8.0.33\mysql-connector-j-8.0.33.jar;C:\Users\cpatil\.m2\repository\com\google\protobuf\protobuf-java\3.21.9\protobuf-java-3.21.9.jar;"/>
+    <property name="java.vm.vendor" value="Eclipse Adoptium"/>
+    <property name="sun.arch.data.model" value="64"/>
+    <property name="user.variant" value=""/>
+    <property name="java.vendor.url" value="https://adoptium.net/"/>
+    <property name="user.timezone" value="Asia/Calcutta"/>
+    <property name="os.name" value="Windows 11"/>
+    <property name="java.vm.specification.version" value="21"/>
+    <property name="sun.java.launcher" value="SUN_STANDARD"/>
+    <property name="user.country" value="US"/>
+    <property name="sun.boot.library.path" value="C:\Users\cpatil\.p2\pool\plugins\org.eclipse.justj.openjdk.hotspot.jre.full.win32.x86_64_21.0.7.v20250502-0916\jre\bin"/>
+    <property name="sun.java.command" value="C:\Users\cpatil\AppData\Local\Temp\surefire8315891611491923265\surefirebooter-20251104192911682_3.jar C:\Users\cpatil\AppData\Local\Temp\surefire8315891611491923265 2025-11-04T19-29-11_490-jvmRun1 surefire-20251104192911682_1tmp surefire_0-20251104192911682_2tmp"/>
+    <property name="jdk.debug" value="release"/>
+    <property name="surefire.test.class.path" value="C:\Users\cpatil\eclipse-workspace\Issue_persistence\target\test-classes;C:\Users\cpatil\eclipse-workspace\Issue_persistence\target\classes;C:\Users\cpatil\.m2\repository\io\cucumber\cucumber-java\7.15.0\cucumber-java-7.15.0.jar;C:\Users\cpatil\.m2\repository\io\cucumber\cucumber-core\7.15.0\cucumber-core-7.15.0.jar;C:\Users\cpatil\.m2\repository\io\cucumber\cucumber-gherkin\7.15.0\cucumber-gherkin-7.15.0.jar;C:\Users\cpatil\.m2\repository\io\cucumber\cucumber-gherkin-messages\7.15.0\cucumber-gherkin-messages-7.15.0.jar;C:\Users\cpatil\.m2\repository\io\cucumber\gherkin\26.2.0\gherkin-26.2.0.jar;C:\Users\cpatil\.m2\repository\io\cucumber\messages\22.0.0\messages-22.0.0.jar;C:\Users\cpatil\.m2\repository\io\cucumber\tag-expressions\6.0.0\tag-expressions-6.0.0.jar;C:\Users\cpatil\.m2\repository\io\cucumber\cucumber-expressions\17.0.1\cucumber-expressions-17.0.1.jar;C:\Users\cpatil\.m2\repository\io\cucumber\datatable\7.15.0\datatable-7.15.0.jar;C:\Users\cpatil\.m2\repository\io\cucumber\cucumber-plugin\7.15.0\cucumber-plugin-7.15.0.jar;C:\Users\cpatil\.m2\repository\io\cucumber\docstring\7.15.0\docstring-7.15.0.jar;C:\Users\cpatil\.m2\repository\io\cucumber\html-formatter\20.4.0\html-formatter-20.4.0.jar;C:\Users\cpatil\.m2\repository\io\cucumber\junit-xml-formatter\0.2.0\junit-xml-formatter-0.2.0.jar;C:\Users\cpatil\.m2\repository\io\cucumber\ci-environment\10.0.0\ci-environment-10.0.0.jar;C:\Users\cpatil\.m2\repository\org\apiguardian\apiguardian-api\1.1.2\apiguardian-api-1.1.2.jar;C:\Users\cpatil\.m2\repository\org\seleniumhq\selenium\selenium-java\4.20.0\selenium-java-4.20.0.jar;C:\Users\cpatil\.m2\repository\org\seleniumhq\selenium\selenium-api\4.20.0\selenium-api-4.20.0.jar;C:\Users\cpatil\.m2\repository\org\seleniumhq\selenium\selenium-chrome-driver\4.20.0\selenium-chrome-driver-4.20.0.jar;C:\Users\cpatil\.m2\repository\com\google\auto\service\auto-service-annotations\1.1.1\auto-service-annotations-1.1.1.jar;C:\Users\cpatil\.m2\repository\org\seleniumhq\selenium\selenium-chromium-driver\4.20.0\selenium-chromium-driver-4.20.0.jar;C:\Users\cpatil\.m2\repository\org\seleniumhq\selenium\selenium-json\4.20.0\selenium-json-4.20.0.jar;C:\Users\cpatil\.m2\repository\org\seleniumhq\selenium\selenium-manager\4.20.0\selenium-manager-4.20.0.jar;C:\Users\cpatil\.m2\repository\org\seleniumhq\selenium\selenium-devtools-v122\4.20.0\selenium-devtools-v122-4.20.0.jar;C:\Users\cpatil\.m2\repository\org\seleniumhq\selenium\selenium-devtools-v123\4.20.0\selenium-devtools-v123-4.20.0.jar;C:\Users\cpatil\.m2\repository\org\seleniumhq\selenium\selenium-devtools-v124\4.20.0\selenium-devtools-v124-4.20.0.jar;C:\Users\cpatil\.m2\repository\org\seleniumhq\selenium\selenium-devtools-v85\4.20.0\selenium-devtools-v85-4.20.0.jar;C:\Users\cpatil\.m2\repository\org\seleniumhq\selenium\selenium-edge-driver\4.20.0\selenium-edge-driver-4.20.0.jar;C:\Users\cpatil\.m2\repository\org\seleniumhq\selenium\selenium-firefox-driver\4.20.0\selenium-firefox-driver-4.20.0.jar;C:\Users\cpatil\.m2\repository\org\seleniumhq\selenium\selenium-http\4.20.0\selenium-http-4.20.0.jar;C:\Users\cpatil\.m2\repository\dev\failsafe\failsafe\3.3.2\failsafe-3.3.2.jar;C:\Users\cpatil\.m2\repository\org\seleniumhq\selenium\selenium-ie-driver\4.20.0\selenium-ie-driver-4.20.0.jar;C:\Users\cpatil\.m2\repository\org\seleniumhq\selenium\selenium-remote-driver\4.20.0\selenium-remote-driver-4.20.0.jar;C:\Users\cpatil\.m2\repository\com\google\guava\guava\33.1.0-jre\guava-33.1.0-jre.jar;C:\Users\cpatil\.m2\repository\com\google\guava\failureaccess\1.0.2\failureaccess-1.0.2.jar;C:\Users\cpatil\.m2\repository\com\google\guava\listenablefuture\9999.0-empty-to-avoid-conflict-with-guava\listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar;C:\Users\cpatil\.m2\repository\com\google\code\findbugs\jsr305\3.0.2\jsr305-3.0.2.jar;C:\Users\cpatil\.m2\repository\org\checkerframework\checker-qual\3.42.0\checker-qual-3.42.0.jar;C:\Users\cpatil\.m2\repository\com\google\j2objc\j2objc-annotations\3.0.0\j2objc-annotations-3.0.0.jar;C:\Users\cpatil\.m2\repository\io\opentelemetry\semconv\opentelemetry-semconv\1.25.0-alpha\opentelemetry-semconv-1.25.0-alpha.jar;C:\Users\cpatil\.m2\repository\io\opentelemetry\opentelemetry-api\1.37.0\opentelemetry-api-1.37.0.jar;C:\Users\cpatil\.m2\repository\io\opentelemetry\opentelemetry-context\1.37.0\opentelemetry-context-1.37.0.jar;C:\Users\cpatil\.m2\repository\io\opentelemetry\opentelemetry-exporter-logging\1.37.0\opentelemetry-exporter-logging-1.37.0.jar;C:\Users\cpatil\.m2\repository\io\opentelemetry\opentelemetry-sdk-common\1.37.0\opentelemetry-sdk-common-1.37.0.jar;C:\Users\cpatil\.m2\repository\io\opentelemetry\opentelemetry-sdk-extension-autoconfigure-spi\1.37.0\opentelemetry-sdk-extension-autoconfigure-spi-1.37.0.jar;C:\Users\cpatil\.m2\repository\io\opentelemetry\opentelemetry-sdk-extension-autoconfigure\1.37.0\opentelemetry-sdk-extension-autoconfigure-1.37.0.jar;C:\Users\cpatil\.m2\repository\io\opentelemetry\opentelemetry-api-incubator\1.37.0-alpha\opentelemetry-api-incubator-1.37.0-alpha.jar;C:\Users\cpatil\.m2\repository\io\opentelemetry\opentelemetry-sdk-trace\1.37.0\opentelemetry-sdk-trace-1.37.0.jar;C:\Users\cpatil\.m2\repository\io\opentelemetry\opentelemetry-sdk\1.37.0\opentelemetry-sdk-1.37.0.jar;C:\Users\cpatil\.m2\repository\io\opentelemetry\opentelemetry-sdk-metrics\1.37.0\opentelemetry-sdk-metrics-1.37.0.jar;C:\Users\cpatil\.m2\repository\io\opentelemetry\opentelemetry-sdk-logs\1.37.0\opentelemetry-sdk-logs-1.37.0.jar;C:\Users\cpatil\.m2\repository\net\bytebuddy\byte-buddy\1.14.14\byte-buddy-1.14.14.jar;C:\Users\cpatil\.m2\repository\org\seleniumhq\selenium\selenium-os\4.20.0\selenium-os-4.20.0.jar;C:\Users\cpatil\.m2\repository\org\apache\commons\commons-exec\1.4.0\commons-exec-1.4.0.jar;C:\Users\cpatil\.m2\repository\org\seleniumhq\selenium\selenium-safari-driver\4.20.0\selenium-safari-driver-4.20.0.jar;C:\Users\cpatil\.m2\repository\org\seleniumhq\selenium\selenium-support\4.20.0\selenium-support-4.20.0.jar;C:\Users\cpatil\.m2\repository\io\github\bonigarcia\webdrivermanager\5.9.2\webdrivermanager-5.9.2.jar;C:\Users\cpatil\.m2\repository\org\slf4j\slf4j-api\2.0.13\slf4j-api-2.0.13.jar;C:\Users\cpatil\.m2\repository\com\google\code\gson\gson\2.11.0\gson-2.11.0.jar;C:\Users\cpatil\.m2\repository\com\google\errorprone\error_prone_annotations\2.27.0\error_prone_annotations-2.27.0.jar;C:\Users\cpatil\.m2\repository\com\github\docker-java\docker-java\3.4.0\docker-java-3.4.0.jar;C:\Users\cpatil\.m2\repository\com\github\docker-java\docker-java-core\3.4.0\docker-java-core-3.4.0.jar;C:\Users\cpatil\.m2\repository\com\github\docker-java\docker-java-api\3.4.0\docker-java-api-3.4.0.jar;C:\Users\cpatil\.m2\repository\com\fasterxml\jackson\core\jackson-annotations\2.10.3\jackson-annotations-2.10.3.jar;C:\Users\cpatil\.m2\repository\com\fasterxml\jackson\core\jackson-databind\2.10.3\jackson-databind-2.10.3.jar;C:\Users\cpatil\.m2\repository\com\fasterxml\jackson\core\jackson-core\2.10.3\jackson-core-2.10.3.jar;C:\Users\cpatil\.m2\repository\org\slf4j\jcl-over-slf4j\1.7.30\jcl-over-slf4j-1.7.30.jar;C:\Users\cpatil\.m2\repository\com\github\docker-java\docker-java-transport-httpclient5\3.4.0\docker-java-transport-httpclient5-3.4.0.jar;C:\Users\cpatil\.m2\repository\com\github\docker-java\docker-java-transport\3.4.0\docker-java-transport-3.4.0.jar;C:\Users\cpatil\.m2\repository\net\java\dev\jna\jna\5.13.0\jna-5.13.0.jar;C:\Users\cpatil\.m2\repository\org\brotli\dec\0.1.2\dec-0.1.2.jar;C:\Users\cpatil\.m2\repository\org\apache\commons\commons-lang3\3.15.0\commons-lang3-3.15.0.jar;C:\Users\cpatil\.m2\repository\org\apache\commons\commons-compress\1.26.2\commons-compress-1.26.2.jar;C:\Users\cpatil\.m2\repository\commons-codec\commons-codec\1.17.0\commons-codec-1.17.0.jar;C:\Users\cpatil\.m2\repository\commons-io\commons-io\2.16.1\commons-io-2.16.1.jar;C:\Users\cpatil\.m2\repository\org\apache\httpcomponents\client5\httpclient5\5.2.1\httpclient5-5.2.1.jar;C:\Users\cpatil\.m2\repository\org\apache\httpcomponents\core5\httpcore5\5.2\httpcore5-5.2.jar;C:\Users\cpatil\.m2\repository\org\apache\httpcomponents\core5\httpcore5-h2\5.2\httpcore5-h2-5.2.jar;C:\Users\cpatil\.m2\repository\com\sun\mail\jakarta.mail\2.0.1\jakarta.mail-2.0.1.jar;C:\Users\cpatil\.m2\repository\com\sun\activation\jakarta.activation\2.0.1\jakarta.activation-2.0.1.jar;C:\Users\cpatil\.m2\repository\org\json\json\20230227\json-20230227.jar;C:\Users\cpatil\.m2\repository\com\github\javafaker\javafaker\1.0.2\javafaker-1.0.2.jar;C:\Users\cpatil\.m2\repository\org\yaml\snakeyaml\1.23\snakeyaml-1.23-android.jar;C:\Users\cpatil\.m2\repository\com\github\mifmif\generex\1.0.2\generex-1.0.2.jar;C:\Users\cpatil\.m2\repository\dk\brics\automaton\automaton\1.11-8\automaton-1.11-8.jar;C:\Users\cpatil\.m2\repository\javax\activation\activation\1.1.1\activation-1.1.1.jar;C:\Users\cpatil\.m2\repository\io\cucumber\cucumber-junit\7.15.0\cucumber-junit-7.15.0.jar;C:\Users\cpatil\.m2\repository\junit\junit\4.13.2\junit-4.13.2.jar;C:\Users\cpatil\.m2\repository\org\hamcrest\hamcrest-core\1.3\hamcrest-core-1.3.jar;C:\Users\cpatil\.m2\repository\io\rest-assured\rest-assured\5.3.2\rest-assured-5.3.2.jar;C:\Users\cpatil\.m2\repository\org\apache\groovy\groovy\4.0.11\groovy-4.0.11.jar;C:\Users\cpatil\.m2\repository\org\apache\groovy\groovy-xml\4.0.11\groovy-xml-4.0.11.jar;C:\Users\cpatil\.m2\repository\org\apache\httpcomponents\httpclient\4.5.13\httpclient-4.5.13.jar;C:\Users\cpatil\.m2\repository\org\apache\httpcomponents\httpcore\4.4.13\httpcore-4.4.13.jar;C:\Users\cpatil\.m2\repository\commons-logging\commons-logging\1.2\commons-logging-1.2.jar;C:\Users\cpatil\.m2\repository\org\apache\httpcomponents\httpmime\4.5.13\httpmime-4.5.13.jar;C:\Users\cpatil\.m2\repository\org\hamcrest\hamcrest\2.2\hamcrest-2.2.jar;C:\Users\cpatil\.m2\repository\org\ccil\cowan\tagsoup\tagsoup\1.2.1\tagsoup-1.2.1.jar;C:\Users\cpatil\.m2\repository\io\rest-assured\json-path\5.3.2\json-path-5.3.2.jar;C:\Users\cpatil\.m2\repository\org\apache\groovy\groovy-json\4.0.11\groovy-json-4.0.11.jar;C:\Users\cpatil\.m2\repository\io\rest-assured\rest-assured-common\5.3.2\rest-assured-common-5.3.2.jar;C:\Users\cpatil\.m2\repository\io\rest-assured\xml-path\5.3.2\xml-path-5.3.2.jar;C:\Users\cpatil\.m2\repository\com\aventstack\extentreports\5.0.9\extentreports-5.0.9.jar;C:\Users\cpatil\.m2\repository\io\reactivex\rxjava3\rxjava\3.0.4\rxjava-3.0.4.jar;C:\Users\cpatil\.m2\repository\org\reactivestreams\reactive-streams\1.0.3\reactive-streams-1.0.3.jar;C:\Users\cpatil\.m2\repository\org\freemarker\freemarker\2.3.30\freemarker-2.3.30.jar;C:\Users\cpatil\.m2\repository\org\projectlombok\lombok\1.18.32\lombok-1.18.32.jar;C:\Users\cpatil\.m2\repository\com\mysql\mysql-connector-j\8.0.33\mysql-connector-j-8.0.33.jar;C:\Users\cpatil\.m2\repository\com\google\protobuf\protobuf-java\3.21.9\protobuf-java-3.21.9.jar;"/>
+    <property name="sun.cpu.endian" value="little"/>
+    <property name="user.home" value="C:\Users\cpatil"/>
+    <property name="user.language" value="en"/>
+    <property name="java.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.version.date" value="2025-04-15"/>
+    <property name="java.home" value="C:\Users\cpatil\.p2\pool\plugins\org.eclipse.justj.openjdk.hotspot.jre.full.win32.x86_64_21.0.7.v20250502-0916\jre"/>
+    <property name="file.separator" value="\"/>
+    <property name="basedir" value="C:\Users\cpatil\eclipse-workspace\Issue_persistence"/>
+    <property name="style.color" value="always"/>
+    <property name="java.vm.compressedOopsMode" value="Zero based"/>
+    <property name="line.separator" value="&#10;"/>
+    <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.specification.name" value="Java Platform API Specification"/>
+    <property name="surefire.real.class.path" value="C:\Users\cpatil\AppData\Local\Temp\surefire8315891611491923265\surefirebooter-20251104192911682_3.jar"/>
+    <property name="user.script" value=""/>
+    <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
+    <property name="java.runtime.version" value="21.0.7+6-LTS"/>
+    <property name="user.name" value="cpatil"/>
+    <property name="stdout.encoding" value="Cp1252"/>
+    <property name="path.separator" value=";"/>
+    <property name="os.version" value="10.0"/>
+    <property name="java.runtime.name" value="OpenJDK Runtime Environment"/>
+    <property name="file.encoding" value="UTF-8"/>
+    <property name="java.vm.name" value="OpenJDK 64-Bit Server VM"/>
+    <property name="java.vendor.version" value="Temurin-21.0.7+6"/>
+    <property name="localRepository" value="C:\Users\cpatil\.m2\repository"/>
+    <property name="java.vendor.url.bug" value="https://github.com/adoptium/adoptium-support/issues"/>
+    <property name="java.io.tmpdir" value="C:\Users\cpatil\AppData\Local\Temp\"/>
+    <property name="java.version" value="21.0.7"/>
+    <property name="user.dir" value="C:\Users\cpatil\eclipse-workspace\Issue_persistence"/>
+    <property name="os.arch" value="amd64"/>
+    <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
+    <property name="sun.os.patch.level" value=""/>
+    <property name="native.encoding" value="Cp1252"/>
+    <property name="java.library.path" value="C:\Users\cpatil\.p2\pool\plugins\org.eclipse.justj.openjdk.hotspot.jre.full.win32.x86_64_21.0.7.v20250502-0916\jre\bin;C:\WINDOWS\Sun\Java\bin;C:\WINDOWS\system32;C:\WINDOWS;C:/Users/cpatil/.p2/pool/plugins/org.eclipse.justj.openjdk.hotspot.jre.full.win32.x86_64_21.0.8.v20250724-1412/jre/bin/server;C:/Users/cpatil/.p2/pool/plugins/org.eclipse.justj.openjdk.hotspot.jre.full.win32.x86_64_21.0.8.v20250724-1412/jre/bin;C:\Program Files\Common Files\Oracle\Java\javapath;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Users\cpatil\Downloads\apache-maven-3.9.11-bin\apache-maven-3.9.11\bin;C:\Program Files\nodejs\;C:\Program Files\PuTTY\;C:\Program Files\Java\jdk-17\bin;C:\Users\cpatil\Downloads\allure-2.35.1\allure-2.35.1\bin;C:\Program Files\Git\cmd;C:\Users\cpatil\AppData\Local\Programs\Eclipse Adoptium\jdk-21.0.8.9-hotspot\bin;C:\Users\cpatil\AppData\Local\Microsoft\WindowsApps;C:\Users\cpatil\AppData\Roaming\npm;C:\Users\cpatil\AppData\Local\Programs\Microsoft VS Code\bin;C:\Program Files\Java\jdk-17;C:\Users\cpatil\AppData\Local\GitHubDesktop\bin;C:\Users\cpatil\Desktop;;."/>
+    <property name="java.vm.info" value="mixed mode, sharing"/>
+    <property name="stderr.encoding" value="Cp1252"/>
+    <property name="java.vendor" value="Eclipse Adoptium"/>
+    <property name="java.vm.version" value="21.0.7+6-LTS"/>
+    <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
+    <property name="java.class.version" value="65.0"/>
+  </properties>
+  <testcase name="To verify that  New IssueSprint is Creating" classname="IssueSprint API testing" time="13.942">
+    <system-out><![CDATA[
+@IssueSprint
+Scenario: To verify that  New IssueSprint is Creating    # src/test/resources/features/issuesprint.feature:5
+IssueSprint JSON:
+{
+  "sprintId": 8653,
+  "issueId": 3707,
+  "startSprintDate": "2025-11-02T10:29:14.410Z",
+  "sprintName": "et",
+  "endSprintDate": "2025-11-22T10:29:14.410Z",
+  "type": "Banking",
+  "projectId": 1085
+}
+  Given I have a IssueSprint                             # Issue_persistence.IssueSprint.i_have_a_issuesprint()
+Response Body:
+{"id":14,"sprintId":8653,"issueId":3707,"deleted":false,"startSprintDate":"2025-11-02T10:29:14.410+00:00","sprintName":"et","endSprintDate":"2025-11-22T10:29:14.410+00:00","type":"Banking","projectId":1085}
+Status Code: 201
+Stored IssueSprintId: 14
+  When Create New IssueSprint                            # Issue_persistence.IssueSprint.Create_new_issuesprint()
+  Then The IssueSprint response should contain "id"      # Issue_persistence.IssueSprint.the_issuesprint_response_should_contain(java.lang.String)
+  And The IssueSprint response status code should be 201 # Issue_persistence.IssueSprint.the_issuesprint_response_status_code_should_be(java.lang.Integer)
+]]></system-out>
+    <system-err><![CDATA[SLF4J(W): No SLF4J providers were found.
+SLF4J(W): Defaulting to no-operation (NOP) logger implementation
+SLF4J(W): See https://www.slf4j.org/codes.html#noProviders for further details.
+Nov 04, 2025 7:29:24 PM org.openqa.selenium.devtools.CdpVersionFinder findNearestMatch
+WARNING: Unable to find CDP implementation matching 141
+Nov 04, 2025 7:29:24 PM org.openqa.selenium.chromium.ChromiumDriver lambda$new$5
+WARNING: Unable to find version of CDP to use for 141.0.7390.123. You may need to include a dependency on a specific version of the CDP using something similar to `org.seleniumhq.selenium:selenium-devtools-v86:4.20.0` where the version ("v86") matches the version of the chromium-based browser you're using and the version number of the artifact is the same as Selenium's.
+]]></system-err>
+  </testcase>
+  <testcase name="To verify that Fetching All IssueSprints" classname="IssueSprint API testing" time="0.615">
+    <system-out><![CDATA[
+@IssueSprint
+Scenario: To verify that Fetching All IssueSprints        # src/test/resources/features/issuesprint.feature:11
+Response Body:
+[{"id":1,"sprintId":258,"issueId":5640,"deleted":false,"startSprintDate":"2025-01-10T09:00:00.000+00:00","sprintName":"Sprint Alpha","endSprintDate":"2025-01-24T18:00:00.000+00:00","type":"Development","projectId":1476},{"id":2,"sprintId":258,"issueId":5640,"deleted":false,"startSprintDate":"2025-01-10T09:00:00.000+00:00","sprintName":"Sprint Alpha","endSprintDate":"2025-01-24T18:00:00.000+00:00","type":"Development","projectId":1476},{"id":3,"sprintId":302,"issueId":6123,"deleted":false,"startSprintDate":"2025-03-05T09:30:00.000+00:00","sprintName":"Sprint Gamma","endSprintDate":"2025-03-19T18:30:00.000+00:00","type":"Bug Fix","projectId":1984},{"id":4,"sprintId":303,"issueId":4591,"deleted":false,"startSprintDate":"2025-04-01T10:00:00.000+00:00","sprintName":"Sprint Delta","endSprintDate":"2025-04-15T17:00:00.000+00:00","type":"Feature","projectId":3056},{"id":5,"sprintId":304,"issueId":8934,"deleted":false,"startSprintDate":"2025-05-02T08:45:00.000+00:00","sprintName":"Sprint Epsilon","endSprintDate":"2025-05-16T17:30:00.000+00:00","type":"Enhancement","projectId":1560},{"id":6,"sprintId":305,"issueId":6672,"deleted":false,"startSprintDate":"2025-06-10T09:15:00.000+00:00","sprintName":"Sprint Zeta","endSprintDate":"2025-06-24T18:15:00.000+00:00","type":"Maintenance","projectId":2741},{"id":7,"sprintId":306,"issueId":9821,"deleted":false,"startSprintDate":"2025-07-01T09:00:00.000+00:00","sprintName":"Sprint Theta","endSprintDate":"2025-07-15T17:00:00.000+00:00","type":"Release Prep","projectId":4203},{"id":8,"sprintId":306,"issueId":9821,"deleted":false,"startSprintDate":"2025-07-01T09:00:00.000+00:00","sprintName":"Sprint Theta","endSprintDate":"2025-07-15T17:00:00.000+00:00","type":"Release Prep","projectId":4203},{"id":9,"sprintId":306,"issueId":9821,"deleted":false,"startSprintDate":"2025-07-01T09:00:00.000+00:00","sprintName":"Sprint Theta","endSprintDate":"2025-07-15T17:00:00.000+00:00","type":"Release Prep","projectId":4203},{"id":10,"sprintId":307,"issueId":9822,"deleted":false,"startSprintDate":null,"sprintName":null,"endSprintDate":null,"type":null,"projectId":4204},{"id":14,"sprintId":8653,"issueId":3707,"deleted":false,"startSprintDate":"2025-11-02T10:29:14.410+00:00","sprintName":"et","endSprintDate":"2025-11-22T10:29:14.410+00:00","type":"Banking","projectId":1085}]
+Status Code: 200
+  When Fetch All IssueSprint Details                      # Issue_persistence.IssueSprint.Fetch_All_issuesprint_Details()
+  Then The IssueSprint response status code should be 200 # Issue_persistence.IssueSprint.the_issuesprint_response_status_code_should_be(java.lang.Integer)
+]]></system-out>
+  </testcase>
+  <testcase name="To verify that GET with ID Fetched Correct Data" classname="IssueSprint API testing" time="0.717">
+    <system-out><![CDATA[
+@IssueSprint
+Scenario: To verify that GET with ID Fetched Correct Data # src/test/resources/features/issuesprint.feature:15
+Response Body:
+{"id":14,"sprintId":8653,"issueId":3707,"deleted":false,"startSprintDate":"2025-11-02T10:29:14.410+00:00","sprintName":"et","endSprintDate":"2025-11-22T10:29:14.410+00:00","type":"Banking","projectId":1085}
+Status Code: 200
+  When Fetch IssueSprint Details with ID                  # Issue_persistence.IssueSprint.Fetch_issuesprint_Details_with_ID()
+  Then The IssueSprint response status code should be 200 # Issue_persistence.IssueSprint.the_issuesprint_response_status_code_should_be(java.lang.Integer)
+]]></system-out>
+  </testcase>
+  <testcase name="To verify that in PUT data is updating in DataBase" classname="IssueSprint API testing" time="7.775">
+    <system-out><![CDATA[
+@IssueSprint
+Scenario: To verify that in PUT data is updating in DataBase # src/test/resources/features/issuesprint.feature:19
+PUT Response Body:
+{"id":14,"sprintId":7881,"issueId":7490,"deleted":null,"startSprintDate":"2025-10-31T08:29:28.983+00:00","sprintName":"corrupti","endSprintDate":"2025-11-19T08:29:28.983+00:00","type":"Marketing","projectId":4976}
+Status Code: 200
+  When Update IssueSprint Details                            # Issue_persistence.IssueSprint.Update_issuesprint_details()
+  Then The IssueSprint response status code should be 200    # Issue_persistence.IssueSprint.the_issuesprint_response_status_code_should_be(java.lang.Integer)
+]]></system-out>
+    <system-err><![CDATA[Nov 04, 2025 7:29:33 PM org.openqa.selenium.devtools.CdpVersionFinder findNearestMatch
+WARNING: Unable to find CDP implementation matching 141
+Nov 04, 2025 7:29:33 PM org.openqa.selenium.chromium.ChromiumDriver lambda$new$5
+WARNING: Unable to find version of CDP to use for 141.0.7390.123. You may need to include a dependency on a specific version of the CDP using something similar to `org.seleniumhq.selenium:selenium-devtools-v86:4.20.0` where the version ("v86") matches the version of the chromium-based browser you're using and the version number of the artifact is the same as Selenium's.
+]]></system-err>
+  </testcase>
+  <testcase name="To verify that in Patch data is updating in DataBase" classname="IssueSprint API testing" time="7.754">
+    <failure message="expected:&lt;200&gt; but was:&lt;500&gt;" type="java.lang.AssertionError"><![CDATA[java.lang.AssertionError: expected:<200> but was:<500>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:647)
+	at org.junit.Assert.assertEquals(Assert.java:633)
+	at Issue_persistence.IssueSprint.the_issuesprint_response_status_code_should_be(IssueSprint.java:268)
+	at ✽.The IssueSprint response status code should be 200(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issuesprint.feature:25)
+]]></failure>
+    <system-out><![CDATA[
+@IssueSprint
+Scenario: To verify that in Patch data is updating in DataBase # src/test/resources/features/issuesprint.feature:23
+PATCH Request Body:
+{
+  "sprintId": 6461,
+  "issueId": 1068,
+  "startSprintDate": "2025-10-24T13:29:36.748Z",
+  "sprintName": "maiores",
+  "endSprintDate": "2025-11-09T13:29:36.748Z",
+  "type": "Government",
+  "projectId": 1489
+}
+PATCH Response Body:
+{"appName":"issue-persistence","httpStatus":"INTERNAL_SERVER_ERROR","statusCode":500,"timestamp":"2025-11-04T13:59:37.236Z","errorDescription":"The request processing has failed because of an unknown error, exception or failure.{0}","params":{},"path":"uri=/issue-persistence/issueSprints/14"}
+Status Code: 500
+  When Update Patch IssueSprint                                # Issue_persistence.IssueSprint.Update_Patch_issuesprint()
+  Then The IssueSprint response status code should be 200      # Issue_persistence.IssueSprint.the_issuesprint_response_status_code_should_be(java.lang.Integer)
+      java.lang.AssertionError: expected:<200> but was:<500>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:647)
+	at org.junit.Assert.assertEquals(Assert.java:633)
+	at Issue_persistence.IssueSprint.the_issuesprint_response_status_code_should_be(IssueSprint.java:268)
+	at ✽.The IssueSprint response status code should be 200(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issuesprint.feature:25)
+
+]]></system-out>
+    <system-err><![CDATA[Nov 04, 2025 7:29:41 PM org.openqa.selenium.devtools.CdpVersionFinder findNearestMatch
+WARNING: Unable to find CDP implementation matching 141
+Nov 04, 2025 7:29:41 PM org.openqa.selenium.chromium.ChromiumDriver lambda$new$5
+WARNING: Unable to find version of CDP to use for 141.0.7390.123. You may need to include a dependency on a specific version of the CDP using something similar to `org.seleniumhq.selenium:selenium-devtools-v86:4.20.0` where the version ("v86") matches the version of the chromium-based browser you're using and the version number of the artifact is the same as Selenium's.
+]]></system-err>
+  </testcase>
+  <testcase name="To verify that After Delete Data should delete from DataBase" classname="IssueSprint API testing" time="7.95">
+    <system-out><![CDATA[
+@IssueSprint
+Scenario: To verify that After Delete Data should delete from DataBase # src/test/resources/features/issuesprint.feature:27
+Delete Response Body:
+
+Delete Status Code: 204
+  When Delete IssueSprint with ID                                      # Issue_persistence.IssueSprint.delete_issuesprint_with_ID()
+  Then The IssueSprint response status code should be 204              # Issue_persistence.IssueSprint.the_issuesprint_response_status_code_should_be(java.lang.Integer)
+]]></system-out>
+    <system-err><![CDATA[Nov 04, 2025 7:29:49 PM org.openqa.selenium.devtools.CdpVersionFinder findNearestMatch
+WARNING: Unable to find CDP implementation matching 141
+Nov 04, 2025 7:29:49 PM org.openqa.selenium.chromium.ChromiumDriver lambda$new$5
+WARNING: Unable to find version of CDP to use for 141.0.7390.123. You may need to include a dependency on a specific version of the CDP using something similar to `org.seleniumhq.selenium:selenium-devtools-v86:4.20.0` where the version ("v86") matches the version of the chromium-based browser you're using and the version number of the artifact is the same as Selenium's.
+]]></system-err>
+  </testcase>
+  <testcase name="To verify that New IssueStatus is creating" classname="IssueStatus API testing" time="8.315">
+    <system-out><![CDATA[
+@IssueStatus
+Scenario: To verify that New IssueStatus is creating      # src/test/resources/features/issuestatus.feature:5
+IssueStatus JSON:
+{
+  "isUpdatable": true,
+  "isDefault": true,
+  "deleted": false,
+  "color": "#382904",
+  "percentage": 5065,
+  "description": "Blocked due to dependency on another issue.",
+  "position": 2441,
+  "label": "To Do",
+  "projectId": 8387,
+  "statusLevel": "High",
+  "isFinalStatus": true,
+  "statusRole": "Representative"
+}
+  Given I have a IssueStatus                              # Issue_persistence.IssueStatus.i_have_a_issuestatus()
+Response Body:
+{"id":1,"isUpdatable":true,"isDefault":true,"deleted":false,"color":"#382904","percentage":5065,"description":"Blocked due to dependency on another issue.","position":2441,"label":"To Do","projectId":8387,"statusLevel":"High","isFinalStatus":true,"statusRole":"Representative"}
+Status Code: 201
+Stored IssueRootCauseId: 1
+  When Create New IssueStatus                             # Issue_persistence.IssueStatus.Create_new_issuestatus()
+  Then The IssueStatus response status code should be 201 # Issue_persistence.IssueStatus.the_issuestatus_response_status_code_should_be(java.lang.Integer)
+  And The IssueStatus response should contain "id"        # Issue_persistence.IssueStatus.the_issuestatus_response_should_contain(java.lang.String)
+]]></system-out>
+    <system-err><![CDATA[Nov 04, 2025 7:29:57 PM org.openqa.selenium.devtools.CdpVersionFinder findNearestMatch
+WARNING: Unable to find CDP implementation matching 141
+Nov 04, 2025 7:29:57 PM org.openqa.selenium.chromium.ChromiumDriver lambda$new$5
+WARNING: Unable to find version of CDP to use for 141.0.7390.123. You may need to include a dependency on a specific version of the CDP using something similar to `org.seleniumhq.selenium:selenium-devtools-v86:4.20.0` where the version ("v86") matches the version of the chromium-based browser you're using and the version number of the artifact is the same as Selenium's.
+]]></system-err>
+  </testcase>
+  <testcase name="To verify that fetching all IssueStatus" classname="IssueStatus API testing" time="0.55">
+    <system-out><![CDATA[
+@IssueStatus
+Scenario: To verify that fetching all IssueStatus         # src/test/resources/features/issuestatus.feature:11
+Response Body:
+[{"id":1,"isUpdatable":true,"isDefault":true,"deleted":false,"color":"#382904","percentage":5065,"description":"Blocked due to dependency on another issue.","position":2441,"label":"To Do","projectId":8387,"statusLevel":"High","isFinalStatus":true,"statusRole":"Representative"}]
+Status Code: 200
+  When Fetch All IssueStatus Details                      # Issue_persistence.IssueStatus.Fetch_All_issuestatus_Details()
+  Then The IssueStatus response status code should be 200 # Issue_persistence.IssueStatus.the_issuestatus_response_status_code_should_be(java.lang.Integer)
+]]></system-out>
+  </testcase>
+  <testcase name="To verify that GET with ID fetched correct Data" classname="IssueStatus API testing" time="0.577">
+    <system-out><![CDATA[
+@IssueStatus
+Scenario: To verify that GET with ID fetched correct Data # src/test/resources/features/issuestatus.feature:15
+Response Body:
+{"id":1,"isUpdatable":true,"isDefault":true,"deleted":false,"color":"#382904","percentage":5065,"description":"Blocked due to dependency on another issue.","position":2441,"label":"To Do","projectId":8387,"statusLevel":"High","isFinalStatus":true,"statusRole":"Representative"}
+Status Code: 200
+  When Fetch IssueStatus Details with ID                  # Issue_persistence.IssueStatus.Fetch_issuestatus_Details_with_ID()
+  Then The IssueStatus response status code should be 200 # Issue_persistence.IssueStatus.the_issuestatus_response_status_code_should_be(java.lang.Integer)
+]]></system-out>
+  </testcase>
+  <testcase name="To verify that in PUT request data should get update in DataBase" classname="IssueStatus API testing" time="7.721">
+    <system-out><![CDATA[
+@IssueStatus
+Scenario: To verify that in PUT request data should get update in DataBase # src/test/resources/features/issuestatus.feature:19
+PUT Response Body:
+{"id":1,"isUpdatable":false,"isDefault":true,"deleted":false,"color":"#FB553D","percentage":3602,"description":"Task successfully completed and verified by QA.","position":6055,"label":"In Review","projectId":3438,"statusLevel":"Critical","isFinalStatus":true,"statusRole":"Developer"}
+Status Code: 200
+  When Update IssueStatus Details                                          # Issue_persistence.IssueStatus.Update_issuestatus_details()
+  Then The IssueStatus response status code should be 200                  # Issue_persistence.IssueStatus.the_issuestatus_response_status_code_should_be(java.lang.Integer)
+]]></system-out>
+    <system-err><![CDATA[Nov 04, 2025 7:30:06 PM org.openqa.selenium.devtools.CdpVersionFinder findNearestMatch
+WARNING: Unable to find CDP implementation matching 141
+Nov 04, 2025 7:30:06 PM org.openqa.selenium.chromium.ChromiumDriver lambda$new$5
+WARNING: Unable to find version of CDP to use for 141.0.7390.123. You may need to include a dependency on a specific version of the CDP using something similar to `org.seleniumhq.selenium:selenium-devtools-v86:4.20.0` where the version ("v86") matches the version of the chromium-based browser you're using and the version number of the artifact is the same as Selenium's.
+]]></system-err>
+  </testcase>
+  <testcase name="To verify that in Patch request data should get update in DataBase" classname="IssueStatus API testing" time="7.679">
+    <system-out><![CDATA[
+@IssueStatus
+Scenario: To verify that in Patch request data should get update in DataBase # src/test/resources/features/issuestatus.feature:23
+Delete Response Body:
+
+Delete Status Code: 204
+  When Delete IssueStatus with ID                                            # Issue_persistence.IssueStatus.delete_issuestatus_with_ID()
+  Then The IssueStatus response status code should be 204                    # Issue_persistence.IssueStatus.the_issuestatus_response_status_code_should_be(java.lang.Integer)
+]]></system-out>
+    <system-err><![CDATA[Nov 04, 2025 7:30:13 PM org.openqa.selenium.devtools.CdpVersionFinder findNearestMatch
+WARNING: Unable to find CDP implementation matching 141
+Nov 04, 2025 7:30:13 PM org.openqa.selenium.chromium.ChromiumDriver lambda$new$5
+WARNING: Unable to find version of CDP to use for 141.0.7390.123. You may need to include a dependency on a specific version of the CDP using something similar to `org.seleniumhq.selenium:selenium-devtools-v86:4.20.0` where the version ("v86") matches the version of the chromium-based browser you're using and the version number of the artifact is the same as Selenium's.
+]]></system-err>
+  </testcase>
+  <testcase name="To verify that New IssueStatusGraph is creating" classname="IssueStatusGraph API testing" time="7.605">
+    <system-out><![CDATA[
+@IssueStatusGraph
+Scenario: To verify that New IssueStatusGraph is creating     # src/test/resources/features/issuestatusgraph.feature:4
+IssueStatusGraph JSON:
+{
+  "issueTypeId": 6992,
+  "statusEnd": 9477,
+  "statusStart": 9225,
+  "type": "Manufacturing",
+  "projectId": 9369,
+  "workflowId": "WF_635"
+}
+  Given I have a IssueStatusGraph                             # Issue_persistence.IssueSatusGraph.i_have_a_issuestatusgraph()
+Response Body:
+{"id":2,"issueTypeId":6992,"statusEnd":9477,"deleted":false,"statusStart":9225,"type":"Manufacturing","projectId":9369,"workflowId":"WF_635"}
+Status Code: 201
+Stored IssueStatusGraphId: 2
+  When Create New IssueStatusGraph                            # Issue_persistence.IssueSatusGraph.Create_new_issuestatusgraph()
+  Then The IssueStatusGraph response should contain "id"      # Issue_persistence.IssueSatusGraph.the_issuestatusgraph_response_should_contain(java.lang.String)
+  And The IssueStatusGraph response status code should be 201 # Issue_persistence.IssueSatusGraph.the_issuestatusgraph_response_status_code_should_be(java.lang.Integer)
+]]></system-out>
+    <system-err><![CDATA[Nov 04, 2025 7:30:21 PM org.openqa.selenium.devtools.CdpVersionFinder findNearestMatch
+WARNING: Unable to find CDP implementation matching 141
+Nov 04, 2025 7:30:21 PM org.openqa.selenium.chromium.ChromiumDriver lambda$new$5
+WARNING: Unable to find version of CDP to use for 141.0.7390.123. You may need to include a dependency on a specific version of the CDP using something similar to `org.seleniumhq.selenium:selenium-devtools-v86:4.20.0` where the version ("v86") matches the version of the chromium-based browser you're using and the version number of the artifact is the same as Selenium's.
+]]></system-err>
+  </testcase>
+  <testcase name="To verify that fetching All IssueStatusGraph" classname="IssueStatusGraph API testing" time="0.685">
+    <system-out><![CDATA[
+@IssueStatusGraph
+Scenario: To verify that fetching All IssueStatusGraph         # src/test/resources/features/issuestatusgraph.feature:10
+Response Body:
+[{"id":2,"issueTypeId":6992,"statusEnd":9477,"deleted":false,"statusStart":9225,"type":"Manufacturing","projectId":9369,"workflowId":"WF_635"}]
+Status Code: 200
+  When Fetch All IssueStatusGraph Details                      # Issue_persistence.IssueSatusGraph.Fetch_All_issuestatusgraph_Details()
+  Then The IssueStatusGraph response status code should be 200 # Issue_persistence.IssueSatusGraph.the_issuestatusgraph_response_status_code_should_be(java.lang.Integer)
+]]></system-out>
+  </testcase>
+  <testcase name="To verify that in PUT data should get Update in DateBase" classname="IssueStatusGraph API testing" time="7.715">
+    <system-out><![CDATA[
+@IssueStatusGraph
+Scenario: To verify that in PUT data should get Update in DateBase # src/test/resources/features/issuestatusgraph.feature:14
+PUT Response Body:
+{"id":2,"issueTypeId":7868,"statusEnd":6007,"deleted":null,"statusStart":9740,"type":"Community-Services","projectId":1108,"workflowId":"WF_561"}
+Status Code: 200
+  When Update IssueStatusGraph Details                             # Issue_persistence.IssueSatusGraph.Update_issuestatusgarph_details()
+  Then The IssueStatusGraph response status code should be 200     # Issue_persistence.IssueSatusGraph.the_issuestatusgraph_response_status_code_should_be(java.lang.Integer)
+]]></system-out>
+    <system-err><![CDATA[Nov 04, 2025 7:30:29 PM org.openqa.selenium.devtools.CdpVersionFinder findNearestMatch
+WARNING: Unable to find CDP implementation matching 141
+Nov 04, 2025 7:30:29 PM org.openqa.selenium.chromium.ChromiumDriver lambda$new$5
+WARNING: Unable to find version of CDP to use for 141.0.7390.123. You may need to include a dependency on a specific version of the CDP using something similar to `org.seleniumhq.selenium:selenium-devtools-v86:4.20.0` where the version ("v86") matches the version of the chromium-based browser you're using and the version number of the artifact is the same as Selenium's.
+]]></system-err>
+  </testcase>
+  <testcase name="To verify that in Patch data should get update in DataBase" classname="IssueStatusGraph API testing" time="7.673">
+    <failure message="expected:&lt;200&gt; but was:&lt;500&gt;" type="java.lang.AssertionError"><![CDATA[java.lang.AssertionError: expected:<200> but was:<500>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:647)
+	at org.junit.Assert.assertEquals(Assert.java:633)
+	at Issue_persistence.IssueSatusGraph.the_issuestatusgraph_response_status_code_should_be(IssueSatusGraph.java:268)
+	at ✽.The IssueStatusGraph response status code should be 200(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issuestatusgraph.feature:20)
+]]></failure>
+    <system-out><![CDATA[
+@IssueStatusGraph
+Scenario: To verify that in Patch data should get update in DataBase # src/test/resources/features/issuestatusgraph.feature:18
+PATCH Request Body:
+{
+  "issueTypeId": 3028,
+  "statusEnd": 2023,
+  "statusStart": 4409,
+  "type": "Retail",
+  "projectId": 1790,
+  "workflowId": "WF_887"
+}
+PATCH Response Body:
+{"appName":"issue-persistence","httpStatus":"INTERNAL_SERVER_ERROR","statusCode":500,"timestamp":"2025-11-04T14:00:33.767Z","errorDescription":"The request processing has failed because of an unknown error, exception or failure.{0}","params":{},"path":"uri=/issue-persistence/issueStatusGraphs/2"}
+Status Code: 500
+  When Update Patch IssueStatusGraph                                 # Issue_persistence.IssueSatusGraph.Update_Patch_issuestatusgraph()
+  Then The IssueStatusGraph response status code should be 200       # Issue_persistence.IssueSatusGraph.the_issuestatusgraph_response_status_code_should_be(java.lang.Integer)
+      java.lang.AssertionError: expected:<200> but was:<500>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:647)
+	at org.junit.Assert.assertEquals(Assert.java:633)
+	at Issue_persistence.IssueSatusGraph.the_issuestatusgraph_response_status_code_should_be(IssueSatusGraph.java:268)
+	at ✽.The IssueStatusGraph response status code should be 200(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issuestatusgraph.feature:20)
+
+]]></system-out>
+    <system-err><![CDATA[Nov 04, 2025 7:30:37 PM org.openqa.selenium.devtools.CdpVersionFinder findNearestMatch
+WARNING: Unable to find CDP implementation matching 141
+Nov 04, 2025 7:30:37 PM org.openqa.selenium.chromium.ChromiumDriver lambda$new$5
+WARNING: Unable to find version of CDP to use for 141.0.7390.123. You may need to include a dependency on a specific version of the CDP using something similar to `org.seleniumhq.selenium:selenium-devtools-v86:4.20.0` where the version ("v86") matches the version of the chromium-based browser you're using and the version number of the artifact is the same as Selenium's.
+]]></system-err>
+  </testcase>
+  <testcase name="To verify that after Delete data should get delete from DataBase" classname="IssueStatusGraph API testing" time="7.605">
+    <system-out><![CDATA[
+@IssueStatusGraph
+Scenario: To verify that after Delete data should get delete from DataBase # src/test/resources/features/issuestatusgraph.feature:22
+Delete Response Body:
+
+Delete Status Code: 204
+  When Delete IssueStatusGraph with ID                                     # Issue_persistence.IssueSatusGraph.delete_issuestatusgraph_with_ID()
+  Then The IssueStatusGraph response status code should be 204             # Issue_persistence.IssueSatusGraph.the_issuestatusgraph_response_status_code_should_be(java.lang.Integer)
+]]></system-out>
+    <system-err><![CDATA[Nov 04, 2025 7:30:45 PM org.openqa.selenium.devtools.CdpVersionFinder findNearestMatch
+WARNING: Unable to find CDP implementation matching 141
+Nov 04, 2025 7:30:45 PM org.openqa.selenium.chromium.ChromiumDriver lambda$new$5
+WARNING: Unable to find version of CDP to use for 141.0.7390.123. You may need to include a dependency on a specific version of the CDP using something similar to `org.seleniumhq.selenium:selenium-devtools-v86:4.20.0` where the version ("v86") matches the version of the chromium-based browser you're using and the version number of the artifact is the same as Selenium's.
+]]></system-err>
+  </testcase>
+  <testcase name="To verify that New IssueStep is creating" classname="IssueStep API testing" time="7.395">
+    <system-out><![CDATA[
+@IssueStep
+Scenario: To verify that New IssueStep is creating     # src/test/resources/features/issuestep.feature:5
+IssueStep JSON:
+{
+  "issueId": 2778,
+  "projectId": 6334,
+  "rootCauseId": 7810,
+  "comments": "Incorrect calculations in report due to rounding errors.",
+  "correctiveActions": "Add missing validation rules and input sanitization."
+}
+  Given I have a IssueStep                             # Issue_persistence.IssueStep.i_have_a_issuestep()
+Response Body:
+{"id":1,"issueId":2778,"deleted":false,"icon":null,"step":null,"projectId":6334}
+Status Code: 201
+Stored IssueStepId: 1
+  When Create New IssueStep                            # Issue_persistence.IssueStep.Create_new_issuestep()
+  Then The IssueStep response should contain "id"      # Issue_persistence.IssueStep.the_issuestep_response_should_contain(java.lang.String)
+  And The IssueStep response status code should be 201 # Issue_persistence.IssueStep.the_issuestep_response_status_code_should_be(java.lang.Integer)
+]]></system-out>
+    <system-err><![CDATA[Nov 04, 2025 7:30:52 PM org.openqa.selenium.devtools.CdpVersionFinder findNearestMatch
+WARNING: Unable to find CDP implementation matching 141
+Nov 04, 2025 7:30:52 PM org.openqa.selenium.chromium.ChromiumDriver lambda$new$5
+WARNING: Unable to find version of CDP to use for 141.0.7390.123. You may need to include a dependency on a specific version of the CDP using something similar to `org.seleniumhq.selenium:selenium-devtools-v86:4.20.0` where the version ("v86") matches the version of the chromium-based browser you're using and the version number of the artifact is the same as Selenium's.
+]]></system-err>
+  </testcase>
+  <testcase name="To verify that fetching All IssueSteps" classname="IssueStep API testing" time="0.619">
+    <system-out><![CDATA[
+@IssueStep
+Scenario: To verify that fetching All IssueSteps        # src/test/resources/features/issuestep.feature:11
+Response Body:
+[{"id":1,"issueId":2778,"deleted":false,"icon":null,"step":null,"projectId":6334}]
+Status Code: 200
+  When Fetch All IssueStep Details                      # Issue_persistence.IssueStep.Fetch_All_issuestep_Details()
+  Then The IssueStep response status code should be 200 # Issue_persistence.IssueStep.the_issuestep_response_status_code_should_be(java.lang.Integer)
+]]></system-out>
+  </testcase>
+  <testcase name="To verify that GET with ID fetched correct data" classname="IssueStep API testing" time="0.613">
+    <system-out><![CDATA[
+@IssueStep
+Scenario: To verify that GET with ID fetched correct data # src/test/resources/features/issuestep.feature:15
+Response Body:
+{"id":1,"issueId":2778,"deleted":false,"icon":null,"step":null,"projectId":6334}
+Status Code: 200
+  When Fetch IssueStep Details with ID                    # Issue_persistence.IssueStep.Fetch_issuestep_Details_with_ID()
+  Then The IssueStep response status code should be 200   # Issue_persistence.IssueStep.the_issuestep_response_status_code_should_be(java.lang.Integer)
+]]></system-out>
+  </testcase>
+  <testcase name="To verify that in PUT request Data is get update in DataBase" classname="IssueStep API testing" time="7.533">
+    <system-out><![CDATA[
+@IssueStep
+Scenario: To verify that in PUT request Data is get update in DataBase # src/test/resources/features/issuestep.feature:19
+PUT Response Body:
+{"id":1,"issueId":2661,"deleted":null,"icon":"check-circle","step":"Testing Phase","projectId":5115}
+Status Code: 200
+  When Update IssueStep Details                                        # Issue_persistence.IssueStep.Update_issuestep_details()
+  Then The IssueStep response status code should be 200                # Issue_persistence.IssueStep.the_issuestep_response_status_code_should_be(java.lang.Integer)
+]]></system-out>
+    <system-err><![CDATA[Nov 04, 2025 7:31:01 PM org.openqa.selenium.devtools.CdpVersionFinder findNearestMatch
+WARNING: Unable to find CDP implementation matching 141
+Nov 04, 2025 7:31:01 PM org.openqa.selenium.chromium.ChromiumDriver lambda$new$5
+WARNING: Unable to find version of CDP to use for 141.0.7390.123. You may need to include a dependency on a specific version of the CDP using something similar to `org.seleniumhq.selenium:selenium-devtools-v86:4.20.0` where the version ("v86") matches the version of the chromium-based browser you're using and the version number of the artifact is the same as Selenium's.
+]]></system-err>
+  </testcase>
+  <testcase name="To verify that in Patch request data is get update in DataBase" classname="IssueStep API testing" time="7.706">
+    <failure message="expected:&lt;200&gt; but was:&lt;500&gt;" type="java.lang.AssertionError"><![CDATA[java.lang.AssertionError: expected:<200> but was:<500>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:647)
+	at org.junit.Assert.assertEquals(Assert.java:633)
+	at Issue_persistence.IssueStep.the_issuestep_response_status_code_should_be(IssueStep.java:268)
+	at ✽.The IssueStep response status code should be 200(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issuestep.feature:25)
+]]></failure>
+    <system-out><![CDATA[
+@IssueStep
+Scenario: To verify that in Patch request data is get update in DataBase # src/test/resources/features/issuestep.feature:23
+PATCH Request Body:
+{
+  "issueId": 8811,
+  "icon": "flag",
+  "step": "Design Phase",
+  "projectId": 6296
+}
+PATCH Response Body:
+{"appName":"issue-persistence","httpStatus":"INTERNAL_SERVER_ERROR","statusCode":500,"timestamp":"2025-11-04T14:01:05.295Z","errorDescription":"The request processing has failed because of an unknown error, exception or failure.{0}","params":{},"path":"uri=/issue-persistence/issueStepses/1"}
+Status Code: 500
+  When Update Patch IssueStep                                            # Issue_persistence.IssueStep.Update_Patch_issuestep()
+  Then The IssueStep response status code should be 200                  # Issue_persistence.IssueStep.the_issuestep_response_status_code_should_be(java.lang.Integer)
+      java.lang.AssertionError: expected:<200> but was:<500>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:647)
+	at org.junit.Assert.assertEquals(Assert.java:633)
+	at Issue_persistence.IssueStep.the_issuestep_response_status_code_should_be(IssueStep.java:268)
+	at ✽.The IssueStep response status code should be 200(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issuestep.feature:25)
+
+]]></system-out>
+    <system-err><![CDATA[Nov 04, 2025 7:31:09 PM org.openqa.selenium.devtools.CdpVersionFinder findNearestMatch
+WARNING: Unable to find CDP implementation matching 141
+Nov 04, 2025 7:31:09 PM org.openqa.selenium.chromium.ChromiumDriver lambda$new$5
+WARNING: Unable to find version of CDP to use for 141.0.7390.123. You may need to include a dependency on a specific version of the CDP using something similar to `org.seleniumhq.selenium:selenium-devtools-v86:4.20.0` where the version ("v86") matches the version of the chromium-based browser you're using and the version number of the artifact is the same as Selenium's.
+]]></system-err>
+  </testcase>
+  <testcase name="To verify that after delete request data should get delete from DataBase" classname="IssueStep API testing" time="0.003">
+    <system-out><![CDATA[
+@IssueStep
+Scenario: To verify that after delete request data should get delete from DataBase # src/test/resources/features/issuestep.feature:27
+]]></system-out>
+  </testcase>
+  <testcase name="To verify that new IssueTestCase creating" classname="IssueTestCase API testing" time="7.459">
+    <system-out><![CDATA[
+@IssueTestCase
+Scenario: To verify that new IssueTestCase creating        # src/test/resources/features/issuetestcase.feature:5
+IssueTestCase JSON:
+{
+  "issueRequirementId": 9637,
+  "issueId": 2907,
+  "testCaseId": 9330
+}
+  Given I have a IssueTestCase                             # Issue_persistence.IssueTestCase.i_have_a_issuetestcase()
+Response Body:
+{"id":1,"issueRequirementId":9637,"issueId":2907,"deleted":false,"testCaseId":9330}
+Status Code: 201
+Stored IssueTestCaseId: 1
+  When Create New IssueTestCase                            # Issue_persistence.IssueTestCase.Create_new_issuetestcase()
+  Then The IssueTestCase response should contain "id"      # Issue_persistence.IssueTestCase.the_issuetestcase_response_should_contain(java.lang.String)
+  And The IssueTestCase response status code should be 201 # Issue_persistence.IssueTestCase.the_issuetestcase_response_status_code_should_be(java.lang.Integer)
+]]></system-out>
+    <system-err><![CDATA[Nov 04, 2025 7:31:16 PM org.openqa.selenium.devtools.CdpVersionFinder findNearestMatch
+WARNING: Unable to find CDP implementation matching 141
+Nov 04, 2025 7:31:16 PM org.openqa.selenium.chromium.ChromiumDriver lambda$new$5
+WARNING: Unable to find version of CDP to use for 141.0.7390.123. You may need to include a dependency on a specific version of the CDP using something similar to `org.seleniumhq.selenium:selenium-devtools-v86:4.20.0` where the version ("v86") matches the version of the chromium-based browser you're using and the version number of the artifact is the same as Selenium's.
+]]></system-err>
+  </testcase>
+  <testcase name="To verify that Fetching All IssueTestCase" classname="IssueTestCase API testing" time="0.545">
+    <system-out><![CDATA[
+@IssueTestCase
+Scenario: To verify that Fetching All IssueTestCase         # src/test/resources/features/issuetestcase.feature:11
+Response Body:
+[{"id":1,"issueRequirementId":9637,"issueId":2907,"deleted":false,"testCaseId":9330}]
+Status Code: 200
+  When Fetch All IssueTestCase Details                      # Issue_persistence.IssueTestCase.Fetch_All_issuetestcase_Details()
+  Then The IssueTestCase response status code should be 200 # Issue_persistence.IssueTestCase.the_issuetestcase_response_status_code_should_be(java.lang.Integer)
+]]></system-out>
+  </testcase>
+  <testcase name="To verify that GET with ID fetched correct data" classname="IssueTestCase API testing" time="0.606">
+    <system-out><![CDATA[
+@IssueTestCase
+Scenario: To verify that GET with ID fetched correct data   # src/test/resources/features/issuetestcase.feature:15
+Response Body:
+{"id":1,"issueRequirementId":9637,"issueId":2907,"deleted":false,"testCaseId":9330}
+Status Code: 200
+  When Fetch IssueTestCase Details with ID                  # Issue_persistence.IssueTestCase.Fetch_issuetestcase_Details_with_ID()
+  Then The IssueTestCase response status code should be 200 # Issue_persistence.IssueTestCase.the_issuetestcase_response_status_code_should_be(java.lang.Integer)
+]]></system-out>
+  </testcase>
+  <testcase name="To verify that in PUT request Data is geting update in DataBase" classname="IssueTestCase API testing" time="7.543">
+    <system-out><![CDATA[
+@IssueTestCase
+Scenario: To verify that in PUT request Data is geting update in DataBase # src/test/resources/features/issuetestcase.feature:19
+PUT Response Body:
+{"id":1,"issueRequirementId":4420,"issueId":1341,"deleted":null,"testCaseId":9917}
+Status Code: 200
+  When Update IssueTestCase Details                                       # Issue_persistence.IssueTestCase.Update_issuetestcase_details()
+  Then The IssueTestCase response status code should be 200               # Issue_persistence.IssueTestCase.the_issuetestcase_response_status_code_should_be(java.lang.Integer)
+]]></system-out>
+    <system-err><![CDATA[Nov 04, 2025 7:31:25 PM org.openqa.selenium.devtools.CdpVersionFinder findNearestMatch
+WARNING: Unable to find CDP implementation matching 141
+Nov 04, 2025 7:31:25 PM org.openqa.selenium.chromium.ChromiumDriver lambda$new$5
+WARNING: Unable to find version of CDP to use for 141.0.7390.123. You may need to include a dependency on a specific version of the CDP using something similar to `org.seleniumhq.selenium:selenium-devtools-v86:4.20.0` where the version ("v86") matches the version of the chromium-based browser you're using and the version number of the artifact is the same as Selenium's.
+]]></system-err>
+  </testcase>
+  <testcase name="To verify that in Patch request data is geting update in DataBase" classname="IssueTestCase API testing" time="7.674">
+    <failure message="expected:&lt;200&gt; but was:&lt;500&gt;" type="java.lang.AssertionError"><![CDATA[java.lang.AssertionError: expected:<200> but was:<500>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:647)
+	at org.junit.Assert.assertEquals(Assert.java:633)
+	at Issue_persistence.IssueTestCase.the_issuetestcase_response_status_code_should_be(IssueTestCase.java:268)
+	at ✽.The IssueTestCase response status code should be 200(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issuetestcase.feature:25)
+]]></failure>
+    <system-out><![CDATA[
+@IssueTestCase
+Scenario: To verify that in Patch request data is geting update in DataBase # src/test/resources/features/issuetestcase.feature:23
+PATCH Request Body:
+{
+  "issueRequirementId": 4753,
+  "issueId": 8132,
+  "testCaseId": 9477
+}
+PATCH Response Body:
+{"appName":"issue-persistence","httpStatus":"INTERNAL_SERVER_ERROR","statusCode":500,"timestamp":"2025-11-04T14:01:29.157Z","errorDescription":"The request processing has failed because of an unknown error, exception or failure.{0}","params":{},"path":"uri=/issue-persistence/issueTestCases/1"}
+Status Code: 500
+  When Update Patch IssueTestCase                                           # Issue_persistence.IssueTestCase.Update_Patch_issuetestcase()
+  Then The IssueTestCase response status code should be 200                 # Issue_persistence.IssueTestCase.the_issuetestcase_response_status_code_should_be(java.lang.Integer)
+      java.lang.AssertionError: expected:<200> but was:<500>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:647)
+	at org.junit.Assert.assertEquals(Assert.java:633)
+	at Issue_persistence.IssueTestCase.the_issuetestcase_response_status_code_should_be(IssueTestCase.java:268)
+	at ✽.The IssueTestCase response status code should be 200(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issuetestcase.feature:25)
+
+]]></system-out>
+    <system-err><![CDATA[Nov 04, 2025 7:31:32 PM org.openqa.selenium.devtools.CdpVersionFinder findNearestMatch
+WARNING: Unable to find CDP implementation matching 141
+Nov 04, 2025 7:31:32 PM org.openqa.selenium.chromium.ChromiumDriver lambda$new$5
+WARNING: Unable to find version of CDP to use for 141.0.7390.123. You may need to include a dependency on a specific version of the CDP using something similar to `org.seleniumhq.selenium:selenium-devtools-v86:4.20.0` where the version ("v86") matches the version of the chromium-based browser you're using and the version number of the artifact is the same as Selenium's.
+]]></system-err>
+  </testcase>
+  <testcase name="To verify that After Delete request data is delete from DataBase" classname="IssueTestCase API testing" time="7.645">
+    <system-out><![CDATA[
+@IssueTestCase
+Scenario: To verify that After Delete request data is delete from DataBase # src/test/resources/features/issuetestcase.feature:27
+Delete Response Body:
+
+Delete Status Code: 204
+  When Delete IssueTestCase with ID                                        # Issue_persistence.IssueTestCase.delete_issuetestcase_with_ID()
+  Then The IssueTestCase response status code should be 204                # Issue_persistence.IssueTestCase.the_issuetestcase_response_status_code_should_be(java.lang.Integer)
+]]></system-out>
+    <system-err><![CDATA[Nov 04, 2025 7:31:40 PM org.openqa.selenium.devtools.CdpVersionFinder findNearestMatch
+WARNING: Unable to find CDP implementation matching 141
+Nov 04, 2025 7:31:40 PM org.openqa.selenium.chromium.ChromiumDriver lambda$new$5
+WARNING: Unable to find version of CDP to use for 141.0.7390.123. You may need to include a dependency on a specific version of the CDP using something similar to `org.seleniumhq.selenium:selenium-devtools-v86:4.20.0` where the version ("v86") matches the version of the chromium-based browser you're using and the version number of the artifact is the same as Selenium's.
+]]></system-err>
+  </testcase>
+  <testcase name="To verify that new IssureType is creating" classname="IssueType API testing" time="7.406">
+    <system-out><![CDATA[
+@IssueType
+Scenario: To verify that new IssureType is creating    # src/test/resources/features/issuetype.feature:5
+IssueType JSON:
+{
+  "isDefault": true,
+  "color": "#105BB2",
+  "description": "Veniam ut corrupti est excepturi dicta neque laboriosam.",
+  "position": 4105,
+  "label": "Task",
+  "iconUrl": "https://s3.amazonaws.com/uifaces/faces/twitter/imammuht/128.jpg",
+  "projectId": 2633
+}
+  Given I have a IssueType                             # Issue_persistence.IssueType.i_have_a_issuetype()
+Response Body:
+{"id":1,"isDefault":true,"deleted":false,"color":"#105BB2","description":"Veniam ut corrupti est excepturi dicta neque laboriosam.","position":4105,"label":"Task","iconUrl":"https://s3.amazonaws.com/uifaces/faces/twitter/imammuht/128.jpg","projectId":2633}
+Status Code: 201
+Stored IssueTypeId: 1
+  When Create New IssueType                            # Issue_persistence.IssueType.Create_new_issuetype()
+  Then The IssueType response should contain "id"      # Issue_persistence.IssueType.the_issuetype_response_should_contain(java.lang.String)
+  And The IssueType response status code should be 201 # Issue_persistence.IssueType.the_issuetype_response_status_code_should_be(java.lang.Integer)
+]]></system-out>
+    <system-err><![CDATA[Nov 04, 2025 7:31:47 PM org.openqa.selenium.devtools.CdpVersionFinder findNearestMatch
+WARNING: Unable to find CDP implementation matching 141
+Nov 04, 2025 7:31:47 PM org.openqa.selenium.chromium.ChromiumDriver lambda$new$5
+WARNING: Unable to find version of CDP to use for 141.0.7390.123. You may need to include a dependency on a specific version of the CDP using something similar to `org.seleniumhq.selenium:selenium-devtools-v86:4.20.0` where the version ("v86") matches the version of the chromium-based browser you're using and the version number of the artifact is the same as Selenium's.
+]]></system-err>
+  </testcase>
+  <testcase name="To verify that Fetching all IssueType" classname="IssueType API testing" time="0.536">
+    <system-out><![CDATA[
+@IssueType
+Scenario: To verify that Fetching all IssueType         # src/test/resources/features/issuetype.feature:11
+Response Body:
+[{"id":1,"isDefault":true,"deleted":false,"color":"#105BB2","description":"Veniam ut corrupti est excepturi dicta neque laboriosam.","position":4105,"label":"Task","iconUrl":"https://s3.amazonaws.com/uifaces/faces/twitter/imammuht/128.jpg","projectId":2633}]
+Status Code: 200
+  When Fetch All IssueType Details                      # Issue_persistence.IssueType.Fetch_All_issuetype_Details()
+  Then The IssueType response status code should be 200 # Issue_persistence.IssueType.the_issuetype_response_status_code_should_be(java.lang.Integer)
+]]></system-out>
+  </testcase>
+  <testcase name="To verify that GET with ID fetched correct Data" classname="IssueType API testing" time="0.621">
+    <system-out><![CDATA[
+@IssueType
+Scenario: To verify that GET with ID fetched correct Data # src/test/resources/features/issuetype.feature:15
+Response Body:
+{"id":1,"isDefault":true,"deleted":false,"color":"#105BB2","description":"Veniam ut corrupti est excepturi dicta neque laboriosam.","position":4105,"label":"Task","iconUrl":"https://s3.amazonaws.com/uifaces/faces/twitter/imammuht/128.jpg","projectId":2633}
+Status Code: 200
+  When Fetch IssueType Details with ID                    # Issue_persistence.IssueType.Fetch_issuetype_Details_with_ID()
+  Then The IssueType response status code should be 200   # Issue_persistence.IssueType.the_issuetype_response_status_code_should_be(java.lang.Integer)
+]]></system-out>
+  </testcase>
+  <testcase name="To verify that in PUT request data isgetting update in DataBase" classname="IssueType API testing" time="7.761">
+    <system-out><![CDATA[
+@IssueType
+Scenario: To verify that in PUT request data isgetting update in DataBase # src/test/resources/features/issuetype.feature:19
+PUT Response Body:
+{"id":1,"isDefault":false,"deleted":null,"color":"#32E90B","description":"Quo asperiores rerum nobis.","position":2019,"label":"Sub-Task","iconUrl":"https://s3.amazonaws.com/uifaces/faces/twitter/_williamguerra/128.jpg","projectId":4137}
+Status Code: 200
+  When Update IssueType Details                                           # Issue_persistence.IssueType.Update_issuetype_details()
+  When The IssueType response status code should be 200                   # Issue_persistence.IssueType.the_issuetype_response_status_code_should_be(java.lang.Integer)
+]]></system-out>
+    <system-err><![CDATA[Nov 04, 2025 7:31:56 PM org.openqa.selenium.devtools.CdpVersionFinder findNearestMatch
+WARNING: Unable to find CDP implementation matching 141
+Nov 04, 2025 7:31:56 PM org.openqa.selenium.chromium.ChromiumDriver lambda$new$5
+WARNING: Unable to find version of CDP to use for 141.0.7390.123. You may need to include a dependency on a specific version of the CDP using something similar to `org.seleniumhq.selenium:selenium-devtools-v86:4.20.0` where the version ("v86") matches the version of the chromium-based browser you're using and the version number of the artifact is the same as Selenium's.
+]]></system-err>
+  </testcase>
+  <testcase name="To verify that in Patch request data is getting update in DataBase" classname="IssueType API testing" time="7.518">
+    <failure message="expected:&lt;200&gt; but was:&lt;500&gt;" type="java.lang.AssertionError"><![CDATA[java.lang.AssertionError: expected:<200> but was:<500>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:647)
+	at org.junit.Assert.assertEquals(Assert.java:633)
+	at Issue_persistence.IssueType.the_issuetype_response_status_code_should_be(IssueType.java:268)
+	at ✽.The IssueType response status code should be 200(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issuetype.feature:25)
+]]></failure>
+    <system-out><![CDATA[
+@IssueType
+Scenario: To verify that in Patch request data is getting update in DataBase # src/test/resources/features/issuetype.feature:23
+PATCH Request Body:
+{
+  "isDefault": false,
+  "color": "#FD15F8",
+  "description": "Impedit magni repudiandae tempora quidem velit.",
+  "position": 3814,
+  "label": "Documentation",
+  "iconUrl": "https://s3.amazonaws.com/uifaces/faces/twitter/thomasschrijer/128.jpg",
+  "projectId": 1117
+}
+PATCH Response Body:
+{"appName":"issue-persistence","httpStatus":"INTERNAL_SERVER_ERROR","statusCode":500,"timestamp":"2025-11-04T14:02:00.743Z","errorDescription":"The request processing has failed because of an unknown error, exception or failure.{0}","params":{},"path":"uri=/issue-persistence/issueTypes/1"}
+Status Code: 500
+  When Update Patch IssueType                                                # Issue_persistence.IssueType.Update_Patch_issuetype()
+  Then The IssueType response status code should be 200                      # Issue_persistence.IssueType.the_issuetype_response_status_code_should_be(java.lang.Integer)
+      java.lang.AssertionError: expected:<200> but was:<500>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:647)
+	at org.junit.Assert.assertEquals(Assert.java:633)
+	at Issue_persistence.IssueType.the_issuetype_response_status_code_should_be(IssueType.java:268)
+	at ✽.The IssueType response status code should be 200(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issuetype.feature:25)
+
+]]></system-out>
+    <system-err><![CDATA[Nov 04, 2025 7:32:04 PM org.openqa.selenium.devtools.CdpVersionFinder findNearestMatch
+WARNING: Unable to find CDP implementation matching 141
+Nov 04, 2025 7:32:04 PM org.openqa.selenium.chromium.ChromiumDriver lambda$new$5
+WARNING: Unable to find version of CDP to use for 141.0.7390.123. You may need to include a dependency on a specific version of the CDP using something similar to `org.seleniumhq.selenium:selenium-devtools-v86:4.20.0` where the version ("v86") matches the version of the chromium-based browser you're using and the version number of the artifact is the same as Selenium's.
+]]></system-err>
+  </testcase>
+  <testcase name="To verify that After Delete request Data is Deleting from DataBase" classname="IssueType API testing" time="7.685">
+    <system-out><![CDATA[
+@IssueType
+Scenario: To verify that After Delete request Data is Deleting from DataBase # src/test/resources/features/issuetype.feature:27
+Delete Response Body:
+
+Delete Status Code: 204
+  When Delete IssueType with ID                                              # Issue_persistence.IssueType.delete_issuetype_with_ID()
+  Then The IssueType response status code should be 204                      # Issue_persistence.IssueType.the_issuetype_response_status_code_should_be(java.lang.Integer)
+]]></system-out>
+    <system-err><![CDATA[Nov 04, 2025 7:32:12 PM org.openqa.selenium.devtools.CdpVersionFinder findNearestMatch
+WARNING: Unable to find CDP implementation matching 141
+Nov 04, 2025 7:32:12 PM org.openqa.selenium.chromium.ChromiumDriver lambda$new$5
+WARNING: Unable to find version of CDP to use for 141.0.7390.123. You may need to include a dependency on a specific version of the CDP using something similar to `org.seleniumhq.selenium:selenium-devtools-v86:4.20.0` where the version ("v86") matches the version of the chromium-based browser you're using and the version number of the artifact is the same as Selenium's.
+]]></system-err>
+  </testcase>
+</testsuite>

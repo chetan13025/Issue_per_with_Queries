@@ -1,0 +1,49 @@
+-------------------------------------------------------------------------------
+Test set: runners.EndtoEndRunner
+-------------------------------------------------------------------------------
+Tests run: 34, Failures: 5, Errors: 0, Skipped: 0, Time elapsed: 210.8 s <<< FAILURE! -- in runners.EndtoEndRunner
+IssueSprint API testing.To verify that in Patch data is updating in DataBase -- Time elapsed: 7.754 s <<< FAILURE!
+java.lang.AssertionError: expected:<200> but was:<500>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:647)
+	at org.junit.Assert.assertEquals(Assert.java:633)
+	at Issue_persistence.IssueSprint.the_issuesprint_response_status_code_should_be(IssueSprint.java:268)
+	at ✽.The IssueSprint response status code should be 200(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issuesprint.feature:25)
+
+IssueStatusGraph API testing.To verify that in Patch data should get update in DataBase -- Time elapsed: 7.673 s <<< FAILURE!
+java.lang.AssertionError: expected:<200> but was:<500>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:647)
+	at org.junit.Assert.assertEquals(Assert.java:633)
+	at Issue_persistence.IssueSatusGraph.the_issuestatusgraph_response_status_code_should_be(IssueSatusGraph.java:268)
+	at ✽.The IssueStatusGraph response status code should be 200(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issuestatusgraph.feature:20)
+
+IssueStep API testing.To verify that in Patch request data is get update in DataBase -- Time elapsed: 7.706 s <<< FAILURE!
+java.lang.AssertionError: expected:<200> but was:<500>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:647)
+	at org.junit.Assert.assertEquals(Assert.java:633)
+	at Issue_persistence.IssueStep.the_issuestep_response_status_code_should_be(IssueStep.java:268)
+	at ✽.The IssueStep response status code should be 200(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issuestep.feature:25)
+
+IssueTestCase API testing.To verify that in Patch request data is geting update in DataBase -- Time elapsed: 7.674 s <<< FAILURE!
+java.lang.AssertionError: expected:<200> but was:<500>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:647)
+	at org.junit.Assert.assertEquals(Assert.java:633)
+	at Issue_persistence.IssueTestCase.the_issuetestcase_response_status_code_should_be(IssueTestCase.java:268)
+	at ✽.The IssueTestCase response status code should be 200(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issuetestcase.feature:25)
+
+IssueType API testing.To verify that in Patch request data is getting update in DataBase -- Time elapsed: 7.518 s <<< FAILURE!
+java.lang.AssertionError: expected:<200> but was:<500>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:647)
+	at org.junit.Assert.assertEquals(Assert.java:633)
+	at Issue_persistence.IssueType.the_issuetype_response_status_code_should_be(IssueType.java:268)
+	at ✽.The IssueType response status code should be 200(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issuetype.feature:25)
+
