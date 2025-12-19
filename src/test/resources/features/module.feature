@@ -1,0 +1,36 @@
+@Module
+
+Feature: Module API testing
+
+Scenario: To verify that New Module is creating
+Given I have a Module
+When Create New Module
+Then The Module response should contain "id"
+Then Validate API ES and DB for ModuleId after POST skipping ES true excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "null"
+And The Module response status code should be 201
+
+Scenario: To verify that GET request Fetched all data
+When Fetch All Module Details
+Then The Module response status code should be 200
+
+Scenario: To verify that GET with ID Fetched Correct data
+When Fetch Module Details with ID
+Then The Module response status code should be 200
+
+Scenario: To verify that after PUT request data should get update in DataBase
+When Update Module Details
+Then Validate API ES and DB for ModuleId after PUT skipping ES true excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "null"
+Then The Module response status code should be 200
+
+Scenario: To verify that after PATCH request data should get update in DataBase
+When Update Patch Module
+Then Validate API ES and DB for ModuleId after PATCH skipping ES true excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "null"
+Then The Module response status code should be 200
+
+Scenario: To verify that after Delete request data should get removed from DataBase
+When Delete Module with ID
+Then The Module response status code should be 204
+
+
+
+

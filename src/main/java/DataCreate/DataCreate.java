@@ -2,13 +2,19 @@ package DataCreate;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 import org.json.JSONObject;
 
 import com.github.javafaker.Faker;
+
+import io.opentelemetry.exporter.logging.SystemOutLogRecordExporter;
 
 public class DataCreate {
 	static Faker faker = new Faker();
@@ -95,7 +101,8 @@ public class DataCreate {
 		String qaAssignedId = "QA_" + faker.number().digits(3);
 		String devAssignedId = "DEV_" + faker.number().digits(3);
 		String reporterId = "USR_" + faker.number().digits(4);
-
+		int moduleId = faker.number().numberBetween(1000, 9999);
+		String moduleLabel = faker.company().bs().replaceAll("[^a-zA-Z ]", "");
 		String productName = faker.commerce().productName();
 		String productShortName = productName.replaceAll("\\s+", "");
 		if (productShortName.length() > 16)
@@ -177,7 +184,8 @@ public class DataCreate {
 				+ ",\n" + "  \"reporterId\": \"" + esc.apply(reporterId) + "\",\n" + "  \"bugTypeId\": " + bugTypeId
 				+ ",\n" + "  \"affectedVersions\": \""
 				+ esc.apply("v" + faker.number().numberBetween(1, 9) + "." + faker.number().numberBetween(0, 9) + ".0")
-				+ "\"\n" + "}";
+				+ "\",\n" + "  \"moduleId\": " + moduleId + ",\n" + "  \"moduleLabel\": \"" + moduleLabel + "\"\n"
+				+ "}";
 
 		return json;
 	}
@@ -510,9 +518,9 @@ public class DataCreate {
 		String statusRole = faker.job().position();
 
 		String json = "{\n" + "  \"isUpdatable\": " + isUpdatable + ",\n" + "  \"isDefault\": " + isDefault + ",\n"
-				+ "  \"deleted\": " + deleted + ",\n" + "  \"color\": \"" + color + "\",\n" + "  \"percentage\": "
-				+ percentage + ",\n" + "  \"description\": \"" + description + "\",\n" + "  \"position\": " + position
-				+ ",\n" + "  \"label\": \"" + label + "\",\n" + "  \"projectId\": " + projectId + ",\n"
+				+ "  \"color\": \"" + color + "\",\n" + "  \"percentage\": " + percentage + ",\n"
+				+ "  \"description\": \"" + description + "\",\n" + "  \"position\": " + position + ",\n"
+				+ "  \"label\": \"" + label + "\",\n" + "  \"projectId\": " + projectId + ",\n"
 				+ "  \"statusLevel\": \"" + statusLevel + "\",\n" + "  \"isFinalStatus\": " + isFinalStatus + ",\n"
 				+ "  \"statusRole\": \"" + statusRole + "\"\n" + "}";
 
@@ -522,13 +530,14 @@ public class DataCreate {
 	public static String generateIssueStepJson() {
 
 		int issueId = faker.number().numberBetween(1000, 9999);
-		String icon = faker.options().option("check-circle", "alert-triangle", "clock", "code", "flag", "star");
-		String step = faker.options().option("Design Phase", "Development Phase", "Testing Phase", "Code Review",
-				"Deployment", "Bug Fixing", "User Acceptance");
 		int projectId = faker.number().numberBetween(1000, 9999);
+		String icon = faker.internet().image(); // random image URL
+		String[] steps = { "Created", "In Progress", "Development", "Code Review", "Testing", "QA Review", "UAT",
+				"Ready for Deployment", "Deployed", "Completed" };
+		String step = steps[random.nextInt(steps.length)];
 
-		String json = "{\n" + "  \"issueId\": " + issueId + ",\n" + "  \"icon\": \"" + icon + "\",\n" + "  \"step\": \""
-				+ step + "\",\n" + "  \"projectId\": " + projectId + "\n" + "}";
+		String json = "{\n" + "  \"issueId\": " + issueId + ",\n" + "  \"projectId\": " + projectId + ",\n"
+				+ "  \"icon\": \"" + icon + "\",\n" + "  \"step\": \"" + step + "\"\n" + "}";
 
 		return json;
 	}
@@ -551,7 +560,8 @@ public class DataCreate {
 		String color = faker.color().hex();
 		String description = faker.lorem().sentence();
 		int position = faker.number().numberBetween(100, 9999);
-		String label = faker.options().option("Bug", "Feature", "Improvement", "Enhancement", "Task", "Documentation","Sub-Task","Regression");
+		String label = faker.options().option("Bug", "Feature", "Improvement", "Enhancement", "Task", "Documentation",
+				"Sub-Task", "Regression");
 		String iconUrl = faker.internet().avatar();
 		int projectId = faker.number().numberBetween(1000, 9999);
 
@@ -559,6 +569,636 @@ public class DataCreate {
 				+ "  \"description\": \"" + description + "\",\n" + "  \"position\": " + position + ",\n"
 				+ "  \"label\": \"" + label + "\",\n" + "  \"iconUrl\": \"" + iconUrl + "\",\n" + "  \"projectId\": "
 				+ projectId + "\n" + "}";
+
+		return json;
+	}
+
+	public static String generateIssueVersionJson() {
+		int issueId = faker.number().numberBetween(1000, 9999);
+		int projectVersionId = faker.number().numberBetween(100, 999);
+		String type = faker.options().option("Bug", "Task", "Feature", "Improvement", "Epic", "Sub-Task");
+		String versionName = faker.app().version();
+		int projectId = faker.number().numberBetween(1000, 9999);
+		String versionCode = "v" + faker.number().digits(3);
+
+		String json = "{\n" + "  \"issueId\": " + issueId + ",\n" + "  \"projectVersionId\": " + projectVersionId
+				+ ",\n" + "  \"type\": \"" + type + "\",\n" + "  \"versionName\": \"" + versionName + "\",\n"
+				+ "  \"projectId\": " + projectId + ",\n" + "  \"versionCode\": \"" + versionCode + "\"\n" + "}";
+
+		return json;
+	}
+
+	public static String generateIssueVoteJson() {
+		int issueId = faker.number().numberBetween(1000, 9999);
+		String userId = faker.name().username();
+
+		String json = "{\n" + "  \"issueId\": " + issueId + ",\n" + "  \"userId\": \"" + userId + "\"\n" + "}";
+
+		return json;
+	}
+
+	public static String generateLucyEventJson() {
+		String modalLocation = faker.address().cityName();
+		String actionType = faker.options().option("Click", "Open", "Close", "Hover", "Submit", "Select");
+		String modalType = faker.options().option("Confirmation", "Alert", "Form", "Popup", "Dialog", "Tooltip");
+		String additional = faker.lorem().sentence();
+		String eventType = faker.options().option("UserAction", "SystemEvent", "Validation", "Notification");
+		String elementSuggestion = faker.options().option("Button", "Checkbox", "TextField", "Dropdown", "Link",
+				"Icon");
+		String title = faker.book().title();
+		String message = faker.lorem().sentence();
+		String elementFocus = faker.options().option("YesButton", "CancelButton", "InputField", "SubmitButton",
+				"SearchBar");
+
+		String json = "{\n" + "  \"modalLocation\": \"" + modalLocation + "\",\n" + "  \"actionType\": \"" + actionType
+				+ "\",\n" + "  \"modalType\": \"" + modalType + "\",\n" + "  \"additional\": \"" + additional + "\",\n"
+				+ "  \"eventType\": \"" + eventType + "\",\n" + "  \"elementSuggestion\": \"" + elementSuggestion
+				+ "\",\n" + "  \"title\": \"" + title + "\",\n" + "  \"message\": \"" + message + "\",\n"
+				+ "  \"elementFocus\": \"" + elementFocus + "\"\n" + "}";
+
+		return json;
+	}
+
+	public static String generateModuleJson() {
+
+		String color = faker.color().hex();
+		String description = faker.lorem().sentence();
+		int position = faker.number().numberBetween(1000, 9999);
+		String label = faker.commerce().productName();
+		String fileName = faker.lorem().characters(6, true, true).toLowerCase();
+		String iconUrl = "https://example.com/img/" + fileName + ".png";
+		int projectId = faker.number().numberBetween(1000, 9999);
+
+		String json = "{\n" + "  \"color\": \"" + color + "\",\n" + "  \"description\": \"" + description + "\",\n"
+				+ "  \"position\": " + position + ",\n" + "  \"label\": \"" + label + "\",\n" + "  \"iconUrl\": \""
+				+ iconUrl + "\",\n" + "  \"projectId\": " + projectId + "\n" + "}";
+
+		return json;
+	}
+
+	public static String generateNatureJson() {
+
+		boolean isDefault = faker.bool().bool();
+		String color = faker.color().hex();
+		String[] descriptions = { "Indicates a reported bug that requires verification and resolution.",
+				"Represents an issue affecting functionality that needs debugging.",
+				"Marks a defect discovered during testing and awaiting triage.",
+				"Used to track an error impacting core user experience.",
+				"Represents a task assigned for development or improvement.",
+				"This task requires follow-up to ensure timely delivery.",
+				"A pending action item necessary for the project workflow.",
+				"A scheduled task that contributes to the sprint goals.",
+				"Part of a module requiring updates or enhancements.",
+				"Indicates work related to a specific application module.",
+				"Module-related activity that needs documentation and review.",
+				"Enhancement or fix associated with a key system module.",
+				"Kanban stage representing items currently in progress.",
+				"Kanban label used to organize workflow and track status.",
+				"Used to manage items moving through the Kanban pipeline.",
+				"Indicates the current workflow state in the Kanban board.",
+				"Jira label applied for categorizing and filtering issues.",
+				"Used to group Jira tickets under a specific project workflow.",
+				"A Jira-associated item that requires review before closing.",
+				"Jira task awaiting assignment or prioritization." };
+		int position = faker.number().numberBetween(1000, 9999);
+		String label = faker.commerce().productName();
+		String fileName = faker.lorem().characters(6, true, true).toLowerCase();
+		String iconUrl = "https://example.com/icons/" + fileName + ".png";
+		int projectId = faker.number().numberBetween(100, 999);
+		String description = descriptions[random.nextInt(descriptions.length)];
+
+		String json = "{\n" + "  \"isDefault\": " + isDefault + ",\n" + "  \"color\": \"" + color + "\",\n"
+				+ "  \"description\": \"" + description + "\",\n" + "  \"position\": " + position + ",\n"
+				+ "  \"label\": \"" + label + "\",\n" + "  \"iconUrl\": \"" + iconUrl + "\",\n" + "  \"projectId\": "
+				+ projectId + "\n" + "}";
+
+		return json;
+	}
+
+	public static String generateOccurrenceJson() {
+
+		Faker faker = new Faker();
+
+		boolean isDefault = faker.bool().bool();
+		String color = faker.color().hex();
+		String[] descriptions = { "Indicates a reported bug that requires verification and resolution.",
+				"Represents an issue affecting functionality that needs debugging.",
+				"Marks a defect discovered during testing and awaiting triage.",
+				"Used to track an error impacting core user experience.",
+				"Represents a task assigned for development or improvement.",
+				"This task requires follow-up to ensure timely delivery.",
+				"A pending action item necessary for the project workflow.",
+				"A scheduled task that contributes to sprint goals.",
+				"Part of a module requiring updates or enhancements.",
+				"Indicates work related to a specific application module.",
+				"Module-related activity needing documentation and review.",
+				"Enhancement or fix associated with a key system module.",
+				"Kanban stage representing items currently in progress.",
+				"Kanban label used to organize workflow and track status.",
+				"Used to manage items moving through the Kanban pipeline.",
+				"Indicates the current workflow state on the Kanban board.",
+				"Jira label applied for categorizing and filtering issues.",
+				"Used to group Jira tickets under a specific project workflow.",
+				"A Jira-associated item that requires review before closing.",
+				"Jira task awaiting assignment or prioritization." };
+		int position = faker.number().numberBetween(1000, 9999);
+		String label = faker.commerce().productName();
+		String fileName = faker.lorem().characters(6, true, true).toLowerCase();
+		String iconUrl = "https://example.com/icons/" + fileName + ".png";
+		String description = descriptions[random.nextInt(descriptions.length)];
+		int projectId = faker.number().numberBetween(100, 999);
+
+		String json = "{\n" + "  \"isDefault\": " + isDefault + ",\n" + "  \"color\": \"" + color + "\",\n"
+				+ "  \"description\": \"" + description + "\",\n" + "  \"position\": " + position + ",\n"
+				+ "  \"label\": \"" + label + "\",\n" + "  \"iconUrl\": \"" + iconUrl + "\",\n" + "  \"projectId\": "
+				+ projectId + "\n" + "}";
+
+		return json;
+	}
+
+	public static String generatePriorityJson() {
+
+		Faker faker = new Faker();
+
+		boolean isDefault = faker.bool().bool();
+		String color = faker.color().hex();
+		String[] descriptions = { "Indicates a reported bug that requires verification and resolution.",
+				"Represents an issue affecting functionality that needs debugging.",
+				"Marks a defect discovered during testing and awaiting triage.",
+				"Used to track an error impacting core user experience.",
+				"Represents a task assigned for development or improvement.",
+				"This task requires follow-up to ensure timely delivery.",
+				"A pending action item necessary for the project workflow.",
+				"A scheduled task that contributes to sprint goals.",
+				"Part of a module requiring updates or enhancements.",
+				"Indicates work related to a specific application module.",
+				"Module-related activity needing documentation and review.",
+				"Enhancement or fix associated with a key system module.",
+				"Kanban stage representing items currently in progress.",
+				"Kanban label used to organize workflow and track status.",
+				"Used to manage items moving through the Kanban pipeline.",
+				"Indicates the current workflow state on the Kanban board.",
+				"Jira label applied for categorizing and filtering issues.",
+				"Used to group Jira tickets under a specific project workflow.",
+				"A Jira-associated item that requires review before closing.",
+				"Jira task awaiting assignment or prioritization." };
+		int position = faker.number().numberBetween(1000, 9999);
+		String label = faker.commerce().productName();
+		String fileName = faker.lorem().characters(6, true, true).toLowerCase();
+		String iconUrl = "https://example.com/icons/" + fileName + ".png";
+		String description = descriptions[random.nextInt(descriptions.length)];
+		int projectId = faker.number().numberBetween(100, 999);
+
+		String json = "{\n" + "  \"isDefault\": " + isDefault + ",\n" + "  \"color\": \"" + color + "\",\n"
+				+ "  \"description\": \"" + description + "\",\n" + "  \"position\": " + position + ",\n"
+				+ "  \"label\": \"" + label + "\",\n" + "  \"iconUrl\": \"" + iconUrl + "\",\n" + "  \"projectId\": "
+				+ projectId + "\n" + "}";
+
+		return json;
+	}
+
+	public static String generateResolutionJson() {
+
+		String color = faker.color().hex();
+		String[] descriptions = { "Represents a bug impacting functionality that needs resolution.",
+				"Indicates a defect found during testing and awaiting triage.",
+				"Bug item that requires developer attention for fixing.",
+				"Represents a task assigned to the current sprint cycle.",
+				"A pending task that contributes to overall workflow progress.",
+				"Task item requiring review before moving to completion.",
+				"Related to a specific module requiring updates or validation.",
+				"Module-related action needed for project enhancement.",
+				"Work item associated with a particular system module.",
+				"Kanban stage representing current progress state.",
+				"Item used to track workflow movement in Kanban board.",
+				"Kanban label to categorize progress and priority.",
+				"Jira ticket category used for better issue organization.",
+				"An item categorized for tracking inside Jira workflow.",
+				"Jira-related description for sprint planning and tracking." };
+		String description = descriptions[random.nextInt(descriptions.length)];
+		String fileName1 = faker.lorem().characters(6, true, true).toLowerCase();
+		String fileName2 = faker.lorem().characters(6, true, true).toLowerCase();
+
+		String categoryIconUrl = "https://example.com/category/" + fileName1 + ".png";
+		int position = faker.number().numberBetween(1000, 9999);
+		String label = faker.commerce().productName();
+		String iconUrl = "https://example.com/icons/" + fileName2 + ".png";
+		String category = faker.commerce().department(); // random category name
+		int projectId = faker.number().numberBetween(1000, 9999);
+
+		String json = "{\n" + "  \"color\": \"" + color + "\",\n" + "  \"description\": \"" + description + "\",\n"
+				+ "  \"categoryIconUrl\": \"" + categoryIconUrl + "\",\n" + "  \"position\": " + position + ",\n"
+				+ "  \"label\": \"" + label + "\",\n" + "  \"iconUrl\": \"" + iconUrl + "\",\n" + "  \"category\": \""
+				+ category + "\",\n" + "  \"projectId\": " + projectId + "\n" + "}";
+
+		return json;
+	}
+
+	public static String generateRootCauseJson() {
+
+		String[] descriptions = { "Work item related to sprint planning and workflow optimization.",
+				"Task created to improve module stability and enhance user experience.",
+				"Bug identified during regression testing requiring immediate Fix.",
+				"Module enhancement request to improve system performance.",
+				"Kanban board update required for progress tracking and visibility.",
+				"Technical debt cleanup to improve code quality and maintainability.",
+				"Story created to support new feature development for the upcoming release." };
+		String description = descriptions[random.nextInt(descriptions.length)];
+
+		String[] labels = { "API Module", "UI Fix", "Backend Task", "Bug Tracking", "Release Planning",
+				"Sprint Activities", "Environment Setup", "Regression Cases", "Functional Module",
+				"Workflow Category" };
+
+		String label = labels[random.nextInt(labels.length)];
+
+		int projectId = faker.number().numberBetween(1000, 9999);
+
+		String json = "{\n" + "  \"description\": \"" + description + "\",\n" + "  \"label\": \"" + label + "\",\n"
+				+ "  \"projectId\": " + projectId + "\n" + "}";
+
+		return json;
+	}
+
+	public static String generateSprintProposalJson() {
+		Faker faker = new Faker();
+
+		int sprintId = faker.number().numberBetween(0, 999);
+		int issueId = faker.number().numberBetween(1000, 99999);
+
+		String[] userPrefixes = { "User", "QA", "Dev", "Tester", "Agent", "Prod" };
+		String prefix = userPrefixes[faker.number().numberBetween(0, userPrefixes.length)];
+		String userId = prefix + "_" + faker.number().digits(4);
+
+		String json = "{\n" + "  \"sprintId\": " + sprintId + ",\n" + "  \"issueId\": " + issueId + ",\n"
+				+ "  \"userId\": \"" + userId + "\"\n" + "}";
+
+		return json;
+	}
+
+	public static String generateTestCaseJson() {
+
+		int issueId = faker.number().numberBetween(1000, 99999);
+
+		String[] prefixes = { "BUG", "TASK", "STORY", "EPIC", "FIX", "DEFECT" };
+		String prefix = prefixes[faker.number().numberBetween(0, prefixes.length)];
+		String code = prefix + "-" + faker.number().numberBetween(100, 9999);
+
+		String fileName = faker.lorem().characters(6, true).toLowerCase();
+		String iconUrl = "https://example.com/icons/" + fileName + ".png";
+
+		String[] titles = { "Fix UI rendering issue on dashboard", "Improve API response time for product service",
+				"Add validation for user input fields", "Update workflow rules for Sprint cycle",
+				"Refactor module to improve maintainability", "Resolve authentication token refresh issue",
+				"Enhance logging and monitoring for backend service" };
+
+		String title = titles[random.nextInt(titles.length)];
+
+		// Project ID
+		int projectId = faker.number().numberBetween(1000, 9999);
+
+		// Realistic status values
+		String[] statuses = { "Open", "In Progress", "Resolved", "QA Review", "Closed", "Reopened", "Not a BUG",
+				"QA Ready", "QA_Done", "Closed", "Done", "Resolved" };
+		String status = statuses[random.nextInt(statuses.length)];
+
+		String json = "{\n" + "  \"issueId\": " + issueId + ",\n" + "  \"code\": \"" + code + "\",\n"
+				+ "  \"iconUrl\": \"" + iconUrl + "\",\n" + "  \"title\": \"" + title + "\",\n" + "  \"projectId\": "
+				+ projectId + ",\n" + "  \"status\": \"" + status + "\"\n" + "}";
+
+		return json;
+	}
+
+	public static String generateunitTestResultJson() {
+		Faker faker = new Faker();
+
+		int issueId = faker.number().numberBetween(1000, 99999);
+		int projectId = faker.number().numberBetween(1000, 9999);
+
+		String[] Comments = { "Pushed the fix to the develop branch. Waiting for build pipeline to complete.",
+				"Refactored the API logic to improve performance by ~20%.",
+				"Root cause identified: null pointer due to missing validation.",
+				"Added unit tests for the new module. Coverage increased to 85%.",
+				"Working on edge-case scenarios reported during testing.",
+				"Optimized DB query; execution time reduced from 2.8s to 400ms.",
+				"Fix applied, please verify in the latest QA build.",
+				"Implemented retry mechanism to handle intermittent failures.",
+				"Tested the fix; issue persists under specific conditions.",
+				"Verified on the latest build. The fix works as expected.",
+				"Regression testing completed. No major blockers found.",
+				"Added detailed reproduction steps in the ticket.",
+				"Observed inconsistent behavior; attaching screenshots.",
+				"Re-opening the issue as the bug is still reproducible.",
+				"Validated across Chrome, Firefox, and Edge — all good.",
+				"Completed smoke testing. Ready for full regression.", "Please prioritize this for the current sprint.",
+				"Team to review and update the estimated timelines.",
+				"Marking this as a high-impact item for this release.",
+				"Align with product team to confirm requirements.", "Need an update before EOD for sprint planning.",
+				"Escalating due to customer impact — fix ASAP.",
+				"Please ensure cross-functional review before closing.",
+				"Coordinate with QA to finalize acceptance criteria." };
+
+		String comment = Comments[random.nextInt(Comments.length)];
+
+		String json = "{\n" + "  \"issueId\": " + issueId + ",\n" + "  \"comments\": \"" + comment + "\",\n"
+				+ "  \"projectId\": " + projectId + "\n" + "}";
+
+		return json;
+	}
+
+	public static String generateWorkLogJson() {
+		Faker faker = new Faker();
+
+		// Random IDs
+		int issueId = faker.number().numberBetween(1000, 99999);
+		int projectId = faker.number().numberBetween(1000, 9999);
+		int minutesWorked = faker.number().numberBetween(30, 10000);
+
+		// Authors
+		String author = faker.name().username();
+		String updateAuthor = faker.name().username();
+
+		// Developer comments
+		String[] descriptions = { "Pushed latest fix to repository; awaiting CI build.",
+				"Refactored controller logic to improve maintainability.",
+				"Identified root cause — null check missing in service layer.",
+				"Optimized API response time by updating database indexes.",
+				"Added new unit tests; coverage increased to 88%.", "Resolved integration issue between modules.",
+				"Updated dependency versions to fix compatibility issues.",
+				"Tested on latest build; the issue is still reproducible.",
+				"Validated fix across multiple browsers — all working fine.",
+				"Re-opening the issue due to failed regression steps.",
+				"Attached screen recordings for reproducibility.", "Completed smoke tests; ready for full regression.",
+				"Observed inconsistent behavior in edge cases.", "Verified on QA environment; ready for UAT.",
+				"Please prioritize this task for the current sprint.",
+				"Required before release freeze — treat as high priority.",
+				"Coordinate with QA to expedite verification.", "Need timeline confirmation for delivery planning.",
+				"Marking this as a critical customer-impacting issue.",
+				"Ensure cross-team communication for smooth rollout.",
+				"Review required before marking this issue as done." };
+
+		String description = descriptions[random.nextInt(descriptions.length)];
+
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+
+		LocalDateTime created = faker.date().past(5000, TimeUnit.DAYS).toInstant().atZone(ZoneId.of("UTC"))
+				.toLocalDateTime();
+
+		LocalDateTime updated = faker.date().past(3000, TimeUnit.DAYS).toInstant().atZone(ZoneId.of("UTC"))
+				.toLocalDateTime();
+
+		LocalDateTime startDate = faker.date().past(9000, TimeUnit.DAYS).toInstant().atZone(ZoneId.of("UTC"))
+				.toLocalDateTime();
+
+		String json = "{\n" + "  \"issueId\": " + issueId + ",\n" + "  \"author\": \"" + author + "\",\n"
+				+ "  \"created\": \"" + created.format(formatter) + "\",\n" + "  \"minutesWorked\": " + minutesWorked
+				+ ",\n" + "  \"updateAuthor\": \"" + updateAuthor + "\",\n" + "  \"description\": \"" + description
+				+ "\",\n" + "  \"projectId\": " + projectId + ",\n" + "  \"updated\": \"" + updated.format(formatter)
+				+ "\",\n" + "  \"startDate\": \"" + startDate.format(formatter) + "\"\n" + "}";
+
+		return json;
+	}
+
+	public static String generateBehaviorJson() {
+		Faker faker = new Faker();
+
+		int issueId = faker.number().numberBetween(1000, 99999);
+		int projectId = faker.number().numberBetween(1000, 9999);
+
+		String[] Behaviors = { "Triggers API call when issue status is updated.",
+				"Syncs issue data with third-party API service.", "Validates request payload before API submission.",
+				"Auto-refreshes API token during workflow transition.", "Records API response metadata for auditing.",
+				"Throttles outgoing API calls to prevent rate limit.",
+				"Shows inline validation message before form submission.",
+				"Disables UI controls until required fields are filled.",
+				"Updates UI theme dynamically based on project settings.",
+				"Highlights modified fields during issue editing.",
+				"Expands/Collapses sections automatically based on status.",
+				"Executes scheduled background job for stale issues.", "Triggers workflow hook after database update.",
+				"Caches frequently accessed issue metadata.", "Runs pre-update validation on backend service.",
+				"Logs backend events for issue transitions.", "Performs dependency checks before updating issue.",
+				"Moves issue to next workflow stage automatically.", "Sends alert when SLA threshold is reached.",
+				"Auto-assigns developer based on workload.", "Prevents transition if mandatory fields are missing.",
+				"Creates sub-task during workflow initialization." };
+
+		String behavior = Behaviors[random.nextInt(Behaviors.length)];
+		// Behavior types
+		String[] behaviorTypes = { "API", "UI", "Backend", "Workflow", "Trigger", "Validation", "Notification",
+				"Automation" };
+
+		String behaviorType = behaviorTypes[random.nextInt(behaviorTypes.length)];
+		String fileName = faker.lorem().characters(6, true).toLowerCase();
+		String iconUrl = "https://example.com/icons/" + fileName + ".png";
+
+		String json = "{\n" + "  \"issueId\": " + issueId + ",\n" + "  \"icon\": \"" + iconUrl + "\",\n"
+				+ "  \"behavior\": \"" + behavior + "\",\n" + "  \"behaviorType\": \"" + behaviorType + "\",\n"
+				+ "  \"projectId\": " + projectId + "\n" + "}";
+
+		return json;
+	}
+
+	public static String generateBugTypeJson() {
+
+		boolean isDefault = faker.bool().bool();
+		String color = faker.color().hex();
+		String[] descriptions = { "Represents default category used in sprint workflow.",
+				"Used for organizing tasks related to product enhancements.",
+				"Default grouping for module-level planning.",
+				"Category created to classify backend-related work items.",
+				"Primary bucket for UI/UX improvements in the project.",
+				"Used to segment automation tasks and QA activities.",
+				"Supports classification of issues based on workflow stages." };
+
+		String description = descriptions[random.nextInt(descriptions.length)];
+
+		String[] labels = { "Backend Module", "UI Improvements", "API Enhancements", "Sprint Tasks",
+				"Release Activities", "Bug Fixes", "DevOps Utilities", "Workflow Rules" };
+
+		String label = labels[random.nextInt(labels.length)];
+		// position
+		int position = faker.number().numberBetween(1000, 9999);
+
+		// Icon URL
+		String file = faker.lorem().characters(6, true).toLowerCase();
+		String iconUrl = "https://example.com/icons/" + file + ".png";
+
+		// Project ID
+		int projectId = faker.number().numberBetween(1000, 9999);
+
+		String json = "{\n" + "  \"isDefault\": " + isDefault + ",\n" + "  \"color\": \"" + color + "\",\n"
+				+ "  \"description\": \"" + description + "\",\n" + "  \"position\": " + position + ",\n"
+				+ "  \"label\": \"" + label + "\",\n" + "  \"iconUrl\": \"" + iconUrl + "\",\n" + "  \"projectId\": "
+				+ projectId + "\n" + "}";
+
+		return json;
+	}
+
+	public static String generateComponentJson() {
+
+		String[] descriptions = { "Handles UI rendering, layout management and user interaction flows.",
+				"Manages dynamic components, widgets, and front-end state updates.",
+				"Responsible for responsive layouts and cross-browser compatibility.",
+				"Implements user experience improvements and accessibility guidelines.",
+				"Controls dashboard widgets and client-side data visualization.",
+				"Provides reusable UI components shared across application screens.",
+				"Handles client-side form validations and input sanitization.",
+				"Updates UI state based on backend or API responses.",
+				"Executes core business rules and domain logic for the application.",
+				"Manages server-side processing of workflows and automation tasks.",
+				"Handles database transactions, migrations, and query optimization.",
+				"Processes background jobs and scheduled tasks.",
+				"Controls service orchestration and inter-service communication.",
+				"Manages caching, indexing, and backend performance tuning.",
+				"Implements data aggregation and complex server-side operations.",
+				"Supports secure access to internal services and backend resources.",
+				"Manages REST API endpoints and request/response life cycles.",
+				"Handles authentication tokens, security policies, and API rate limiting.",
+				"Provides integrations with third-party services and external systems.",
+				"Validates incoming requests and enforces schema constraints.",
+				"Implements API versioning and migration support.",
+				"Supports webhook processing and outbound notifications.",
+				"Handles serialization, deserialization, and payload transformation.",
+				"Ensures consistent API contract for frontend and service clients.",
+				"Manages workflow transitions and rule-based automation.",
+				"Controls issue lifecycle events from creation to closure.",
+				"Applies conditional logic for transitions and validations.",
+				"Generates audit logs for workflow-led changes.",
+				"Coordinates automatic notifications triggered by workflow events.",
+				"Executes automation scripts during state changes.",
+				"Enforces mandatory field checks before allowing transitions.",
+				"Supports complex multi-step approval sequences." };
+
+		String description = descriptions[random.nextInt(descriptions.length)];
+
+		String[] labels = { "Workflow Engine", "Backend Services", "UI Module", "API Gateway", "Auth Module",
+				"Reporting Module", "Storage Handler", "Sprint Manager", "Data Processor", "Integration Service",
+				"Notification Engine", "Validation Service", "Automation Module", "Event Handler" };
+
+		String label = labels[faker.number().numberBetween(0, labels.length)];
+
+		int moduleId = faker.number().numberBetween(1000, 9999);
+		int projectId = faker.number().numberBetween(1000, 9999);
+
+		String json = "{\n" + "  \"description\": \"" + description + "\",\n" + "  \"label\": \"" + label + "\",\n"
+				+ "  \"moduleId\": " + moduleId + ",\n" + "  \"projectId\": " + projectId + "\n" + "}";
+
+		return json;
+	}
+
+	public static String generateComponentImpactAreaJson() {
+
+		int componentId = faker.number().numberBetween(1000, 9999);
+		int impactAreaId = faker.number().numberBetween(1000, 9999);
+
+		String json = "{\n" + "  \"componentId\": " + componentId + ",\n" + "  \"impactAreaId\": " + impactAreaId + "\n"
+				+ "}";
+
+		return json;
+	}
+
+	public static String generateDependencyTypeJson() {
+
+		String[] inverseLabels = { "Blocked By", "Related To", "Duplicate Of", "Caused By", "Depends On", "Linked With",
+				"Parent Of", "Child Of" };
+		String inverseLabel = inverseLabels[faker.number().numberBetween(0, inverseLabels.length)];
+
+		String[] labels = { "Blocks", "Relates", "Duplicate", "Causes", "Depends", "Links", "Parent", "Child" };
+		String label = labels[faker.number().numberBetween(0, labels.length)];
+
+		String[] descriptions = { "Indicates relationship between two issues.",
+				"Marks logical dependency across modules.", "Represents workflow-based connection.",
+				"Defines cross-component reference mapping.", "Classifies related tasks affecting each other.",
+				"Identifies links required for sprint progress.", "Maps issue relationship for planning decisions.",
+				"Tracks issue influence within the project." };
+		String description = descriptions[faker.number().numberBetween(0, descriptions.length)];
+
+		String color = faker.color().hex();
+
+		String fileName = faker.lorem().characters(6, true).toLowerCase();
+		String iconUrl = "https://example.com/icons/" + fileName + ".png";
+
+		boolean isRelated = faker.bool().bool();
+		boolean isDefault = faker.bool().bool();
+		boolean isBlocker = faker.bool().bool();
+
+		int position = faker.number().numberBetween(1000, 9999);
+		int projectId = faker.number().numberBetween(1000, 9999);
+
+		String json = "{\n" + "  \"inverseLabel\": \"" + inverseLabel + "\",\n" + "  \"isRelated\": " + isRelated
+				+ ",\n" + "  \"isDefault\": " + isDefault + ",\n" + "  \"color\": \"" + color + "\",\n"
+				+ "  \"description\": \"" + description + "\",\n" + "  \"isBlocker\": " + isBlocker + ",\n"
+				+ "  \"position\": " + position + ",\n" + "  \"label\": \"" + label + "\",\n" + "  \"iconUrl\": \""
+				+ iconUrl + "\",\n" + "  \"projectId\": " + projectId + "\n" + "}";
+
+		return json;
+	}
+
+	public static String generateEnvironmentJson() {
+
+		boolean isDefault = faker.bool().bool();
+		; // fixed as per your structure
+
+		String[] descriptions = { "Represents a default workflow state.", "Indicates tasks ready for development.",
+				"Marks items currently under processing.", "Shows items pending verification or QA.",
+				"Final state after all validations are complete.", "Represents a blocked or halted workflow state.",
+				"Used for tasks awaiting dependencies.", "Indicates initial state after ticket creation.",
+				"Represents tickets rejected during review.", "Marks tasks awaiting deployment approval." };
+
+		String description = descriptions[faker.number().numberBetween(0, descriptions.length)];
+
+		String[] labels = { "To Do", "In Progress", "Under Review", "QA Testing", "Done", "Blocked", "Pending", "New",
+				"Rejected", "Ready for Deploy" };
+
+		String label = labels[faker.number().numberBetween(0, labels.length)];
+
+		String color = faker.color().hex();
+
+		String fileName = faker.lorem().characters(8, true, true).toLowerCase();
+		String iconUrl = "https://example.com/icons/" + fileName + ".png";
+
+		int position = faker.number().numberBetween(1000, 9999);
+		int projectId = faker.number().numberBetween(1000, 9999);
+
+		String json = "{\n" + "  \"isDefault\": " + isDefault + ",\n" + "  \"color\": \"" + color + "\",\n"
+				+ "  \"description\": \"" + description + "\",\n" + "  \"position\": " + position + ",\n"
+				+ "  \"label\": \"" + label + "\",\n" + "  \"iconUrl\": \"" + iconUrl + "\",\n" + "  \"projectId\": "
+				+ projectId + "\n" + "}";
+
+		return json;
+	}
+
+	public static String generateImpactAreaJson() {
+
+		String[] descriptions = { "Represents a functional module within the project.",
+				"Defines a task category used in sprint planning.",
+				"Describes a reusable component across the application.",
+				"Represents a workflow group for issue transitions.",
+				"Indicates a logical grouping for related issues.",
+				"Defines an area impacted during development changes.",
+				"Used for categorizing issues in backlog and sprints.",
+				"Represents a core behavior within the system architecture.",
+				"Handles UI rendering and component layouts.", "Manages user interaction flows and visual behavior.",
+				"Provides reusable widgets for page designs.", "Controls responsive layout and styling logic.",
+				"Supports user experience and design guidelines.",
+				"Implements client-side state updates and animations.",
+				"Maintains dashboard visuals and data displays.", "Handles form validations and user input handling.",
+				"Processes business logic and core domain operations.",
+				"Handles database queries and transaction execution.", "Manages scheduled jobs and background workers.",
+				"Orchestrates internal services and components.", "Responsible for server-side performance tuning.",
+				"Implements data aggregation and storage logic.", "Manages internal workflows and event pipelines.",
+				"Handles caching, indexing, and session control." };
+
+		String description = descriptions[faker.number().numberBetween(0, descriptions.length)];
+
+		// Labels
+		String[] labels = { "Core Module", "Task Group", "UI Component", "Workflow Unit", "API Category",
+				"Backend Module", "Feature Area", "Impact Zone" };
+
+		String label = labels[faker.number().numberBetween(0, labels.length)];
+
+		int projectId = faker.number().numberBetween(1000, 9999);
+
+		String json = "{\n" + "  \"description\": \"" + description + "\",\n" + "  \"label\": \"" + label + "\",\n"
+				+ "  \"projectId\": " + projectId + "\n" + "}";
 
 		return json;
 	}
@@ -584,8 +1224,28 @@ public class DataCreate {
 //		System.out.println(generateIssueSprintJson());
 //		System.out.println(generateIssueStatusGraphson());
 //		System.out.println(generateIssueStatusJson());
-//		System.out.println(generateIssueStepJson());
+		System.out.println(generateIssueStepJson());
 //		System.out.println(generateIssueTestCaseJson());
-		System.out.println(generateIssueTypeJson());
+//		System.out.println(generateIssueTypeJson());
+//		System.out.println(generateIssueVersionJson());
+//		System.out.println(generateIssueVoteJson());
+//		System.out.println(generateLucyEventJson());
+//		System.out.println(generateModuleJson());
+//		System.out.println(generateNatureJson());
+//		System.out.println(generateOccurrenceJson());
+//		System.out.println(generatePriorityJson());
+//		System.out.println(generateResolutionJson());
+//		System.out.println(generateRootCauseJson());
+//		System.out.println(generateSprintProposalJson());
+//		System.out.println(generateTestCaseJson());
+//		System.out.println(generateunitTestResultJson());
+//		System.out.println(generateWorkLogJson());
+//		System.out.println(generateBehaviorJson());
+//		System.out.println(generateBugTypeJson());
+//		System.out.println(generateComponentJson());
+//		System.out.println(generateComponentImpactAreaJson());
+//		System.out.println(generateDependencyTypeJson());
+//		System.out.println(generateEnvironmentJson());
+		System.out.println(generateImpactAreaJson());
 	}
 }

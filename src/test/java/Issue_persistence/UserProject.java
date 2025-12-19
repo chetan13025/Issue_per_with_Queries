@@ -9,6 +9,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
+import java.util.Arrays;
 
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.OutputType;
@@ -27,11 +28,13 @@ import io.cucumber.java.en.When;
 import io.restassured.response.Response;
 import reports.ExtentCucumberListener;
 import utils.ConfigReader;
+import validators.ApiDataValidator;
 
 public class UserProject {
 	public static int UserProjectId;
 	private Response response;
 	private String requestBody;
+	private String RequestBodyForValidation;
 	private static String baseUrl = ConfigReader.getProperty("baseUrl");
 	private static String tenantId = ConfigReader.getProperty("tenantId");
 	private static String author = ConfigReader.getProperty("author");
@@ -181,6 +184,7 @@ public class UserProject {
 		System.out.println("Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
 		UserProjectId = response.jsonPath().getInt("id");
+		RequestBodyForValidation=requestBody;
 		System.out.println("Stored UserProject: " + UserProjectId);
 		logToExtent("Create UserProject Response", requestBody, response);
 		captureDbSnapshot(UserProjectId, "Create New User");
@@ -222,6 +226,7 @@ public class UserProject {
 
 		System.out.println("PUT Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
+		RequestBodyForValidation=newJson;
 		logToExtent("Update UserProject (PUT)", newJson, response);
 		captureDbSnapshot(UserProjectId, "Update UserProject (PUT)");
 		captureElasticScreenshot(UserProjectId, "Update UserProject (PUT)");
@@ -242,6 +247,7 @@ public class UserProject {
 		System.out.println("PATCH Request Body:\n" + newJson);
 		System.out.println("PATCH Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
+		RequestBodyForValidation=newJson;
 		logToExtent("Update UserProject (PATCH)", newJson, response);
 		captureDbSnapshot(UserProjectId, "Update UserProject (PATCH)");
 		captureElasticScreenshot(UserProjectId, "Update UserProject (PATCH)");
@@ -274,4 +280,51 @@ public class UserProject {
 
 	}
 
+	
+	@Then("Validate API ES and DB for UserProjectId after {word} skipping ES {word} excludingEverywhere {string} excludeFromRequest {string} excludeFromEs {string}")
+	public void validate_api_es_db_for_UserProjectId_dynamic(String method, String skipEsToken,
+			String excludeEverywhereCsv, String excludeReqCsv, String excludeEsCsv) throws Exception {
+
+		if (UserProjectId == 0) {
+			throw new IllegalStateException("No UserProjectId available. Run POST/PUT/PATCH first.");
+		}
+		if (response == null) {
+			throw new IllegalStateException("Response is null. Make sure the request step ran.");
+		}
+		if (RequestBodyForValidation == null) {
+			throw new IllegalStateException("RequestBodyForValidation is null. Ensure you stored the request body.");
+		}
+
+		boolean skipEs = Boolean.parseBoolean(skipEsToken); // "true"/"false" from feature
+
+		String[] excludeEverywhere = parseCsvKeys(excludeEverywhereCsv);
+		String[] excludeReqOnly = parseCsvKeys(excludeReqCsv);
+		String[] excludeEsOnly = parseCsvKeys(excludeEsCsv);
+
+		ExtentTest current = ExtentCucumberListener.getCurrentScenario();
+		if (current != null) {
+			current.info("🧪 Cross-layer validation for UserProjectId=" + UserProjectId + " after " + method.toUpperCase()
+					+ " | skipEs=" + skipEs);
+			current.info("ExcludeEverywhere=" + excludeEverywhereCsv + " | RequestOnly=" + excludeReqCsv + " | EsOnly="
+					+ excludeEsCsv);
+		}
+
+		// 🔥 your core call, now parameterised
+		ApiDataValidator.validateKeysAcrosRequestResponseEsDb(RequestBodyForValidation, response, UserProjectId,
+				"user-project", // ES index suffix
+				"UserProject", // DB table name
+				skipEs, // <== comes from feature
+				excludeEverywhere, // <== comes from feature
+				excludeReqOnly, // <== comes from feature
+				excludeEsOnly // <== comes from feature
+		);
+	}
+
+	private String[] parseCsvKeys(String csv) {
+		if (csv == null || csv.trim().isEmpty() || csv.equalsIgnoreCase("null") || csv.equalsIgnoreCase("none")
+				|| csv.equals("-")) {
+			return new String[] {}; // treat as no excludes
+		}
+		return Arrays.stream(csv.split(",")).map(String::trim).filter(s -> !s.isEmpty()).toArray(String[]::new);
+	}
 }

@@ -9,6 +9,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
+import java.util.Arrays;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -29,11 +30,13 @@ import io.cucumber.java.en.When;
 import io.restassured.response.Response;
 import reports.ExtentCucumberListener;
 import utils.ConfigReader;
+import validators.ApiDataValidator;
 
 public class Users {
 	public static int UserId;
 	private Response response;
 	private String requestBody;
+	private String RequestBodyForValidation;
 	private static String baseUrl = ConfigReader.getProperty("baseUrl");
 	private static String tenantId = ConfigReader.getProperty("tenantId");
 	private static String author = ConfigReader.getProperty("author");
@@ -175,7 +178,7 @@ public class Users {
 	}
 
 	@When("Create New User")
-	public void Create_new_user() {
+	public void Create_new_user() throws Exception {
 		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
 				.header("Author", author).body(requestBody).when().post(baseUrl + User_endpoint).then().extract()
 				.response();
@@ -183,10 +186,13 @@ public class Users {
 		System.out.println("Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
 		UserId = response.jsonPath().getInt("id");
+		RequestBodyForValidation=requestBody;
 		System.out.println("Stored UserId: " + UserId);
 		logToExtent("Create User Response", requestBody, response);
 		captureDbSnapshot(UserId, "Create New User");
 		captureElasticScreenshot(UserId, "Create User");
+		ApiDataValidator.validateKeysAcrosRequestResponseEsDb(requestBody, response, UserId, "user", "User", false,null, new String[] {"id","deleted"},new String[] {"deleted"});
+		
 	}
 
 	@When("Fetch All Users Details")
@@ -224,6 +230,7 @@ public class Users {
 
 		System.out.println("PUT Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
+		RequestBodyForValidation=newJson;
 		logToExtent("Update User (PUT)", newJson, response);
 		captureDbSnapshot(UserId, "Update User (PUT)");
 		captureElasticScreenshot(UserId, "Update User (PUT)");
@@ -244,6 +251,7 @@ public class Users {
 		System.out.println("PATCH Request Body:\n" + newJson);
 		System.out.println("PATCH Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
+		RequestBodyForValidation=newJson;
 		logToExtent("Update User (PATCH)", newJson, response);
 		captureDbSnapshot(UserId, "Update User (PATCH)");
 		captureElasticScreenshot(UserId, "Update User (PATCH)");
@@ -274,6 +282,52 @@ public class Users {
 	public void the_user_response_should_contain(String key) {
 		assertTrue("Response does not contain key: " + key, response.getBody().asString().contains(key));
 
+	}
+	@Then("Validate API ES and DB for UserId after {word} skipping ES {word} excludingEverywhere {string} excludeFromRequest {string} excludeFromEs {string}")
+	public void validate_api_es_db_for_UserId_dynamic(String method, String skipEsToken,
+			String excludeEverywhereCsv, String excludeReqCsv, String excludeEsCsv) throws Exception {
+
+		if (UserId == 0) {
+			throw new IllegalStateException("No UserId available. Run POST/PUT/PATCH first.");
+		}
+		if (response == null) {
+			throw new IllegalStateException("Response is null. Make sure the request step ran.");
+		}
+		if (RequestBodyForValidation == null) {
+			throw new IllegalStateException("RequestBodyForValidation is null. Ensure you stored the request body.");
+		}
+
+		boolean skipEs = Boolean.parseBoolean(skipEsToken); // "true"/"false" from feature
+
+		String[] excludeEverywhere = parseCsvKeys(excludeEverywhereCsv);
+		String[] excludeReqOnly = parseCsvKeys(excludeReqCsv);
+		String[] excludeEsOnly = parseCsvKeys(excludeEsCsv);
+
+		ExtentTest current = ExtentCucumberListener.getCurrentScenario();
+		if (current != null) {
+			current.info("🧪 Cross-layer validation for UserId=" + UserId + " after " + method.toUpperCase()
+					+ " | skipEs=" + skipEs);
+			current.info("ExcludeEverywhere=" + excludeEverywhereCsv + " | RequestOnly=" + excludeReqCsv + " | EsOnly="
+					+ excludeEsCsv);
+		}
+
+		// 🔥 your core call, now parameterised
+		ApiDataValidator.validateKeysAcrosRequestResponseEsDb(RequestBodyForValidation, response, UserId,
+				"user", // ES index suffix
+				"User", // DB table name
+				skipEs, // <== comes from feature
+				excludeEverywhere, // <== comes from feature
+				excludeReqOnly, // <== comes from feature
+				excludeEsOnly // <== comes from feature
+		);
+	}
+
+	private String[] parseCsvKeys(String csv) {
+		if (csv == null || csv.trim().isEmpty() || csv.equalsIgnoreCase("null") || csv.equalsIgnoreCase("none")
+				|| csv.equals("-")) {
+			return new String[] {}; // treat as no excludes
+		}
+		return Arrays.stream(csv.split(",")).map(String::trim).filter(s -> !s.isEmpty()).toArray(String[]::new);
 	}
 
 }

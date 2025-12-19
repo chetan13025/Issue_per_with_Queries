@@ -157,6 +157,7 @@ import jakarta.mail.*;
 import jakarta.mail.internet.*;
 import jakarta.activation.*;
 
+import java.io.File;
 import java.util.Properties;
 
 public class EmailReportSender {
@@ -169,9 +170,91 @@ public class EmailReportSender {
     private static final String FROM_EMAIL = "chetan.patil@dharbor.com";
     private static final String FROM_PASSWORD = "Athanidhi@2025"; // ⚠️ use app password if MFA enabled
 
-    public static void sendReport(String toEmail, String reportPath) {
+//    public static void sendReport(String toEmail, String reportPath) {
+//        if (reportPath == null) {
+//            System.err.println("⚠️ No report found to send.");
+//            return;
+//        }
+//
+//        Properties props = new Properties();
+//        props.put("mail.smtp.auth", "true");
+//        props.put("mail.smtp.starttls.enable", "true");
+//        props.put("mail.smtp.host", SMTP_HOST);
+//        props.put("mail.smtp.port", String.valueOf(SMTP_PORT));
+//        props.put("mail.smtp.ssl.trust", SMTP_HOST);
+//
+//        // Create a mail session with authentication
+//        Session session = Session.getInstance(props, new Authenticator() {
+//            @Override
+//            protected PasswordAuthentication getPasswordAuthentication() {
+//                return new PasswordAuthentication(FROM_EMAIL, FROM_PASSWORD);
+//            }
+//        });
+//
+//        try {
+//            // Create email message
+//            Message message = new MimeMessage(session);
+//            message.setFrom(new InternetAddress(FROM_EMAIL));
+//
+//            // ✅ Primary recipient
+//            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
+//
+//            // ✅ Add CC recipient
+//            message.setRecipients(Message.RecipientType.CC, InternetAddress.parse("prashanth.kumar@dharbor.com"));
+//
+//            message.setSubject("Automation Test Report - Issue-persistence");
+//
+//            // ✅ Email Body
+//            BodyPart text = new MimeBodyPart();
+//            text.setText("Hi Team,\n\nPlease find attached the latest automation report.\n\nRegards,\nAutomation Bot");
+//
+//            // ✅ Attachment
+//            MimeBodyPart attachment = new MimeBodyPart();
+//            DataSource source = new FileDataSource(reportPath);
+//            attachment.setDataHandler(new DataHandler(source));
+//            attachment.setFileName(new java.io.File(reportPath).getName());
+//
+//            // ✅ Combine parts
+//            Multipart multipart = new MimeMultipart();
+//            multipart.addBodyPart(text);
+//            multipart.addBodyPart(attachment);
+//            message.setContent(multipart);
+//
+//            // ✅ Send email
+//            Transport.send(message);
+//
+//            System.out.println("✅ Report emailed successfully to " + toEmail +
+//                    " ( attached: " + reportPath);
+//
+//        } catch (MessagingException e) {
+//            e.printStackTrace();
+//            System.err.println("❌ Failed to send report: " + e.getMessage());
+//        }
+//    }
+    
+    // with version
+    
+    public static void sendReport(String toEmail, String versionText) {
+        // find latest complete html report (ReportUtils default waits & has min size)
+        String reportPath = ReportUtils.getLatestReportFile("target", ".html");
         if (reportPath == null) {
-            System.err.println("⚠️ No report found to send.");
+            System.err.println("⚠️ No HTML report found under target/. Email not sent.");
+            return;
+        }
+
+        sendReportWithPath(toEmail, reportPath, versionText);
+    }
+
+    /**
+     * Send a specific file path as attachment.
+     */
+    public static void sendReportWithPath(String toEmail, String reportPath, String versionText) {
+        if (reportPath == null || !(new File(reportPath).exists())) {
+            System.err.println("⚠️ Report file missing: " + reportPath);
+            return;
+        }
+        if (FROM_PASSWORD == null || FROM_PASSWORD.isEmpty()) {
+            System.err.println("⚠️ SMTP password not provided. Set OUTLOOK_PASS env var or update code.");
             return;
         }
 
@@ -182,7 +265,6 @@ public class EmailReportSender {
         props.put("mail.smtp.port", String.valueOf(SMTP_PORT));
         props.put("mail.smtp.ssl.trust", SMTP_HOST);
 
-        // Create a mail session with authentication
         Session session = Session.getInstance(props, new Authenticator() {
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
@@ -191,44 +273,45 @@ public class EmailReportSender {
         });
 
         try {
-            // Create email message
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress(FROM_EMAIL));
-
-            // ✅ Primary recipient
+            // support comma-separated recipients
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
-
-            // ✅ Add CC recipient
+            // optional CC
             message.setRecipients(Message.RecipientType.CC, InternetAddress.parse("prashanth.kumar@dharbor.com"));
 
-            message.setSubject("Automation Test Report - Issue-persistence");
+            String subject = "Automation Report for Issue-Persistence with";
+            if (versionText != null && !versionText.isBlank()) subject += " - Version " + versionText;
+            message.setSubject(subject);
 
-            // ✅ Email Body
-            BodyPart text = new MimeBodyPart();
-            text.setText("Hi Team,\n\nPlease find attached the latest automation report.\n\nRegards,\nAutomation Bot");
+            MimeBodyPart textPart = new MimeBodyPart();
+            StringBuilder body = new StringBuilder();
+            body.append("Hi Team,\n\nPlease find attached the latest automation report.\n");
+            if (versionText != null && !versionText.isBlank()) {
+                body.append("Persistence Version: ").append(versionText).append("\n");
+            }
+            body.append("\nRegards,\nAutomation Bot");
+            textPart.setText(body.toString());
 
-            // ✅ Attachment
-            MimeBodyPart attachment = new MimeBodyPart();
+            MimeBodyPart attachmentPart = new MimeBodyPart();
             DataSource source = new FileDataSource(reportPath);
-            attachment.setDataHandler(new DataHandler(source));
-            attachment.setFileName(new java.io.File(reportPath).getName());
+            attachmentPart.setDataHandler(new DataHandler(source));
+            attachmentPart.setFileName(new File(reportPath).getName());
 
-            // ✅ Combine parts
             Multipart multipart = new MimeMultipart();
-            multipart.addBodyPart(text);
-            multipart.addBodyPart(attachment);
+            multipart.addBodyPart(textPart);
+            multipart.addBodyPart(attachmentPart);
             message.setContent(multipart);
 
-            // ✅ Send email
             Transport.send(message);
-
-            System.out.println("✅ Report emailed successfully to " + toEmail +
-                    " ( attached: " + reportPath);
+            System.out.println("📧 Email sent with attachment: " + reportPath);
 
         } catch (MessagingException e) {
             e.printStackTrace();
-            System.err.println("❌ Failed to send report: " + e.getMessage());
+            System.err.println("❌ Failed to send email: " + e.getMessage());
         }
     }
+    
+    
 }
 

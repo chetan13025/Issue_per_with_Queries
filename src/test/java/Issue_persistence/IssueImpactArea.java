@@ -9,6 +9,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
+import java.util.Arrays;
 
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.OutputType;
@@ -27,12 +28,14 @@ import io.cucumber.java.en.When;
 import io.restassured.response.Response;
 import reports.ExtentCucumberListener;
 import utils.ConfigReader;
+import validators.ApiDataValidator;
 
 public class IssueImpactArea {
 	
-	public static int IsueImpactAreaId;
+	public static int IssueImpactAreaId;
 	private Response response;
 	private String requestBody;
+	private String RequestBodyForValidation;
 	private static String baseUrl = ConfigReader.getProperty("baseUrl");
 	private static String tenantId = ConfigReader.getProperty("tenantId");
 	private static String author = ConfigReader.getProperty("author");
@@ -57,7 +60,7 @@ public class IssueImpactArea {
 		}
 	}
 
-	private void captureDbSnapshot(int IsueImpactAreaId, String action) {
+	private void captureDbSnapshot(int IssueImpactAreaId, String action) {
 		ExtentTest current = ExtentCucumberListener.getCurrentScenario();
 		if (current == null)
 			return;
@@ -87,7 +90,7 @@ public class IssueImpactArea {
 					currentId = rs.getInt("id"); // fallback
 				}
 
-				if (currentId == IsueImpactAreaId) {
+				if (currentId == IssueImpactAreaId) {
 					html.append("<tr style='background-color:#90EE90; font-weight:bold;'>"); // highlight
 				} else {
 					html.append("<tr>");
@@ -110,7 +113,7 @@ public class IssueImpactArea {
 		}
 	}
 
-	private void captureElasticScreenshot(int IsueImpactAreaId, String action) {
+	private void captureElasticScreenshot(int IssueImpactAreaId, String action) {
 		WebDriver driver = null;
 		try {
 			// Launch Chrome
@@ -133,7 +136,7 @@ public class IssueImpactArea {
 //                "window.find(arguments[0], false, false, true, false, true, false);", 
 //                String.valueOf(bookId)
 //            );
-			js.executeScript("window.find('\"id\" : " + IsueImpactAreaId + "');");
+			js.executeScript("window.find('\"id\" : " + IssueImpactAreaId + "');");
 			js.executeScript("var sel = window.getSelection();"
 					+ "if (sel.rangeCount > 0) sel.getRangeAt(0).startContainer.parentElement.scrollIntoView({behavior: 'smooth', block: 'center'});");
 
@@ -152,7 +155,7 @@ public class IssueImpactArea {
 //            }
 			ExtentTest current = ExtentCucumberListener.getCurrentScenario();
 			if (current != null) {
-				current.info("Elasticsearch Verification for IsueImpactAreaId: " + IsueImpactAreaId);
+				current.info("Elasticsearch Verification for IssueImpactAreaId: " + IssueImpactAreaId);
 				current.addScreenCaptureFromBase64String(Useridscreenshot, "ElasticSearch_" + action.replace(" ", "_"));
 //                MediaEntityBuilder.createScreenCaptureFromBase64String(base64Screenshot, "ElasticSearch Screenshot").build();
 
@@ -181,11 +184,12 @@ public class IssueImpactArea {
 
 		System.out.println("Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
-		IsueImpactAreaId = response.jsonPath().getInt("id");
-		System.out.println("Stored IsueImpactAreaId: " + IsueImpactAreaId);
+		IssueImpactAreaId = response.jsonPath().getInt("id");
+		RequestBodyForValidation= requestBody;
+		System.out.println("Stored IsueImpactAreaId: " + IssueImpactAreaId);
 		logToExtent("Create IssueImpactArea Response", requestBody, response);
-		captureDbSnapshot(IsueImpactAreaId, "Create New IssueImpactArea");
-		captureElasticScreenshot(IsueImpactAreaId, "Create IssueImpactArea");
+		captureDbSnapshot(IssueImpactAreaId, "Create New IssueImpactArea");
+		captureElasticScreenshot(IssueImpactAreaId, "Create IssueImpactArea");
 	}
 
 	@When("Fetch All IssueImpactArea Details")
@@ -202,7 +206,7 @@ public class IssueImpactArea {
 	@When("Fetch IssueImpactArea Details with ID")
 	public void Fetch_issueimpactarea_Details_with_ID() {
 		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
-				.header("Author", author).pathParam("id", IsueImpactAreaId).when().get(baseUrl + IssueImpactArea_endpoint + "/{id}").then()
+				.header("Author", author).pathParam("id", IssueImpactAreaId).when().get(baseUrl + IssueImpactArea_endpoint + "/{id}").then()
 				.extract().response();
 
 		System.out.println("Response Body:\n" + response.getBody().asString());
@@ -212,55 +216,57 @@ public class IssueImpactArea {
 
 	@When("Update IssueImpactArea Details")
 	public void Update_issueimpactarea_details() {
-		if (IsueImpactAreaId == 0)
-			throw new IllegalStateException("No IsueImpactAreaId available. Run POST first.");
+		if (IssueImpactAreaId == 0)
+			throw new IllegalStateException("No IssueImpactAreaId available. Run POST first.");
 
 		String newJson = DataCreate.generateIssueImpactAreaJson();
 
 		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
-				.header("Author", author).pathParam("id", IsueImpactAreaId).body(newJson).when()
+				.header("Author", author).pathParam("id", IssueImpactAreaId).body(newJson).when()
 				.put(baseUrl + IssueImpactArea_endpoint + "/{id}").then().extract().response();
 
 		System.out.println("PUT Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
+		RequestBodyForValidation=newJson;
 		logToExtent("Update IssueImpactArea (PUT)", newJson, response);
-		captureDbSnapshot(IsueImpactAreaId, "Update IssueImpactArea (PUT)");
-		captureElasticScreenshot(IsueImpactAreaId, "Update IssueImpactArea (PUT)");
+		captureDbSnapshot(IssueImpactAreaId, "Update IssueImpactArea (PUT)");
+		captureElasticScreenshot(IssueImpactAreaId, "Update IssueImpactArea (PUT)");
 
 	}
 
 	@When("Update Patch IssueImpactArea")
 	public void Update_Patch_issueimpactarea() {
-		if (IsueImpactAreaId == 0)
-			throw new IllegalStateException("No IsueImpactAreaId available. Run POST first.");
+		if (IssueImpactAreaId == 0)
+			throw new IllegalStateException("No IssueImpactAreaId available. Run POST first.");
 
 		String newJson = DataCreate.generateIssueImpactAreaJson();
 
 		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
-				.header("Author", author).pathParam("id", IsueImpactAreaId).body(newJson).when()
+				.header("Author", author).pathParam("id", IssueImpactAreaId).body(newJson).when()
 				.patch(baseUrl + IssueImpactArea_endpoint + "/{id}").then().extract().response();
 
 		System.out.println("PATCH Request Body:\n" + newJson);
 		System.out.println("PATCH Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
+		RequestBodyForValidation=newJson;
 		logToExtent("Update IssueImpactArea (PATCH)", newJson, response);
-		captureDbSnapshot(IsueImpactAreaId, "Update IssueImpactArea (PATCH)");
-		captureElasticScreenshot(IsueImpactAreaId, "Update IssueImpactArea (PATCH)");
+		captureDbSnapshot(IssueImpactAreaId, "Update IssueImpactArea (PATCH)");
+		captureElasticScreenshot(IssueImpactAreaId, "Update IssueImpactArea (PATCH)");
 
 	}
 
 	@When("Delete IssueImpactArea with ID")
 	public void delete_issueimpactarea_with_ID() {
 		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
-				.header("Author", author).pathParam("id", IsueImpactAreaId).when().delete(baseUrl + IssueImpactArea_endpoint + "/{id}")
+				.header("Author", author).pathParam("id", IssueImpactAreaId).when().delete(baseUrl + IssueImpactArea_endpoint + "/{id}")
 				.then().extract().response();
 
 		System.out.println("Delete Response Body:\n" + response.getBody().asString());
 		System.out.println("Delete Status Code: " + response.getStatusCode());
 
 		logToExtent("Delete IssueImpactArea", null, response);
-		captureDbSnapshot(IsueImpactAreaId, "Delete IssueImpactArea");
-		captureElasticScreenshot(IsueImpactAreaId, "Delete IssueImpactArea");
+		captureDbSnapshot(IssueImpactAreaId, "Delete IssueImpactArea");
+		captureElasticScreenshot(IssueImpactAreaId, "Delete IssueImpactArea");
 	}
 
 	@Then("The IssueImpactArea response status code should be {int}")
@@ -273,6 +279,52 @@ public class IssueImpactArea {
 	public void the_issueimpactarea_response_should_contain(String key) {
 		assertTrue("Response does not contain key: " + key, response.getBody().asString().contains(key));
 
+	}
+	@Then("Validate API ES and DB for IsueImpactAreaId after {word} skipping ES {word} excludingEverywhere {string} excludeFromRequest {string} excludeFromEs {string}")
+	public void validate_api_es_db_for_IsueImpactAreaId_dynamic(String method, String skipEsToken,
+			String excludeEverywhereCsv, String excludeReqCsv, String excludeEsCsv) throws Exception {
+
+		if (IssueImpactAreaId == 0) {
+			throw new IllegalStateException("No IssueImpactAreaId available. Run POST/PUT/PATCH first.");
+		}
+		if (response == null) {
+			throw new IllegalStateException("Response is null. Make sure the request step ran.");
+		}
+		if (RequestBodyForValidation == null) {
+			throw new IllegalStateException("RequestBodyForValidation is null. Ensure you stored the request body.");
+		}
+
+		boolean skipEs = Boolean.parseBoolean(skipEsToken); // "true"/"false" from feature
+
+		String[] excludeEverywhere = parseCsvKeys(excludeEverywhereCsv);
+		String[] excludeReqOnly = parseCsvKeys(excludeReqCsv);
+		String[] excludeEsOnly = parseCsvKeys(excludeEsCsv);
+
+		ExtentTest current = ExtentCucumberListener.getCurrentScenario();
+		if (current != null) {
+			current.info("🧪 Cross-layer validation for IssueImpactAreaId=" + IssueImpactAreaId + " after " + method.toUpperCase()
+					+ " | skipEs=" + skipEs);
+			current.info("ExcludeEverywhere=" + excludeEverywhereCsv + " | RequestOnly=" + excludeReqCsv + " | EsOnly="
+					+ excludeEsCsv);
+		}
+
+		// 🔥 your core call, now parameterised
+		ApiDataValidator.validateKeysAcrosRequestResponseEsDb(RequestBodyForValidation, response, IssueImpactAreaId,
+				"issue-impact-area", // ES index suffix
+				"IssueImpactArea", // DB table name
+				skipEs, // <== comes from feature
+				excludeEverywhere, // <== comes from feature
+				excludeReqOnly, // <== comes from feature
+				excludeEsOnly // <== comes from feature
+		);
+	}
+
+	private String[] parseCsvKeys(String csv) {
+		if (csv == null || csv.trim().isEmpty() || csv.equalsIgnoreCase("null") || csv.equalsIgnoreCase("none")
+				|| csv.equals("-")) {
+			return new String[] {}; // treat as no excludes
+		}
+		return Arrays.stream(csv.split(",")).map(String::trim).filter(s -> !s.isEmpty()).toArray(String[]::new);
 	}
 
 }

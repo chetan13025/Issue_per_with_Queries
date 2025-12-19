@@ -9,6 +9,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
+import java.util.Arrays;
 
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.OutputType;
@@ -27,11 +28,13 @@ import io.cucumber.java.en.When;
 import io.restassured.response.Response;
 import reports.ExtentCucumberListener;
 import utils.ConfigReader;
+import validators.ApiDataValidator;
 
 public class IssueLog {
 	public static int IssueLogId;
 	private Response response;
 	private String requestBody;
+	private String RequestBodyForValidation;
 	private static String baseUrl = ConfigReader.getProperty("baseUrl");
 	private static String tenantId = ConfigReader.getProperty("tenantId");
 	private static String author = ConfigReader.getProperty("author");
@@ -181,6 +184,7 @@ public class IssueLog {
 		System.out.println("Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
 		IssueLogId = response.jsonPath().getInt("id");
+		RequestBodyForValidation=requestBody;
 		System.out.println("Stored IssueLogId: " + IssueLogId);
 		logToExtent("Create IssueLog Response", requestBody, response);
 		captureDbSnapshot(IssueLogId, "Create New IssueLog");
@@ -222,6 +226,7 @@ public class IssueLog {
 
 		System.out.println("PUT Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
+		RequestBodyForValidation=newJson;
 		logToExtent("Update IssueLog (PUT)", newJson, response);
 		captureDbSnapshot(IssueLogId, "Update IssueLog (PUT)");
 		captureElasticScreenshot(IssueLogId, "Update IssueLog (PUT)");
@@ -242,6 +247,7 @@ public class IssueLog {
 		System.out.println("PATCH Request Body:\n" + newJson);
 		System.out.println("PATCH Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
+		RequestBodyForValidation=newJson;
 		logToExtent("Update IssueLog (PATCH)", newJson, response);
 		captureDbSnapshot(IssueLogId, "Update IssueLog (PATCH)");
 		captureElasticScreenshot(IssueLogId, "Update IssueLog (PATCH)");
@@ -271,6 +277,53 @@ public class IssueLog {
 	public void the_issuelog_response_should_contain(String key) {
 		assertTrue("Response does not contain key: " + key, response.getBody().asString().contains(key));
 
+	}
+	
+	@Then("Validate API ES and DB for IssueLogId after {word} skipping ES {word} excludingEverywhere {string} excludeFromRequest {string} excludeFromEs {string}")
+	public void validate_api_es_db_for_IssueLogId_dynamic(String method, String skipEsToken,
+			String excludeEverywhereCsv, String excludeReqCsv, String excludeEsCsv) throws Exception {
+
+		if (IssueLogId == 0) {
+			throw new IllegalStateException("No IssueLogId available. Run POST/PUT/PATCH first.");
+		}
+		if (response == null) {
+			throw new IllegalStateException("Response is null. Make sure the request step ran.");
+		}
+		if (RequestBodyForValidation == null) {
+			throw new IllegalStateException("RequestBodyForValidation is null. Ensure you stored the request body.");
+		}
+
+		boolean skipEs = Boolean.parseBoolean(skipEsToken); // "true"/"false" from feature
+
+		String[] excludeEverywhere = parseCsvKeys(excludeEverywhereCsv);
+		String[] excludeReqOnly = parseCsvKeys(excludeReqCsv);
+		String[] excludeEsOnly = parseCsvKeys(excludeEsCsv);
+
+		ExtentTest current = ExtentCucumberListener.getCurrentScenario();
+		if (current != null) {
+			current.info("🧪 Cross-layer validation for IssueLogId=" + IssueLogId + " after " + method.toUpperCase()
+					+ " | skipEs=" + skipEs);
+			current.info("ExcludeEverywhere=" + excludeEverywhereCsv + " | RequestOnly=" + excludeReqCsv + " | EsOnly="
+					+ excludeEsCsv);
+		}
+
+		// 🔥 your core call, now parameterised
+		ApiDataValidator.validateKeysAcrosRequestResponseEsDb(RequestBodyForValidation, response, IssueLogId,
+				"issue-log", // ES index suffix
+				"IssueLog", // DB table name
+				skipEs, // <== comes from feature
+				excludeEverywhere, // <== comes from feature
+				excludeReqOnly, // <== comes from feature
+				excludeEsOnly // <== comes from feature
+		);
+	}
+
+	private String[] parseCsvKeys(String csv) {
+		if (csv == null || csv.trim().isEmpty() || csv.equalsIgnoreCase("null") || csv.equalsIgnoreCase("none")
+				|| csv.equals("-")) {
+			return new String[] {}; // treat as no excludes
+		}
+		return Arrays.stream(csv.split(",")).map(String::trim).filter(s -> !s.isEmpty()).toArray(String[]::new);
 	}
 	
 }

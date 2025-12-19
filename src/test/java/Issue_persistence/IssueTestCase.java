@@ -9,6 +9,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
+import java.util.Arrays;
 
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.OutputType;
@@ -27,12 +28,14 @@ import io.cucumber.java.en.When;
 import io.restassured.response.Response;
 import reports.ExtentCucumberListener;
 import utils.ConfigReader;
+import validators.ApiDataValidator;
 import validators.ApiValidators;
 
 public class IssueTestCase {
 	public static int IssueTestCaseId;
 	private Response response;
 	private String requestBody;
+	private String RequestBodyForValidation;
 	private static String baseUrl = ConfigReader.getProperty("baseUrl");
 	private static String tenantId = ConfigReader.getProperty("tenantId");
 	private static String author = ConfigReader.getProperty("author");
@@ -64,7 +67,7 @@ public class IssueTestCase {
 
 		try (Connection conn = DriverManager.getConnection("jdbc:mysql://10.10.2.45:3306", "root", "dhi123");
 				Statement stmt = conn.createStatement();
-				ResultSet rs = stmt.executeQuery("SELECT * FROM `issue_persistence_piqa`.`IssueRootCause` LIMIT 1000")) {
+				ResultSet rs = stmt.executeQuery("SELECT * FROM `issue_persistence_piqa`.`IssueTestCase` LIMIT 1000")) {
 
 			ResultSetMetaData meta = rs.getMetaData();
 			int colCount = meta.getColumnCount();
@@ -118,7 +121,7 @@ public class IssueTestCase {
 			driver.manage().window().maximize();
 
 			// Open Elasticsearch _search URL
-			String url = "http://10.10.2.45:9200/piqa_issue-persistence_issue-root-cause_index/_search?pretty&size=2000";
+			String url = "http://10.10.2.45:9200/piqa_issue-persistence_issue-test-case_index/_search?pretty&size=2000";
 			driver.get(url);
 
 			// Small wait for JSON to load
@@ -181,6 +184,7 @@ public class IssueTestCase {
 		System.out.println("Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
 		IssueTestCaseId = response.jsonPath().getInt("id");
+		RequestBodyForValidation=requestBody;
 		System.out.println("Stored IssueTestCaseId: " + IssueTestCaseId);
 		logToExtent("Create IssueTestCase Response", requestBody, response);
 		captureDbSnapshot(IssueTestCaseId, "Create New IssueTestCase");
@@ -222,6 +226,7 @@ public class IssueTestCase {
 
 		System.out.println("PUT Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
+		RequestBodyForValidation=newJson;
 		logToExtent("Update IssueTestCase (PUT)", newJson, response);
 		captureDbSnapshot(IssueTestCaseId, "Update IssueTestCase (PUT)");
 		ApiValidators.validatePathParamToResponse(response, "id", IssueTestCaseId);
@@ -242,6 +247,7 @@ public class IssueTestCase {
 		System.out.println("PATCH Request Body:\n" + newJson);
 		System.out.println("PATCH Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
+		RequestBodyForValidation=newJson;
 		logToExtent("Update IssueTestCase (PATCH)", newJson, response);
 		captureDbSnapshot(IssueTestCaseId, "Update IssueTestCase (PATCH)");
 //		ApiValidators.validatePathParamToResponse(response, "id", IssueRootCauseId);
@@ -273,5 +279,52 @@ public class IssueTestCase {
 	public void the_issuetestcase_response_should_contain(String key) {
 		assertTrue("Response does not contain key: " + key, response.getBody().asString().contains(key));
 
+	}
+	
+	@Then("Validate API ES and DB for IssueTestCaseId after {word} skipping ES {word} excludingEverywhere {string} excludeFromRequest {string} excludeFromEs {string}")
+	public void validate_api_es_db_for_IssueTestCaseId_dynamic(String method, String skipEsToken,
+			String excludeEverywhereCsv, String excludeReqCsv, String excludeEsCsv) throws Exception {
+
+		if (IssueTestCaseId == 0) {
+			throw new IllegalStateException("No IssueTestCaseId available. Run POST/PUT/PATCH first.");
+		}
+		if (response == null) {
+			throw new IllegalStateException("Response is null. Make sure the request step ran.");
+		}
+		if (RequestBodyForValidation == null) {
+			throw new IllegalStateException("RequestBodyForValidation is null. Ensure you stored the request body.");
+		}
+
+		boolean skipEs = Boolean.parseBoolean(skipEsToken); // "true"/"false" from feature
+
+		String[] excludeEverywhere = parseCsvKeys(excludeEverywhereCsv);
+		String[] excludeReqOnly = parseCsvKeys(excludeReqCsv);
+		String[] excludeEsOnly = parseCsvKeys(excludeEsCsv);
+
+		ExtentTest current = ExtentCucumberListener.getCurrentScenario();
+		if (current != null) {
+			current.info("🧪 Cross-layer validation for IssueTestCaseId=" + IssueTestCaseId + " after " + method.toUpperCase()
+					+ " | skipEs=" + skipEs);
+			current.info("ExcludeEverywhere=" + excludeEverywhereCsv + " | RequestOnly=" + excludeReqCsv + " | EsOnly="
+					+ excludeEsCsv);
+		}
+
+		// 🔥 your core call, now parameterised
+		ApiDataValidator.validateKeysAcrosRequestResponseEsDb(RequestBodyForValidation, response, IssueTestCaseId,
+				"issue-test-case", // ES index suffix
+				"IssueTestCase", // DB table name
+				skipEs, // <== comes from feature
+				excludeEverywhere, // <== comes from feature
+				excludeReqOnly, // <== comes from feature
+				excludeEsOnly // <== comes from feature
+		);
+	}
+
+	private String[] parseCsvKeys(String csv) {
+		if (csv == null || csv.trim().isEmpty() || csv.equalsIgnoreCase("null") || csv.equalsIgnoreCase("none")
+				|| csv.equals("-")) {
+			return new String[] {}; // treat as no excludes
+		}
+		return Arrays.stream(csv.split(",")).map(String::trim).filter(s -> !s.isEmpty()).toArray(String[]::new);
 	}
 }

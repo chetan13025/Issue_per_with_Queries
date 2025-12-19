@@ -9,6 +9,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
+import java.util.Arrays;
 
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.OutputType;
@@ -27,11 +28,13 @@ import io.cucumber.java.en.When;
 import io.restassured.response.Response;
 import reports.ExtentCucumberListener;
 import utils.ConfigReader;
+import validators.ApiDataValidator;
 
 public class IssueCollaborator {
 	public static int IssueCollaboratorId;
 	private Response response;
 	private String requestBody;
+	private String RequestBodyForValidation;
 	private static String baseUrl = ConfigReader.getProperty("baseUrl");
 	private static String tenantId = ConfigReader.getProperty("tenantId");
 	private static String author = ConfigReader.getProperty("author");
@@ -179,6 +182,7 @@ public class IssueCollaborator {
 		System.out.println("Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
 		IssueCollaboratorId = response.jsonPath().getInt("id");
+		RequestBodyForValidation = requestBody;
 		System.out.println("Stored UserId: " + IssueCollaboratorId);
 		logToExtent("Create IssueCollaborator Response", requestBody, response);
 		captureDbSnapshot(IssueCollaboratorId, "Create New IssueCollaborator");
@@ -219,6 +223,7 @@ public class IssueCollaborator {
 
 		System.out.println("PUT Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
+		RequestBodyForValidation = newJson;
 		logToExtent("Update IssueCollaborator (PUT)", newJson, response);
 		captureDbSnapshot(IssueCollaboratorId, "Update IssueCollaborator (PUT)");
 		captureElasticScreenshot(IssueCollaboratorId, "Update IssueCollaborator (PUT)");
@@ -239,6 +244,7 @@ public class IssueCollaborator {
 		System.out.println("PATCH Request Body:\n" + newJson);
 		System.out.println("PATCH Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
+		RequestBodyForValidation = newJson;
 		logToExtent("Update IssueCollaborator (PATCH)", newJson, response);
 		captureDbSnapshot(IssueCollaboratorId, "Update IssueCollaborator (PATCH)");
 		captureElasticScreenshot(IssueCollaboratorId, "Update IssueCollaborator (PATCH)");
@@ -270,5 +276,51 @@ public class IssueCollaborator {
 	public void the_issuecollaborator_response_should_contain(String key) {
 		assertTrue("Response does not contain key: " + key, response.getBody().asString().contains(key));
 
+	}
+	@Then("Validate API ES and DB for IssueCollaboratorId after {word} skipping ES {word} excludingEverywhere {string} excludeFromRequest {string} excludeFromEs {string}")
+	public void validate_api_es_db_for_IssueCollaboratorId_dynamic(String method, String skipEsToken,
+			String excludeEverywhereCsv, String excludeReqCsv, String excludeEsCsv) throws Exception {
+
+		if (IssueCollaboratorId == 0) {
+			throw new IllegalStateException("No IssueCollaboratorId available. Run POST/PUT/PATCH first.");
+		}
+		if (response == null) {
+			throw new IllegalStateException("Response is null. Make sure the request step ran.");
+		}
+		if (RequestBodyForValidation == null) {
+			throw new IllegalStateException("RequestBodyForValidation is null. Ensure you stored the request body.");
+		}
+
+		boolean skipEs = Boolean.parseBoolean(skipEsToken); // "true"/"false" from feature
+
+		String[] excludeEverywhere = parseCsvKeys(excludeEverywhereCsv);
+		String[] excludeReqOnly = parseCsvKeys(excludeReqCsv);
+		String[] excludeEsOnly = parseCsvKeys(excludeEsCsv);
+
+		ExtentTest current = ExtentCucumberListener.getCurrentScenario();
+		if (current != null) {
+			current.info("🧪 Cross-layer validation for IssueCollaboratorId=" + IssueCollaboratorId + " after " + method.toUpperCase()
+					+ " | skipEs=" + skipEs);
+			current.info("ExcludeEverywhere=" + excludeEverywhereCsv + " | RequestOnly=" + excludeReqCsv + " | EsOnly="
+					+ excludeEsCsv);
+		}
+
+		// 🔥 your core call, now parameterised
+		ApiDataValidator.validateKeysAcrosRequestResponseEsDb(RequestBodyForValidation, response, IssueCollaboratorId,
+				"issue-collaborator", // ES index suffix
+				"IssueCollaborator", // DB table name
+				skipEs, // <== comes from feature
+				excludeEverywhere, // <== comes from feature
+				excludeReqOnly, // <== comes from feature
+				excludeEsOnly // <== comes from feature
+		);
+	}
+
+	private String[] parseCsvKeys(String csv) {
+		if (csv == null || csv.trim().isEmpty() || csv.equalsIgnoreCase("null") || csv.equalsIgnoreCase("none")
+				|| csv.equals("-")) {
+			return new String[] {}; // treat as no excludes
+		}
+		return Arrays.stream(csv.split(",")).map(String::trim).filter(s -> !s.isEmpty()).toArray(String[]::new);
 	}
 }
