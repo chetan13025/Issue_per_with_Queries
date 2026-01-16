@@ -99,29 +99,29 @@ public class EndtoEndRunner {
 	
 	// with version
 	
-	@AfterClass
-	public static void tearDown() {
-	    try {
-	        // Optional: ask your Extent listener to flush if available so HTML is finalized
-	        try {
-	            // if you implemented a flush method on your listener/manager, call it:
-	            // reports.ExtentCucumberListener.flushReports();
-	        } catch (Throwable ignored) {}
-
-	        // Print the resolved latest file (debug)
-	        String latest = ReportUtils.getLatestReportFile("target", ".html");
-	        System.out.println("Latest report file : " + latest);
-
-	        // Read version stored earlier by VersionSteps
-	        String version = System.getProperty("detected.version", "").trim();
-
-	        // Call EmailReportSender which will find the latest HTML and include version in subject/body
-	        EmailReportSender.sendReport("chetan.patil@dharbor.com", version);
-
-	        System.out.println("Email triggered with version=" + version);
-
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	    }
-	}
+//	@AfterClass
+//	public static void tearDown() {
+//	    try {
+//	        // Optional: ask your Extent listener to flush if available so HTML is finalized
+//	        try {
+//	            // if you implemented a flush method on your listener/manager, call it:
+//	            // reports.ExtentCucumberListener.flushReports();
+//	        } catch (Throwable ignored) {}
+//
+//	        // Print the resolved latest file (debug)
+//	        String latest = ReportUtils.getLatestReportFile("target", ".html");
+//	        System.out.println("Latest report file : " + latest);
+//
+//	        // Read version stored earlier by VersionSteps
+//	        String version = System.getProperty("detected.version", "").trim();
+//
+//	        // Call EmailReportSender which will find the latest HTML and include version in subject/body
+//	        EmailReportSender.sendReport("chetan.patil@dharbor.com", version);
+//
+//	        System.out.println("Email triggered with version=" + version);
+//
+//	    } catch (Exception e) {
+//	        e.printStackTrace();
+//	    }
+//	}
 	}
