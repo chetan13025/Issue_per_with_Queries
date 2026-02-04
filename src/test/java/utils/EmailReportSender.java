@@ -167,8 +167,8 @@ public class EmailReportSender {
     private static final int SMTP_PORT = 587;
 
     // Sender details
-    private static final String FROM_EMAIL = "XYZ@dharbor.com";
-    private static final String FROM_PASSWORD = ""; // ⚠️ use app password if MFA enabled
+    private static final String FROM_EMAIL = "chetan.patil@dharbor.com";
+    private static final String FROM_PASSWORD = "Athanidhi@256"; // ⚠️ use app password if MFA enabled
 
 //    public static void sendReport(String toEmail, String reportPath) {
 //        if (reportPath == null) {

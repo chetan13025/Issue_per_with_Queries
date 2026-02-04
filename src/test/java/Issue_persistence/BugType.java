@@ -10,18 +10,25 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.markuputils.CodeLanguage;
 import com.aventstack.extentreports.markuputils.MarkupHelper;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import DataCreate.DataCreate;
+import context.ScenarioContext;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -40,6 +47,9 @@ public class BugType {
 	private static String tenantId = ConfigReader.getProperty("tenantId");
 	private static String author = ConfigReader.getProperty("author");
 	private static String BugType_endpoint = ConfigReader.getProperty("bugtype_endpoint");
+	private static String BugTypeBulk_endpoint = ConfigReader.getProperty("bugtypebulk_enpoint");
+	private static String BugTypeBulkUpdate_endpoint = ConfigReader.getProperty("bugtypeu_endpoint");
+	private static String BugTypeBulkDelete_endpoint = ConfigReader.getProperty("bugtyped_endpoint");
 	
 	private void logToExtent(String action, String reqBody, Response resp) {
 		ExtentTest current = ExtentCucumberListener.getCurrentScenario();
@@ -117,8 +127,17 @@ public class BugType {
 		WebDriver driver = null;
 		try {
 			// Launch Chrome
-			driver = new ChromeDriver();
-			driver.manage().window().maximize();
+//			driver = new ChromeDriver();
+//			driver.manage().window().maximize();
+			ChromeOptions options = new ChromeOptions();
+	        options.addArguments("--headless=new");   // modern headless
+	        options.addArguments("--window-size=1920,1080");
+	        options.addArguments("--disable-gpu");
+	        options.addArguments("--no-sandbox");
+	        options.addArguments("--disable-dev-shm-usage");
+
+	        // ✅ USE options here
+	        driver = new ChromeDriver(options);
 
 			// Open Elasticsearch _search URL
 			String url = "http://10.10.2.45:9200/piqa_issue-persistence_bug-type_index/_search?pretty&size=2000";
@@ -269,6 +288,249 @@ public class BugType {
 		captureDbSnapshot(BugTypeId, "Delete BugType");
 		captureElasticScreenshot(BugTypeId, "Delete BugType");
 	}
+	
+	@Given("I have Bulk BugType")
+	public void i_have_a_bulk_bugtype() {
+		requestBody = DataCreate.generateBugTypeBulkJson();
+		System.out.println("BugType JSON:\n" + requestBody);
+
+	}
+
+	@When("Create New Bulk BugType")
+	public void Create_new_bulk_bugtype() throws Exception {
+
+		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
+				.header("Author", author).body(requestBody).when().post(baseUrl + BugTypeBulk_endpoint).then()
+				.extract().response();
+
+		System.out.println("Response Body:\n" + response.getBody().asString());
+		System.out.println("Status Code: " + response.getStatusCode());
+
+		// ✅ STORE IDs FROM DATA[]
+		List<Integer> idsFromResponse = response.jsonPath().getList("DATA.id");
+
+		ScenarioContext.Ids.clear();
+		ScenarioContext.Ids.addAll(idsFromResponse);
+
+		System.out.println("Stored BugTypeIds: " + ScenarioContext.Ids);
+
+		ScenarioContext.RequestBodyForValidation = requestBody;
+
+		logToExtent("Create BugType Response", requestBody, response);
+
+		for (Integer id : ScenarioContext.Ids) {
+			captureDbSnapshot(id, "Create Bulk BugType");
+			captureElasticScreenshot(id, "Create Bulk BugType"+": "+id);
+			ApiDataValidator.validateDbNotNullExcept(id, "BugType", null);
+		}
+	}
+
+	private String injectBugTypeIdsIntoBulk(String json, List<Integer> bugtypeIds) throws Exception {
+
+		ObjectMapper mapper = new ObjectMapper();
+
+		Map<String, Object> root = mapper.readValue(json, new TypeReference<Map<String, Object>>() {
+		});
+
+		List<Map<String, Object>> bulk = (List<Map<String, Object>>) root.get("bulk");
+
+		if (bulk.size() != bugtypeIds.size()) {
+			throw new IllegalStateException(
+					"Bulk size mismatch. bulk=" + bulk.size() + " BugTypeIds=" + bugtypeIds.size());
+		}
+
+		for (int i = 0; i < bulk.size(); i++) {
+			bulk.get(i).put("id", bugtypeIds.get(i));
+		}
+
+		return mapper.writeValueAsString(root);
+	}
+
+	@When("Update PUT Bulk BugType")
+	public void Update_put_bulk_bugtype() throws Exception {
+
+	    List<Integer> bugtypeIds = ScenarioContext.Ids;
+
+	    if (bugtypeIds == null || bugtypeIds.isEmpty()) {
+	        throw new IllegalStateException(
+	                "No BehaviorIds found. Make sure CREATE scenario ran before UPDATE."
+	        );
+	    }
+
+	    // 1️⃣ Generate bulk JSON
+	    String newJson = DataCreate.generateBugTypeBulkJson();
+
+	    // 2️⃣ Inject stored IDs
+	    newJson = injectBugTypeIdsIntoBulk(newJson, bugtypeIds);
+
+	    // 3️⃣ Send PUT request
+	    response = given()
+	            .header("Content-Type", "application/json")
+	            .header("X-TENANT-ID", tenantId)
+	            .header("Author", author)
+	            .body(newJson)
+	            .when()
+	            .put(baseUrl + BugTypeBulkUpdate_endpoint)
+	            .then()
+	            .extract()
+	            .response();
+
+	    System.out.println("PUT Request Body:\n" + newJson);
+	    System.out.println("PUT Response Body:\n" + response.getBody().asString());
+	    System.out.println("Status Code: " + response.getStatusCode());
+
+	    ScenarioContext.RequestBodyForValidation = newJson;
+
+	    logToExtent("Update BugType (PUT)", newJson, response);
+
+	    for (Integer id : bugtypeIds) {
+	        captureDbSnapshot(id, "Update Bulk BugType");
+	        captureElasticScreenshot(id, "Update Bulk BugType"+": "+id);
+	        ApiDataValidator.validateDbNotNullExcept(id, "BugType", null);
+	    }
+	}
+
+	
+	@When("Delete Bulk BugType")
+	public void Delete_bulk_bugtype() throws Exception {
+
+	    List<Integer> bugtypeIds = ScenarioContext.Ids;
+
+	    if (bugtypeIds == null || bugtypeIds.isEmpty()) {
+	        throw new IllegalStateException(
+	                "No BehaviorIds found. Run CREATE scenario first."
+	        );
+	    }
+
+	    // ✅ Build request JSON directly
+	    String updateRequestBody = new ObjectMapper()
+	            .writeValueAsString(Map.of(
+	                    "trace", true,
+	                    "skipErrors", true,
+	                    "updateExisting", true,
+	                    "bulk", bugtypeIds,
+	                    "skipSofDeleteValidation", false
+	            ));
+
+	    response = given()
+	            .header("Content-Type", "application/json")
+	            .header("X-TENANT-ID", tenantId)
+	            .header("Author", author)
+	            .body(updateRequestBody)
+	            .when()
+	            .delete(baseUrl + BugTypeBulkDelete_endpoint)
+	            .then()
+	            .extract()
+	            .response();
+
+	    System.out.println("Delete Request Body:\n" + updateRequestBody);
+	    System.out.println("Delete Response Body:\n" + response.getBody().asString());
+	    System.out.println("Status Code: " + response.getStatusCode());
+
+	    ScenarioContext.RequestBodyForValidation = updateRequestBody;
+
+	    logToExtent("Update BugType (Delete)", updateRequestBody, response);
+
+	    for (Integer id : bugtypeIds) {
+	        captureDbSnapshot(id, "Delete Bulk BugType");
+	        captureElasticScreenshot(id, "Delete Bulk BugType");
+	        
+	    }
+	}
+	
+	
+	@Then("Validate Bulk BugType Request Response ES DB")
+	public void validate_bulk_bugtype_request_response_es_db() throws Exception {
+
+	    ObjectMapper mapper = new ObjectMapper();
+
+	    int totalIds = 0;
+	    int failedIds = 0;
+
+	    ExtentTest parent = ExtentCucumberListener.getCurrentScenario();
+
+	    // ---------------- Parse request bulk ----------------
+	    Map<String, Object> reqRoot =
+	            mapper.readValue(
+	                    ScenarioContext.RequestBodyForValidation,
+	                    new TypeReference<Map<String, Object>>() {}
+	            );
+
+	    List<Map<String, Object>> requestBulk =
+	            (List<Map<String, Object>>) reqRoot.get("bulk");
+
+	    // ---------------- Parse response DATA ----------------
+	    List<Map<String, Object>> responseData =
+	            response.jsonPath().getList("DATA");
+
+	    if (requestBulk == null || responseData == null) {
+	        parent.fail("Request bulk or response DATA is null");
+	        return;
+	    }
+
+	    parent.info("🔍 Bulk BugType validation started | Request size="
+	            + requestBulk.size() + " | Response size=" + responseData.size());
+
+	    int size = Math.min(requestBulk.size(), responseData.size());
+
+	    // ---------------- INDEX-BASED LOOP (✅ CORRECT) ----------------
+	    for (int i = 0; i < size; i++) {
+
+	        totalIds++;
+
+	        try {
+	            Map<String, Object> reqObj  = requestBulk.get(i);
+	            Map<String, Object> respObj = responseData.get(i);
+
+	            int id = Integer.parseInt(respObj.get("id").toString());
+
+	            String requestJson  = mapper.writeValueAsString(reqObj);
+	            String responseJson = mapper.writeValueAsString(respObj);
+
+	            parent.info("🔎 Validating BugType ID=" + id);
+
+	            ApiDataValidator.validateKeysAcrosRequestResponseEsDb(
+	                    requestJson,
+	                    responseJson,
+	                    id,
+	                    "bug-type",      // ES index
+	                    "BugType",       // DB table
+	                    false,
+	                    new String[]{
+	                            "deleted",
+	                            "createdDate",
+	                            "updatedDate"
+	                    },
+	                    new String[]{"id"},     // exclude request-only
+	                    new String[]{"_class"}  // exclude ES-only
+	            );
+
+	        } catch (Exception e) {
+	            failedIds++;
+	            parent.fail("❌ Validation exception for one ID: " + e.getMessage());
+	        }
+	    }
+
+	    // ---------------- BULK SUMMARY ----------------
+	    String bannerColor = (failedIds == 0) ? "#1e8e3e" : "#d93025";
+	    String statusWord  = (failedIds == 0) ? "PASSED ✓" : "FAILED ✗";
+
+	    String summaryHtml =
+	            "<div style='padding:10px;border-left:6px solid " + bannerColor + ";'>" +
+	            "<b>Bulk BugType Validation " + statusWord + "</b><br>" +
+	            "Total IDs: " + totalIds +
+	            " | Passed: " + (totalIds - failedIds) +
+	            " | Failed: " + failedIds +
+	            "</div>";
+
+	    if (failedIds > 0) {
+	        parent.fail(summaryHtml);
+	    } else {
+	        parent.pass(summaryHtml);
+	    }
+	}
+
+
 	
 	@Then("The BugType response status code should be {int}")
 	public void the_bugtype_response_status_code_should_be(Integer statusCode) {

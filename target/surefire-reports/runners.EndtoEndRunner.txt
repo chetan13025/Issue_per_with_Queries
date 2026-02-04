@@ -1,186 +1,73 @@
 -------------------------------------------------------------------------------
 Test set: runners.EndtoEndRunner
 -------------------------------------------------------------------------------
-Tests run: 246, Failures: 26, Errors: 0, Skipped: 0, Time elapsed: 1673 s <<< FAILURE! -- in runners.EndtoEndRunner
-Component API testing.To verify that creating new Component -- Time elapsed: 15.80 s <<< FAILURE!
-java.lang.AssertionError: ❌ Key validation failed. Check Extent report.
-	at validators.ApiDataValidator.validateKeysAcrosRequestResponseEsDb(ApiDataValidator.java:3535)
-	at validators.ApiDataValidator.validateKeysAcrosRequestResponseEsDb(ApiDataValidator.java:3339)
-	at Issue_persistence.Component.validate_api_es_db_for_componentId_dynamic(Component.java:320)
-	at ✽.Validate API ES and DB for ComponentId after POST skipping ES false excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/component.feature:9)
+Tests run: 129, Failures: 11, Errors: 0, Skipped: 0, Time elapsed: 2757 s <<< FAILURE! -- in runners.EndtoEndRunner
+Bulk API testing.To verify that after Delete request data should get removed DataBase -- Time elapsed: 21.45 s <<< FAILURE!
+java.lang.AssertionError: expected:<200> but was:<400>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:647)
+	at org.junit.Assert.assertEquals(Assert.java:633)
+	at Issue_persistence.BugType.the_bugtype_response_status_code_should_be(BugType.java:537)
+	at ✽.The BugType response status code should be 200(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/bulk.feature:37)
 
-Component API testing.To verify that after PUT request  data should get update in DataBase -- Time elapsed: 17.42 s <<< FAILURE!
+Bulk API testing.To verify that creating bulk Componenet -- Time elapsed: 29.02 s <<< FAILURE!
 java.lang.AssertionError: ❌ Key validation failed. Check Extent report.
 	at validators.ApiDataValidator.validateKeysAcrosRequestResponseEsDb(ApiDataValidator.java:3535)
-	at validators.ApiDataValidator.validateKeysAcrosRequestResponseEsDb(ApiDataValidator.java:3339)
-	at Issue_persistence.Component.validate_api_es_db_for_componentId_dynamic(Component.java:320)
-	at ✽.Validate API ES and DB for ComponentId after PUT skipping ES false excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/component.feature:23)
+	at Issue_persistence.Component.validate_bulk_Component_request_response_es_db(Component.java:495)
+	at ✽.Validate Bulk Component Request Response ES DB(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/bulk.feature:44)
 
-Component API testing.To verify that after Patch request data should get update in DataBase -- Time elapsed: 16.04 s <<< FAILURE!
+Bulk API testing.To verify that after PUT request data should get update in DataBase #3 -- Time elapsed: 25.85 s <<< FAILURE!
 java.lang.AssertionError: ❌ Key validation failed. Check Extent report.
 	at validators.ApiDataValidator.validateKeysAcrosRequestResponseEsDb(ApiDataValidator.java:3535)
-	at validators.ApiDataValidator.validateKeysAcrosRequestResponseEsDb(ApiDataValidator.java:3339)
-	at Issue_persistence.Component.validate_api_es_db_for_componentId_dynamic(Component.java:320)
-	at ✽.Validate API ES and DB for ComponentId after PATCH skipping ES false excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/component.feature:28)
+	at Issue_persistence.Component.validate_bulk_Component_request_response_es_db(Component.java:495)
+	at ✽.Validate Bulk Component Request Response ES DB(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/bulk.feature:50)
 
-Issue API testing.Creating New Issue -- Time elapsed: 15.56 s <<< FAILURE!
+Bulk API testing.To verify that creating Bulk Issue -- Time elapsed: 34.05 s <<< FAILURE!
 java.lang.AssertionError: ❌ Key validation failed. Check Extent report.
 	at validators.ApiDataValidator.validateKeysAcrosRequestResponseEsDb(ApiDataValidator.java:3535)
-	at validators.ApiDataValidator.validateKeysAcrosRequestResponseEsDb(ApiDataValidator.java:3339)
-	at Issue_persistence.Issue.validate_api_es_db_for_IssueId_dynamic(Issue.java:317)
-	at ✽.Validate API ES and DB for IssueId after POST skipping ES false excludingEverywhere "null" excludeFromRequest "id,deleted,createdate,updatedate" excludeFromEs "deleted"(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issue.feature:9)
+	at Issue_persistence.Issue.validate_bulk_Issue_request_response_es_db(Issue.java:484)
+	at ✽.Validate Bulk Issue Request Response ES DB(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/bulk.feature:134)
 
-Issue API testing.Updating PUT Issue Details with ID -- Time elapsed: 12.26 s <<< FAILURE!
+Bulk API testing.To verify that after PUT request data should get update in dataBase #1 -- Time elapsed: 38.64 s <<< FAILURE!
 java.lang.AssertionError: ❌ Key validation failed. Check Extent report.
 	at validators.ApiDataValidator.validateKeysAcrosRequestResponseEsDb(ApiDataValidator.java:3535)
-	at validators.ApiDataValidator.validateKeysAcrosRequestResponseEsDb(ApiDataValidator.java:3339)
-	at Issue_persistence.Issue.validate_api_es_db_for_IssueId_dynamic(Issue.java:317)
-	at ✽.Validate API ES and DB for IssueId after PUT skipping ES false excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issue.feature:22)
+	at Issue_persistence.Issue.validate_bulk_Issue_request_response_es_db(Issue.java:484)
+	at ✽.Validate Bulk Issue Request Response ES DB(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/bulk.feature:140)
 
-Issue API testing.Updating Patch Issue Details with ID -- Time elapsed: 18.53 s <<< FAILURE!
+Bulk API testing.To verify that after PUT request data should get update in DataBase #9 -- Time elapsed: 32.39 s <<< FAILURE!
 java.lang.AssertionError: ❌ Key validation failed. Check Extent report.
 	at validators.ApiDataValidator.validateKeysAcrosRequestResponseEsDb(ApiDataValidator.java:3535)
-	at validators.ApiDataValidator.validateKeysAcrosRequestResponseEsDb(ApiDataValidator.java:3339)
-	at Issue_persistence.Issue.validate_api_es_db_for_IssueId_dynamic(Issue.java:317)
-	at ✽.Validate API ES and DB for IssueId after PATCH skipping ES false excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issue.feature:27)
+	at Issue_persistence.IssueCollaborator.validate_bulk_IssueCollaborator_request_response_es_db(IssueCollaborator.java:484)
+	at ✽.Validate Bulk IssueCollaborator Request Response ES DB(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/bulk.feature:176)
 
-IssueCollaborator API testing.Updating PUT IssueCollaborator Details with ID -- Time elapsed: 12.52 s <<< FAILURE!
+Bulk API testing.To verify that after PUT request data should get update in DataBase #13 -- Time elapsed: 24.93 s <<< FAILURE!
 java.lang.AssertionError: ❌ Key validation failed. Check Extent report.
 	at validators.ApiDataValidator.validateKeysAcrosRequestResponseEsDb(ApiDataValidator.java:3535)
-	at validators.ApiDataValidator.validateKeysAcrosRequestResponseEsDb(ApiDataValidator.java:3339)
-	at Issue_persistence.IssueCollaborator.validate_api_es_db_for_IssueCollaboratorId_dynamic(IssueCollaborator.java:309)
-	at ✽.Validate API ES and DB for IssueCollaboratorId after PUT skipping ES false excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issuecollaborator.feature:22)
+	at Issue_persistence.IssueFeatureStatistics.validate_bulk_IssueFeatureStatistics_request_response_es_db(IssueFeatureStatistics.java:489)
+	at ✽.Validate Bulk IssueFeatureStatistics Request Response ES DB(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/bulk.feature:266)
 
-IssueCollaborator API testing.Updating Patch IssueCollaborator Details with ID -- Time elapsed: 12.90 s <<< FAILURE!
+Bulk API testing.To verify that creating Bulk IssueRootCause -- Time elapsed: 20.57 s <<< FAILURE!
 java.lang.AssertionError: ❌ Key validation failed. Check Extent report.
 	at validators.ApiDataValidator.validateKeysAcrosRequestResponseEsDb(ApiDataValidator.java:3535)
-	at validators.ApiDataValidator.validateKeysAcrosRequestResponseEsDb(ApiDataValidator.java:3339)
-	at Issue_persistence.IssueCollaborator.validate_api_es_db_for_IssueCollaboratorId_dynamic(IssueCollaborator.java:309)
-	at ✽.Validate API ES and DB for IssueCollaboratorId after PATCH skipping ES false excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issuecollaborator.feature:27)
+	at Issue_persistence.IssueRootCause.validate_bulk_IssueRootCause_request_response_es_db(IssueRootCause.java:487)
+	at ✽.Validate Bulk IssueRootCause Request Response ES DB(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/bulk.feature:368)
 
-IssueComments API testing.Updating PUT IssueComments with ID -- Time elapsed: 12.88 s <<< FAILURE!
+Bulk API testing.To verify that after PUT request data should get update in DataBase #18 -- Time elapsed: 17.31 s <<< FAILURE!
 java.lang.AssertionError: ❌ Key validation failed. Check Extent report.
 	at validators.ApiDataValidator.validateKeysAcrosRequestResponseEsDb(ApiDataValidator.java:3535)
-	at validators.ApiDataValidator.validateKeysAcrosRequestResponseEsDb(ApiDataValidator.java:3339)
-	at Issue_persistence.IssueComments.validate_api_es_db_for_IssueCommentsId_dynamic(IssueComments.java:311)
-	at ✽.Validate API ES and DB for IssueCommentsId after PUT skipping ES false excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issuecomment.feature:21)
+	at Issue_persistence.IssueRootCause.validate_bulk_IssueRootCause_request_response_es_db(IssueRootCause.java:487)
+	at ✽.Validate Bulk IssueRootCause Request Response ES DB(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/bulk.feature:374)
 
-IssueComments API testing.Updating Patch IssueComments with ID -- Time elapsed: 12.14 s <<< FAILURE!
-java.lang.AssertionError: ❌ Key validation failed. Check Extent report.
-	at validators.ApiDataValidator.validateKeysAcrosRequestResponseEsDb(ApiDataValidator.java:3535)
-	at validators.ApiDataValidator.validateKeysAcrosRequestResponseEsDb(ApiDataValidator.java:3339)
-	at Issue_persistence.IssueComments.validate_api_es_db_for_IssueCommentsId_dynamic(IssueComments.java:311)
-	at ✽.Validate API ES and DB for IssueCommentsId after PATCH skipping ES false excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issuecomment.feature:26)
+Bulk API testing.To verify that after PUT request data should get removed from DataBase -- Time elapsed: 8.872 s <<< FAILURE!
+java.lang.AssertionError: DB row not found for Id=27
+	at validators.ApiDataValidator.validateDbNotNullExcept(ApiDataValidator.java:3882)
+	at Issue_persistence.IssueRootCause.Delete_bulk_IssueRootCause(IssueRootCause.java:434)
+	at ✽.Delete Bulk IssueRootCause(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/bulk.feature:378)
 
-IssueFeatureStatistics API testing.Creating New IssueFeatureStatistics -- Time elapsed: 15.09 s <<< FAILURE!
+Bulk API testing.To verify that after PUT request data should get update in Database #3 -- Time elapsed: 22.41 s <<< FAILURE!
 java.lang.AssertionError: ❌ Key validation failed. Check Extent report.
 	at validators.ApiDataValidator.validateKeysAcrosRequestResponseEsDb(ApiDataValidator.java:3535)
-	at validators.ApiDataValidator.validateKeysAcrosRequestResponseEsDb(ApiDataValidator.java:3339)
-	at Issue_persistence.IssueFeatureStatistics.validate_api_es_db_for_IssueFeatureStatisticsID_dynamic(IssueFeatureStatistics.java:311)
-	at ✽.Validate API ES and DB for IssueFeatureStatisticsID after POST skipping ES false excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issuefeaturestatistics.feature:9)
-
-IssueFeatureStatistics API testing.Updating PUT IssueFeatureStatistics Details with ID -- Time elapsed: 13.37 s <<< FAILURE!
-java.lang.AssertionError: ❌ Key validation failed. Check Extent report.
-	at validators.ApiDataValidator.validateKeysAcrosRequestResponseEsDb(ApiDataValidator.java:3535)
-	at validators.ApiDataValidator.validateKeysAcrosRequestResponseEsDb(ApiDataValidator.java:3339)
-	at Issue_persistence.IssueFeatureStatistics.validate_api_es_db_for_IssueFeatureStatisticsID_dynamic(IssueFeatureStatistics.java:311)
-	at ✽.Validate API ES and DB for IssueFeatureStatisticsID after PUT skipping ES false excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issuefeaturestatistics.feature:22)
-
-IssueFeatureStatistics API testing.Updating Patch IssueFeatureStatistics Details with ID -- Time elapsed: 13.22 s <<< FAILURE!
-java.lang.AssertionError: ❌ Key validation failed. Check Extent report.
-	at validators.ApiDataValidator.validateKeysAcrosRequestResponseEsDb(ApiDataValidator.java:3535)
-	at validators.ApiDataValidator.validateKeysAcrosRequestResponseEsDb(ApiDataValidator.java:3339)
-	at Issue_persistence.IssueFeatureStatistics.validate_api_es_db_for_IssueFeatureStatisticsID_dynamic(IssueFeatureStatistics.java:311)
-	at ✽.Validate API ES and DB for IssueFeatureStatisticsID after PATCH skipping ES false excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issuefeaturestatistics.feature:27)
-
-IssueLinked API testing.Updating PUT IssueLinked Details with ID -- Time elapsed: 11.82 s <<< FAILURE!
-java.lang.AssertionError: ❌ Key validation failed. Check Extent report.
-	at validators.ApiDataValidator.validateKeysAcrosRequestResponseEsDb(ApiDataValidator.java:3535)
-	at validators.ApiDataValidator.validateKeysAcrosRequestResponseEsDb(ApiDataValidator.java:3339)
-	at Issue_persistence.IssueLinked.validate_api_es_db_for_IssueLinkedId_dynamic(IssueLinked.java:312)
-	at ✽.Validate API ES and DB for IssueLinkedId after PUT skipping ES false excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issuelinked.feature:23)
-
-IssueLinked API testing.Updating Patch IssueLinked Details with ID -- Time elapsed: 11.94 s <<< FAILURE!
-java.lang.AssertionError: ❌ Key validation failed. Check Extent report.
-	at validators.ApiDataValidator.validateKeysAcrosRequestResponseEsDb(ApiDataValidator.java:3535)
-	at validators.ApiDataValidator.validateKeysAcrosRequestResponseEsDb(ApiDataValidator.java:3339)
-	at Issue_persistence.IssueLinked.validate_api_es_db_for_IssueLinkedId_dynamic(IssueLinked.java:312)
-	at ✽.Validate API ES and DB for IssueLinkedId after PATCH skipping ES false excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issuelinked.feature:28)
-
-issueLog API testing.Updating PUT IssueLog Details with ID -- Time elapsed: 13.06 s <<< FAILURE!
-java.lang.AssertionError: ❌ Key validation failed. Check Extent report.
-	at validators.ApiDataValidator.validateKeysAcrosRequestResponseEsDb(ApiDataValidator.java:3535)
-	at validators.ApiDataValidator.validateKeysAcrosRequestResponseEsDb(ApiDataValidator.java:3339)
-	at Issue_persistence.IssueLog.validate_api_es_db_for_IssueLogId_dynamic(IssueLog.java:311)
-	at ✽.Validate API ES and DB for IssueLogId after PUT skipping ES false excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issuelog.feature:22)
-
-issueLog API testing.Updating Patch IssueLog Details with ID -- Time elapsed: 12.20 s <<< FAILURE!
-java.lang.AssertionError: ❌ Key validation failed. Check Extent report.
-	at validators.ApiDataValidator.validateKeysAcrosRequestResponseEsDb(ApiDataValidator.java:3535)
-	at validators.ApiDataValidator.validateKeysAcrosRequestResponseEsDb(ApiDataValidator.java:3339)
-	at Issue_persistence.IssueLog.validate_api_es_db_for_IssueLogId_dynamic(IssueLog.java:311)
-	at ✽.Validate API ES and DB for IssueLogId after PATCH skipping ES false excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issuelog.feature:27)
-
-IssueRootCause API testing.Creating New IssueRootCause -- Time elapsed: 12.25 s <<< FAILURE!
-java.lang.AssertionError: ❌ Key validation failed. Check Extent report.
-	at validators.ApiDataValidator.validateKeysAcrosRequestResponseEsDb(ApiDataValidator.java:3535)
-	at validators.ApiDataValidator.validateKeysAcrosRequestResponseEsDb(ApiDataValidator.java:3339)
-	at Issue_persistence.IssueRootCause.validate_api_es_db_for_IssueRootCauseId_dynamic(IssueRootCause.java:313)
-	at ✽.Validate API ES and DB for IssueRootCauseId after POST skipping ES false excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issuerootcause.feature:9)
-
-IssueRootCause API testing.Updating PUT IssueRootCause Details with ID -- Time elapsed: 12.24 s <<< FAILURE!
-java.lang.AssertionError: ❌ Key validation failed. Check Extent report.
-	at validators.ApiDataValidator.validateKeysAcrosRequestResponseEsDb(ApiDataValidator.java:3535)
-	at validators.ApiDataValidator.validateKeysAcrosRequestResponseEsDb(ApiDataValidator.java:3339)
-	at Issue_persistence.IssueRootCause.validate_api_es_db_for_IssueRootCauseId_dynamic(IssueRootCause.java:313)
-	at ✽.Validate API ES and DB for IssueRootCauseId after PUT skipping ES false excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issuerootcause.feature:22)
-
-IssueRootCause API testing.Updating Patch IssueRootCause Details with ID -- Time elapsed: 12.03 s <<< FAILURE!
-java.lang.AssertionError: ❌ Key validation failed. Check Extent report.
-	at validators.ApiDataValidator.validateKeysAcrosRequestResponseEsDb(ApiDataValidator.java:3535)
-	at validators.ApiDataValidator.validateKeysAcrosRequestResponseEsDb(ApiDataValidator.java:3339)
-	at Issue_persistence.IssueRootCause.validate_api_es_db_for_IssueRootCauseId_dynamic(IssueRootCause.java:313)
-	at ✽.Validate API ES and DB for IssueRootCauseId after PATCH skipping ES false excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issuerootcause.feature:27)
-
-IssueVote API testing.To Verify that New IssueVote is creating -- Time elapsed: 13.27 s <<< FAILURE!
-java.lang.AssertionError: ❌ Key validation failed. Check Extent report.
-	at validators.ApiDataValidator.validateKeysAcrosRequestResponseEsDb(ApiDataValidator.java:3535)
-	at validators.ApiDataValidator.validateKeysAcrosRequestResponseEsDb(ApiDataValidator.java:3339)
-	at Issue_persistence.IssueVote.validate_api_es_db_for_IssueVoteId_dynamic(IssueVote.java:313)
-	at ✽.Validate API ES and DB for IssueVoteId after POST skipping ES false excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issuevote.feature:9)
-
-IssueVote API testing.To verify that after PUT request Data should get update in Data Base -- Time elapsed: 13.46 s <<< FAILURE!
-java.lang.AssertionError: ❌ Key validation failed. Check Extent report.
-	at validators.ApiDataValidator.validateKeysAcrosRequestResponseEsDb(ApiDataValidator.java:3535)
-	at validators.ApiDataValidator.validateKeysAcrosRequestResponseEsDb(ApiDataValidator.java:3339)
-	at Issue_persistence.IssueVote.validate_api_es_db_for_IssueVoteId_dynamic(IssueVote.java:313)
-	at ✽.Validate API ES and DB for IssueVoteId after PUT skipping ES false excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issuevote.feature:22)
-
-IssueVote API testing.To verify that after PATCH request Data should get udpate in DataBase -- Time elapsed: 13.32 s <<< FAILURE!
-java.lang.AssertionError: ❌ Key validation failed. Check Extent report.
-	at validators.ApiDataValidator.validateKeysAcrosRequestResponseEsDb(ApiDataValidator.java:3535)
-	at validators.ApiDataValidator.validateKeysAcrosRequestResponseEsDb(ApiDataValidator.java:3339)
-	at Issue_persistence.IssueVote.validate_api_es_db_for_IssueVoteId_dynamic(IssueVote.java:313)
-	at ✽.Validate API ES and DB for IssueVoteId after PATCH skipping ES false excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issuevote.feature:27)
-
-SprintProposal API testing.To verify that Creating new SprintProposal -- Time elapsed: 16.98 s <<< FAILURE!
-java.lang.AssertionError: ❌ Key validation failed. Check Extent report.
-	at validators.ApiDataValidator.validateKeysAcrosRequestResponseEsDb(ApiDataValidator.java:3535)
-	at validators.ApiDataValidator.validateKeysAcrosRequestResponseEsDb(ApiDataValidator.java:3339)
-	at Issue_persistence.SprintProposal.validate_api_es_db_for_SprintProposalId_dynamic(SprintProposal.java:314)
-	at ✽.Validate API ES and DB for SprintProposalId after POST skipping ES false excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/sprintproposal.feature:9)
-
-SprintProposal API testing.To verify that after PUT request data should get update in DataBase -- Time elapsed: 13.67 s <<< FAILURE!
-java.lang.AssertionError: ❌ Key validation failed. Check Extent report.
-	at validators.ApiDataValidator.validateKeysAcrosRequestResponseEsDb(ApiDataValidator.java:3535)
-	at validators.ApiDataValidator.validateKeysAcrosRequestResponseEsDb(ApiDataValidator.java:3339)
-	at Issue_persistence.SprintProposal.validate_api_es_db_for_SprintProposalId_dynamic(SprintProposal.java:314)
-	at ✽.Validate API ES and DB for SprintProposalId after PUT skipping ES false excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/sprintproposal.feature:22)
-
-SprintProposal API testing.To verify that after Patch request data should get update in DataBase -- Time elapsed: 14.49 s <<< FAILURE!
-java.lang.AssertionError: ❌ Key validation failed. Check Extent report.
-	at validators.ApiDataValidator.validateKeysAcrosRequestResponseEsDb(ApiDataValidator.java:3535)
-	at validators.ApiDataValidator.validateKeysAcrosRequestResponseEsDb(ApiDataValidator.java:3339)
-	at Issue_persistence.SprintProposal.validate_api_es_db_for_SprintProposalId_dynamic(SprintProposal.java:314)
-	at ✽.Validate API ES and DB for SprintProposalId after PATCH skipping ES false excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/sprintproposal.feature:27)
+	at Issue_persistence.IssueVote.validate_bulk_IssueVote_request_response_es_db(IssueVote.java:460)
+	at ✽.Validate Bulk IssueVote Request Response ES DB(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/bulk.feature:518)
 

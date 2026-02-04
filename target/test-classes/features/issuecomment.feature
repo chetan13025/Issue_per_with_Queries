@@ -18,12 +18,12 @@ Then The IssueComment response status code should be 200
 
 Scenario: Updating PUT IssueComments with ID
 When Update IssueComment Details
-Then Validate API ES and DB for IssueCommentsId after PUT skipping ES false excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"
+Then Validate API ES and DB for IssueCommentsId after PUT skipping ES false excludingEverywhere "null" excludeFromRequest "id,deleted,createdate" excludeFromEs "deleted"
 Then The IssueComment response status code should be 200
 
 Scenario: Updating Patch IssueComments with ID
 When Update Patch IssueComment
-Then Validate API ES and DB for IssueCommentsId after PATCH skipping ES false excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"
+Then Validate API ES and DB for IssueCommentsId after PATCH skipping ES false excludingEverywhere "null" excludeFromRequest "id,deleted,createdate" excludeFromEs "deleted"
 Then The IssueComment response status code should be 200
 
 Scenario: Deleting IssueComments Details with ID

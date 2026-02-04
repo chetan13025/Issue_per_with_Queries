@@ -21,23 +21,24 @@ public class DataCreate {
 	static Random random = new Random();
 
 	public static String generateUserJson() {
-		String firstName = faker.name().firstName();
-		String lastName = faker.name().lastName();
-		String userId = "USR" + faker.number().digits(6);
-		int projectId = faker.number().numberBetween(1000, 99999);
-		JSONObject json = new JSONObject();
-		json.put("avatar", faker.internet().avatar());
-		json.put("firstName", firstName);
-		json.put("fullName", firstName + " " + lastName);
-		json.put("lastName", lastName);
-		json.put("position", faker.job().position());
-		json.put("projectId", projectId);
-		json.put("role", faker.job().title());
-		json.put("userId", userId);
-		json.put("userName", faker.name().username());
+	    String firstName = faker.name().firstName();
+	    String lastName  = faker.name().lastName();
+	    String userId    = "USR" + faker.number().digits(6);
+	    int projectId    = faker.number().numberBetween(1000, 99999);
 
-		return json.toString(1);
+	    return "{\n" +
+	            "  \"avatar\": \"" + faker.internet().avatar() + "\",\n" +
+	            "  \"firstName\": \"" + firstName + "\",\n" +
+	            "  \"fullName\": \"" + firstName + " " + lastName + "\",\n" +
+	            "  \"lastName\": \"" + lastName + "\",\n" +
+	            "  \"position\": \"" + faker.job().position() + "\",\n" +
+	            "  \"projectId\": " + projectId + ",\n" +
+	            "  \"role\": \"" + faker.job().title() + "\",\n" +
+	            "  \"userId\": \"" + userId + "\",\n" +
+	            "  \"userName\": \"" + faker.name().username() + "\"\n" +
+	            "}";
 	}
+
 
 	public static String generateUserProjcetJson() {
 
@@ -45,10 +46,9 @@ public class DataCreate {
 		String userId = "USR" + faker.number().digits(6); // Random User ID like USR123456
 		String userName = faker.name().username(); // Random username
 
-		String json = "{\n" + "  \"projectId\": " + projectId + ",\n" + "  \"userId\": \"" + userId + "\",\n"
+		return "{\n" + "  \"projectId\": " + projectId + ",\n" + "  \"userId\": \"" + userId + "\",\n"
 				+ "  \"userName\": \"" + userName + "\"\n" + "}";
 
-		return json;
 	}
 
 	public static String generateUserStateJson() {
@@ -58,11 +58,9 @@ public class DataCreate {
 		String userName = faker.name().username();
 		String tokenExpirationDate = Instant.now().toString(); // ISO format like 1971-10-11T15:03:42.171Z
 
-		String json = "{\n" + "  \"status\": \"" + status + "\",\n" + "  \"userId\": \"" + userId + "\",\n"
+		return "{\n" + "  \"status\": \"" + status + "\",\n" + "  \"userId\": \"" + userId + "\",\n"
 				+ "  \"userName\": \"" + userName + "\",\n" + "  \"tokenExpirationDate\": \"" + tokenExpirationDate
 				+ "\"\n" + "}";
-
-		return json;
 	}
 
 	public static String generateIssueJson() {
@@ -144,9 +142,9 @@ public class DataCreate {
 		// boolean stays boolean in JSON
 		String isReproducedStep = String.valueOf(faker.bool().bool());
 
-		String json = "{\n" + "  \"projectId\": " + projectId + ",\n" + "  \"createUserId\": \""
-				+ esc.apply(createUserId) + "\",\n" + "  \"dueDate\": \"" + esc.apply(dueDate) + "\",\n"
-				+ "  \"createUserName\": \"" + esc.apply(createUserName) + "\",\n" + "  \"fixVersions\": \""
+		return "{\n" + "  \"projectId\": " + projectId + ",\n" + "  \"createUserId\": \"" + esc.apply(createUserId)
+				+ "\",\n" + "  \"dueDate\": \"" + esc.apply(dueDate) + "\",\n" + "  \"createUserName\": \""
+				+ esc.apply(createUserName) + "\",\n" + "  \"fixVersions\": \""
 				+ esc.apply("v" + faker.number().numberBetween(1, 9) + ".0.0") + "\",\n" + "  \"reporterName\": \""
 				+ esc.apply(reporterName) + "\",\n" + "  \"productName\": \"" + esc.apply(productName) + "\",\n"
 				+ "  \"priorityId\": " + priorityId + ",\n" + "  \"moduleCustomLabel\": \""
@@ -187,15 +185,13 @@ public class DataCreate {
 				+ "\",\n" + "  \"moduleId\": " + moduleId + ",\n" + "  \"moduleLabel\": \"" + moduleLabel + "\"\n"
 				+ "}";
 
-		return json;
 	}
 
 	public static String generateIssueCodeJson() {
 		String projectCode = "PRJ_" + faker.number().digits(4);
 
-		String json = "{\n" + "  \"projectCode\": \"" + projectCode + "\"\n" + "}";
+		return "{\n" + "  \"projectCode\": \"" + projectCode + "\"\n" + "}";
 
-		return json;
 	}
 
 	public static String generateIssueCollaboratorsJson() {
@@ -203,9 +199,8 @@ public class DataCreate {
 		int issueId = faker.number().numberBetween(100000, 999900);
 		String userId = "USR_" + faker.number().numberBetween(10000, 99900);
 
-		String json = "{\n" + "  \"issueId\": " + issueId + ",\n" + "  \"userId\": \"" + userId + "\"\n" + "}";
+		return "{\n" + "  \"issueId\": " + issueId + ",\n" + "  \"userId\": \"" + userId + "\"\n" + "}";
 
-		return json;
 	}
 
 	public static String generateIssueCommentsJson() {
@@ -216,11 +211,10 @@ public class DataCreate {
 		String currentState = faker.options().option("Open", "In Progress", "Closed", "Reopened");
 		String previousState = faker.options().option("Open", "In Progress", "Closed", "Reopened");
 
-		String json = "{\n" + "  \"commentId\": " + commentId + ",\n" + "  \"issueId\": " + issueId + ",\n"
-				+ "  \"type\": \"" + type + "\",\n" + "  \"currentState\": \"" + currentState + "\",\n"
-				+ "  \"previousState\": \"" + previousState + "\"\n" + "}";
+		return "{\n" + "  \"commentId\": " + commentId + ",\n" + "  \"issueId\": " + issueId + ",\n" + "  \"type\": \""
+				+ type + "\",\n" + "  \"currentState\": \"" + currentState + "\",\n" + "  \"previousState\": \""
+				+ previousState + "\"\n" + "}";
 
-		return json;
 	}
 
 	public static String generateIssueComponentJson() {
@@ -230,10 +224,9 @@ public class DataCreate {
 		int projectId = faker.number().numberBetween(1000, 9999);
 		String label = faker.lorem().word(); // random string
 
-		String json = "{\n" + "  \"componentId\": " + componentId + ",\n" + "  \"issueId\": " + issueId + ",\n"
+		return "{\n" + "  \"componentId\": " + componentId + ",\n" + "  \"issueId\": " + issueId + ",\n"
 				+ "  \"projectId\": " + projectId + ",\n" + "  \"label\": \"" + label + "\"\n" + "}";
 
-		return json;
 	}
 
 	public static String generateIssueFeatureCatalogJson() {
@@ -243,10 +236,9 @@ public class DataCreate {
 		int projectId = faker.number().numberBetween(1000, 9999);
 		String fieldValue = faker.lorem().word();
 
-		String json = "{\n" + "  \"fieldName\": \"" + fieldName + "\",\n" + "  \"ruleName\": \"" + ruleName + "\",\n"
+		return "{\n" + "  \"fieldName\": \"" + fieldName + "\",\n" + "  \"ruleName\": \"" + ruleName + "\",\n"
 				+ "  \"projectId\": " + projectId + ",\n" + "  \"fieldValue\": \"" + fieldValue + "\"\n" + "}";
 
-		return json;
 	}
 
 	public static String generateIssueFeatureGroupJson() {
@@ -254,13 +246,11 @@ public class DataCreate {
 		String criteriaGroup = faker.lorem().word();
 		String label = faker.lorem().word();
 
-		String json = "{\n" + "  \"criteriaGroup\": \"" + criteriaGroup + "\",\n" + "  \"label\": \"" + label + "\"\n"
-				+ "}";
+		return "{\n" + "  \"criteriaGroup\": \"" + criteriaGroup + "\",\n" + "  \"label\": \"" + label + "\"\n" + "}";
 
-		return json;
 	}
 
-	public static String generateissueFeatureStatisticsJson() {
+	public static String generateIssueFeatureStatisticsJson() {
 
 		int quantitySprints = faker.number().numberBetween(1, 100);
 		int issueId = faker.number().numberBetween(1000, 9999);
@@ -271,13 +261,12 @@ public class DataCreate {
 		int totalLinkedIssues = faker.number().numberBetween(10, 100);
 		int totalClosedIssues = faker.number().numberBetween(5, totalLinkedIssues);
 
-		String json = "{\n" + "  \"quantitySprints\": " + quantitySprints + ",\n" + "  \"issueId\": " + issueId + ",\n"
+		return "{\n" + "  \"quantitySprints\": " + quantitySprints + ",\n" + "  \"issueId\": " + issueId + ",\n"
 				+ "  \"createUserId\": \"" + createUserId + "\",\n" + "  \"updateUserId\": \"" + updateUserId + "\",\n"
 				+ "  \"progressPercentage\": " + progressPercentage + ",\n" + "  \"projectId\": " + projectId + ",\n"
 				+ "  \"totalLinkedIssues\": " + totalLinkedIssues + ",\n" + "  \"totalClosedIssues\": "
 				+ totalClosedIssues + "\n" + "}";
 
-		return json;
 	}
 
 	public static String generateIssueGroupJson() {
@@ -306,10 +295,9 @@ public class DataCreate {
 		String label = faker.company().industry(); // e.g., "E-commerce", "Information Technology"
 
 		// 🧱 Build JSON
-		String json = "{\n" + "  \"impactAreaId\": " + impactAreaId + ",\n" + "  \"issueId\": " + issueId + ",\n"
+		return "{\n" + "  \"impactAreaId\": " + impactAreaId + ",\n" + "  \"issueId\": " + issueId + ",\n"
 				+ "  \"projectId\": " + projectId + ",\n" + "  \"label\": \"" + label + "\"\n" + "}";
 
-		return json;
 	}
 
 	public static String generateIssueLinkedJson() {
@@ -320,20 +308,19 @@ public class DataCreate {
 		String inverseDependencyType = faker.options().option("Blocks", "Relates To", "Depends On", "Duplicates");
 		String dependencyType = faker.options().option("Soft", "Hard", "Critical", "Major");
 		String linkedDate = Instant.now().minus(faker.number().numberBetween(100, 1000), ChronoUnit.DAYS).toString();
-		String unlinkedDate = Instant.now().minus(faker.number().numberBetween(1000, 5000), ChronoUnit.DAYS).toString();
+		String unlinkedDate = faker.date().past(15000, java.util.concurrent.TimeUnit.DAYS).toInstant().toString();
 		int position = faker.number().numberBetween(8000, 9000);
 		String relationship = faker.options().option("Parent", "Child", "Peer", "Linked");
 		int dependencyTypeId = faker.number().numberBetween(1000, 1100);
 
-		String json = "{\n" + "  \"issueId\": " + issueId + ",\n" + "  \"projectId\": " + projectId + ",\n"
+		return "{\n" + "  \"issueId\": " + issueId + ",\n" + "  \"projectId\": " + projectId + ",\n"
 				+ "  \"relatedIssueId\": " + relatedIssueId + ",\n" + "  \"inverseDependencyType\": \""
 				+ inverseDependencyType + "\",\n" + "  \"dependencyType\": \"" + dependencyType + "\",\n" +
 //                "  \"linkedDate\": \"" + linkedDate + "\",\n" +
-//                "  \"unlinkedDate\": \"" + unlinkedDate + "\",\n" +
+                "  \"unlinkedDate\": \"" + unlinkedDate + "\",\n" +
 				"  \"position\": " + position + ",\n" + "  \"relationship\": \"" + relationship + "\",\n"
 				+ "  \"dependencyTypeId\": " + dependencyTypeId + "\n" + "}";
 
-		return json;
 	}
 
 	public static String generateIssueLogJson() {
@@ -376,7 +363,7 @@ public class DataCreate {
 		String comment = faker.options().option(comments);
 		String oldValue = faker.options().option("In Progress", "Open", "Testing", "Blocked");
 
-		String json = "{\n" + "  \"issueId\": " + issueId + ",\n" + "  \"projectId\": " + projectId + ",\n"
+		return "{\n" + "  \"issueId\": " + issueId + ",\n" + "  \"projectId\": " + projectId + ",\n"
 				+ "  \"targetId\": " + targetId + ",\n" + "  \"newValue\": \"" + newValue + "\",\n"
 				+ "  \"targetNewId\": " + targetNewId + ",\n" + "  \"targetType\": \"" + targetType + "\",\n"
 				+ "  \"eventType\": \"" + eventType + "\",\n" + "  \"userId\": \"" + userId + "\",\n"
@@ -385,7 +372,6 @@ public class DataCreate {
 				+ "  \"devAssignedId\": \"" + devAssignedId + "\",\n" + "  \"comment\": \"" + comment + "\",\n"
 				+ "  \"oldValue\": \"" + oldValue + "\"\n" + "}";
 
-		return json;
 	}
 
 	public static String generateIssueMilestoneJson() {
@@ -403,13 +389,12 @@ public class DataCreate {
 		int issueStatusId = faker.number().numberBetween(3000, 4000);
 		boolean isTickeable = faker.bool().bool();
 
-		String json = "{\n" + "  \"projectId\": " + projectId + ",\n" + "  \"isRequired\": " + isRequired + ",\n"
+		return "{\n" + "  \"projectId\": " + projectId + ",\n" + "  \"isRequired\": " + isRequired + ",\n"
 				+ "  \"milestone\": \"" + milestone + "\",\n" + "  \"submilestone\": \"" + submilestone + "\",\n"
 				+ "  \"color\": \"" + color + "\",\n" + "  \"position\": " + position + ",\n" + "  \"eventType\": \""
 				+ eventType + "\",\n" + "  \"UiReference\": \"" + uiReference + "\",\n" + "  \"issueStatusId\": "
 				+ issueStatusId + ",\n" + "  \"isTickeable\": " + isTickeable + "\n" + "}";
 
-		return json;
 	}
 
 	public static String generateIssueRootCauseJson() {
@@ -443,11 +428,10 @@ public class DataCreate {
 				"Use BigDecimal for precise financial calculations." };
 		String correctiveActions = faker.options().option(correctiveActionsList);
 
-		String json = "{\n" + "  \"issueId\": " + issueId + ",\n" + "  \"projectId\": " + projectId + ",\n"
+		return "{\n" + "  \"issueId\": " + issueId + ",\n" + "  \"projectId\": " + projectId + ",\n"
 				+ "  \"rootCauseId\": " + rootCauseId + ",\n" + "  \"comments\": \"" + comments + "\",\n"
 				+ "  \"correctiveActions\": \"" + correctiveActions + "\"\n" + "}";
 
-		return json;
 	}
 
 	public static String generateIssueSprintJson() {
@@ -470,12 +454,12 @@ public class DataCreate {
 
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
-		String json = "{\n" + "  \"sprintId\": " + sprintId + ",\n" + "  \"issueId\": " + issueId + ",\n"
+		return "{\n" + "  \"sprintId\": " + sprintId + ",\n" + "  \"issueId\": " + issueId + ",\n"
 				+ "  \"startSprintDate\": \"" + startSprintDate.format(formatter) + "\",\n" + "  \"sprintName\": \""
 				+ sprintName + "\",\n" + "  \"endSprintDate\": \"" + endSprintDate.format(formatter) + "\",\n"
 				+ "  \"type\": \"" + type + "\",\n" + "  \"projectId\": " + projectId + "\n" + "}";
 
-		return json;
+		
 	}
 
 	public static String generateIssueStatusGraphson() {
@@ -487,11 +471,11 @@ public class DataCreate {
 		int projectId = faker.number().numberBetween(1000, 9999);
 		String workflowId = "WF_" + faker.number().numberBetween(100, 999);
 
-		String json = "{\n" + "  \"issueTypeId\": " + issueTypeId + ",\n" + "  \"statusEnd\": " + statusEnd + ",\n"
+		return "{\n" + "  \"issueTypeId\": " + issueTypeId + ",\n" + "  \"statusEnd\": " + statusEnd + ",\n"
 				+ "  \"statusStart\": " + statusStart + ",\n" + "  \"type\": \"" + type + "\",\n" + "  \"projectId\": "
 				+ projectId + ",\n" + "  \"workflowId\": \"" + workflowId + "\"\n" + "}";
 
-		return json;
+		
 	}
 
 	public static String generateIssueStatusJson() {
@@ -517,14 +501,14 @@ public class DataCreate {
 		boolean isFinalStatus = faker.bool().bool();
 		String statusRole = faker.job().position();
 
-		String json = "{\n" + "  \"isUpdatable\": " + isUpdatable + ",\n" + "  \"isDefault\": " + isDefault + ",\n"
+		return "{\n" + "  \"isUpdatable\": " + isUpdatable + ",\n" + "  \"isDefault\": " + isDefault + ",\n"
 				+ "  \"color\": \"" + color + "\",\n" + "  \"percentage\": " + percentage + ",\n"
 				+ "  \"description\": \"" + description + "\",\n" + "  \"position\": " + position + ",\n"
 				+ "  \"label\": \"" + label + "\",\n" + "  \"projectId\": " + projectId + ",\n"
 				+ "  \"statusLevel\": \"" + statusLevel + "\",\n" + "  \"isFinalStatus\": " + isFinalStatus + ",\n"
 				+ "  \"statusRole\": \"" + statusRole + "\"\n" + "}";
 
-		return json;
+		
 	}
 
 	public static String generateIssueStepJson() {
@@ -536,10 +520,10 @@ public class DataCreate {
 				"Ready for Deployment", "Deployed", "Completed" };
 		String step = steps[random.nextInt(steps.length)];
 
-		String json = "{\n" + "  \"issueId\": " + issueId + ",\n" + "  \"projectId\": " + projectId + ",\n"
+		return "{\n" + "  \"issueId\": " + issueId + ",\n" + "  \"projectId\": " + projectId + ",\n"
 				+ "  \"icon\": \"" + icon + "\",\n" + "  \"step\": \"" + step + "\"\n" + "}";
 
-		return json;
+		
 	}
 
 	public static String generateIssueTestCaseJson() {
@@ -548,10 +532,8 @@ public class DataCreate {
 		int issueId = faker.number().numberBetween(100, 9999);
 		int testCaseId = faker.number().numberBetween(1000, 9999);
 
-		String json = "{\n" + "  \"issueRequirementId\": " + issueRequirementId + ",\n" + "  \"issueId\": " + issueId
+		return "{\n" + "  \"issueRequirementId\": " + issueRequirementId + ",\n" + "  \"issueId\": " + issueId
 				+ ",\n" + "  \"testCaseId\": " + testCaseId + "\n" + "}";
-
-		return json;
 	}
 
 	public static String generateIssueTypeJson() {
@@ -565,12 +547,12 @@ public class DataCreate {
 		String iconUrl = faker.internet().avatar();
 		int projectId = faker.number().numberBetween(1000, 9999);
 
-		String json = "{\n" + "  \"isDefault\": " + isDefault + ",\n" + "  \"color\": \"" + color + "\",\n"
+		return "{\n" + "  \"isDefault\": " + isDefault + ",\n" + "  \"color\": \"" + color + "\",\n"
 				+ "  \"description\": \"" + description + "\",\n" + "  \"position\": " + position + ",\n"
 				+ "  \"label\": \"" + label + "\",\n" + "  \"iconUrl\": \"" + iconUrl + "\",\n" + "  \"projectId\": "
 				+ projectId + "\n" + "}";
 
-		return json;
+		
 	}
 
 	public static String generateIssueVersionJson() {
@@ -581,20 +563,20 @@ public class DataCreate {
 		int projectId = faker.number().numberBetween(1000, 9999);
 		String versionCode = "v" + faker.number().digits(3);
 
-		String json = "{\n" + "  \"issueId\": " + issueId + ",\n" + "  \"projectVersionId\": " + projectVersionId
+		return "{\n" + "  \"issueId\": " + issueId + ",\n" + "  \"projectVersionId\": " + projectVersionId
 				+ ",\n" + "  \"type\": \"" + type + "\",\n" + "  \"versionName\": \"" + versionName + "\",\n"
 				+ "  \"projectId\": " + projectId + ",\n" + "  \"versionCode\": \"" + versionCode + "\"\n" + "}";
 
-		return json;
+		
 	}
 
 	public static String generateIssueVoteJson() {
 		int issueId = faker.number().numberBetween(1000, 9999);
 		String userId = faker.name().username();
 
-		String json = "{\n" + "  \"issueId\": " + issueId + ",\n" + "  \"userId\": \"" + userId + "\"\n" + "}";
+		return "{\n" + "  \"issueId\": " + issueId + ",\n" + "  \"userId\": \"" + userId + "\"\n" + "}";
 
-		return json;
+		
 	}
 
 	public static String generateLucyEventJson() {
@@ -610,13 +592,13 @@ public class DataCreate {
 		String elementFocus = faker.options().option("YesButton", "CancelButton", "InputField", "SubmitButton",
 				"SearchBar");
 
-		String json = "{\n" + "  \"modalLocation\": \"" + modalLocation + "\",\n" + "  \"actionType\": \"" + actionType
+		return "{\n" + "  \"modalLocation\": \"" + modalLocation + "\",\n" + "  \"actionType\": \"" + actionType
 				+ "\",\n" + "  \"modalType\": \"" + modalType + "\",\n" + "  \"additional\": \"" + additional + "\",\n"
 				+ "  \"eventType\": \"" + eventType + "\",\n" + "  \"elementSuggestion\": \"" + elementSuggestion
 				+ "\",\n" + "  \"title\": \"" + title + "\",\n" + "  \"message\": \"" + message + "\",\n"
 				+ "  \"elementFocus\": \"" + elementFocus + "\"\n" + "}";
 
-		return json;
+		
 	}
 
 	public static String generateModuleJson() {
@@ -629,11 +611,11 @@ public class DataCreate {
 		String iconUrl = "https://example.com/img/" + fileName + ".png";
 		int projectId = faker.number().numberBetween(1000, 9999);
 
-		String json = "{\n" + "  \"color\": \"" + color + "\",\n" + "  \"description\": \"" + description + "\",\n"
+		return "{\n" + "  \"color\": \"" + color + "\",\n" + "  \"description\": \"" + description + "\",\n"
 				+ "  \"position\": " + position + ",\n" + "  \"label\": \"" + label + "\",\n" + "  \"iconUrl\": \""
 				+ iconUrl + "\",\n" + "  \"projectId\": " + projectId + "\n" + "}";
 
-		return json;
+		
 	}
 
 	public static String generateNatureJson() {
@@ -667,12 +649,12 @@ public class DataCreate {
 		int projectId = faker.number().numberBetween(100, 999);
 		String description = descriptions[random.nextInt(descriptions.length)];
 
-		String json = "{\n" + "  \"isDefault\": " + isDefault + ",\n" + "  \"color\": \"" + color + "\",\n"
+		return "{\n" + "  \"isDefault\": " + isDefault + ",\n" + "  \"color\": \"" + color + "\",\n"
 				+ "  \"description\": \"" + description + "\",\n" + "  \"position\": " + position + ",\n"
 				+ "  \"label\": \"" + label + "\",\n" + "  \"iconUrl\": \"" + iconUrl + "\",\n" + "  \"projectId\": "
 				+ projectId + "\n" + "}";
 
-		return json;
+		
 	}
 
 	public static String generateOccurrenceJson() {
@@ -708,12 +690,12 @@ public class DataCreate {
 		String description = descriptions[random.nextInt(descriptions.length)];
 		int projectId = faker.number().numberBetween(100, 999);
 
-		String json = "{\n" + "  \"isDefault\": " + isDefault + ",\n" + "  \"color\": \"" + color + "\",\n"
+		return "{\n" + "  \"isDefault\": " + isDefault + ",\n" + "  \"color\": \"" + color + "\",\n"
 				+ "  \"description\": \"" + description + "\",\n" + "  \"position\": " + position + ",\n"
 				+ "  \"label\": \"" + label + "\",\n" + "  \"iconUrl\": \"" + iconUrl + "\",\n" + "  \"projectId\": "
 				+ projectId + "\n" + "}";
 
-		return json;
+		
 	}
 
 	public static String generatePriorityJson() {
@@ -749,12 +731,12 @@ public class DataCreate {
 		String description = descriptions[random.nextInt(descriptions.length)];
 		int projectId = faker.number().numberBetween(100, 999);
 
-		String json = "{\n" + "  \"isDefault\": " + isDefault + ",\n" + "  \"color\": \"" + color + "\",\n"
+		return "{\n" + "  \"isDefault\": " + isDefault + ",\n" + "  \"color\": \"" + color + "\",\n"
 				+ "  \"description\": \"" + description + "\",\n" + "  \"position\": " + position + ",\n"
 				+ "  \"label\": \"" + label + "\",\n" + "  \"iconUrl\": \"" + iconUrl + "\",\n" + "  \"projectId\": "
 				+ projectId + "\n" + "}";
 
-		return json;
+		
 	}
 
 	public static String generateResolutionJson() {
@@ -786,12 +768,12 @@ public class DataCreate {
 		String category = faker.commerce().department(); // random category name
 		int projectId = faker.number().numberBetween(1000, 9999);
 
-		String json = "{\n" + "  \"color\": \"" + color + "\",\n" + "  \"description\": \"" + description + "\",\n"
+		return "{\n" + "  \"color\": \"" + color + "\",\n" + "  \"description\": \"" + description + "\",\n"
 				+ "  \"categoryIconUrl\": \"" + categoryIconUrl + "\",\n" + "  \"position\": " + position + ",\n"
 				+ "  \"label\": \"" + label + "\",\n" + "  \"iconUrl\": \"" + iconUrl + "\",\n" + "  \"category\": \""
 				+ category + "\",\n" + "  \"projectId\": " + projectId + "\n" + "}";
 
-		return json;
+		
 	}
 
 	public static String generateRootCauseJson() {
@@ -813,10 +795,10 @@ public class DataCreate {
 
 		int projectId = faker.number().numberBetween(1000, 9999);
 
-		String json = "{\n" + "  \"description\": \"" + description + "\",\n" + "  \"label\": \"" + label + "\",\n"
+		return "{\n" + "  \"description\": \"" + description + "\",\n" + "  \"label\": \"" + label + "\",\n"
 				+ "  \"projectId\": " + projectId + "\n" + "}";
 
-		return json;
+		
 	}
 
 	public static String generateSprintProposalJson() {
@@ -829,10 +811,10 @@ public class DataCreate {
 		String prefix = userPrefixes[faker.number().numberBetween(0, userPrefixes.length)];
 		String userId = prefix + "_" + faker.number().digits(4);
 
-		String json = "{\n" + "  \"sprintId\": " + sprintId + ",\n" + "  \"issueId\": " + issueId + ",\n"
+		return "{\n" + "  \"sprintId\": " + sprintId + ",\n" + "  \"issueId\": " + issueId + ",\n"
 				+ "  \"userId\": \"" + userId + "\"\n" + "}";
 
-		return json;
+		
 	}
 
 	public static String generateTestCaseJson() {
@@ -861,14 +843,14 @@ public class DataCreate {
 				"QA Ready", "QA_Done", "Closed", "Done", "Resolved" };
 		String status = statuses[random.nextInt(statuses.length)];
 
-		String json = "{\n" + "  \"issueId\": " + issueId + ",\n" + "  \"code\": \"" + code + "\",\n"
+		return "{\n" + "  \"issueId\": " + issueId + ",\n" + "  \"code\": \"" + code + "\",\n"
 				+ "  \"iconUrl\": \"" + iconUrl + "\",\n" + "  \"title\": \"" + title + "\",\n" + "  \"projectId\": "
 				+ projectId + ",\n" + "  \"status\": \"" + status + "\"\n" + "}";
 
-		return json;
+		
 	}
 
-	public static String generateunitTestResultJson() {
+	public static String generateUnitTestResultJson() {
 		Faker faker = new Faker();
 
 		int issueId = faker.number().numberBetween(1000, 99999);
@@ -899,10 +881,10 @@ public class DataCreate {
 
 		String comment = Comments[random.nextInt(Comments.length)];
 
-		String json = "{\n" + "  \"issueId\": " + issueId + ",\n" + "  \"comments\": \"" + comment + "\",\n"
+		return "{\n" + "  \"issueId\": " + issueId + ",\n" + "  \"comments\": \"" + comment + "\",\n"
 				+ "  \"projectId\": " + projectId + "\n" + "}";
 
-		return json;
+		
 	}
 
 	public static String generateWorkLogJson() {
@@ -949,13 +931,13 @@ public class DataCreate {
 		LocalDateTime startDate = faker.date().past(9000, TimeUnit.DAYS).toInstant().atZone(ZoneId.of("UTC"))
 				.toLocalDateTime();
 
-		String json = "{\n" + "  \"issueId\": " + issueId + ",\n" + "  \"author\": \"" + author + "\",\n"
+		return "{\n" + "  \"issueId\": " + issueId + ",\n" + "  \"author\": \"" + author + "\",\n"
 				+ "  \"created\": \"" + created.format(formatter) + "\",\n" + "  \"minutesWorked\": " + minutesWorked
 				+ ",\n" + "  \"updateAuthor\": \"" + updateAuthor + "\",\n" + "  \"description\": \"" + description
 				+ "\",\n" + "  \"projectId\": " + projectId + ",\n" + "  \"updated\": \"" + updated.format(formatter)
 				+ "\",\n" + "  \"startDate\": \"" + startDate.format(formatter) + "\"\n" + "}";
 
-		return json;
+		
 	}
 
 	public static String generateBehaviorJson() {
@@ -989,11 +971,11 @@ public class DataCreate {
 		String fileName = faker.lorem().characters(6, true).toLowerCase();
 		String iconUrl = "https://example.com/icons/" + fileName + ".png";
 
-		String json = "{\n" + "  \"issueId\": " + issueId + ",\n" + "  \"icon\": \"" + iconUrl + "\",\n"
+		return "{\n" + "  \"issueId\": " + issueId + ",\n" + "  \"icon\": \"" + iconUrl + "\",\n"
 				+ "  \"behavior\": \"" + behavior + "\",\n" + "  \"behaviorType\": \"" + behaviorType + "\",\n"
 				+ "  \"projectId\": " + projectId + "\n" + "}";
 
-		return json;
+		
 	}
 
 	public static String generateBugTypeJson() {
@@ -1024,12 +1006,11 @@ public class DataCreate {
 		// Project ID
 		int projectId = faker.number().numberBetween(1000, 9999);
 
-		String json = "{\n" + "  \"isDefault\": " + isDefault + ",\n" + "  \"color\": \"" + color + "\",\n"
+		return "{\n" + "  \"isDefault\": " + isDefault + ",\n" + "  \"color\": \"" + color + "\",\n"
 				+ "  \"description\": \"" + description + "\",\n" + "  \"position\": " + position + ",\n"
 				+ "  \"label\": \"" + label + "\",\n" + "  \"iconUrl\": \"" + iconUrl + "\",\n" + "  \"projectId\": "
 				+ projectId + "\n" + "}";
 
-		return json;
 	}
 
 	public static String generateComponentJson() {
@@ -1078,10 +1059,9 @@ public class DataCreate {
 		int moduleId = faker.number().numberBetween(1000, 9999);
 		int projectId = faker.number().numberBetween(1000, 9999);
 
-		String json = "{\n" + "  \"description\": \"" + description + "\",\n" + "  \"label\": \"" + label + "\",\n"
+		return "{\n" + "  \"description\": \"" + description + "\",\n" + "  \"label\": \"" + label + "\",\n"
 				+ "  \"moduleId\": " + moduleId + ",\n" + "  \"projectId\": " + projectId + "\n" + "}";
 
-		return json;
 	}
 
 	public static String generateComponentImpactAreaJson() {
@@ -1089,10 +1069,9 @@ public class DataCreate {
 		int componentId = faker.number().numberBetween(1000, 9999);
 		int impactAreaId = faker.number().numberBetween(1000, 9999);
 
-		String json = "{\n" + "  \"componentId\": " + componentId + ",\n" + "  \"impactAreaId\": " + impactAreaId + "\n"
+		return "{\n" + "  \"componentId\": " + componentId + ",\n" + "  \"impactAreaId\": " + impactAreaId + "\n"
 				+ "}";
 
-		return json;
 	}
 
 	public static String generateDependencyTypeJson() {
@@ -1123,19 +1102,18 @@ public class DataCreate {
 		int position = faker.number().numberBetween(1000, 9999);
 		int projectId = faker.number().numberBetween(1000, 9999);
 
-		String json = "{\n" + "  \"inverseLabel\": \"" + inverseLabel + "\",\n" + "  \"isRelated\": " + isRelated
+		return "{\n" + "  \"inverseLabel\": \"" + inverseLabel + "\",\n" + "  \"isRelated\": " + isRelated
 				+ ",\n" + "  \"isDefault\": " + isDefault + ",\n" + "  \"color\": \"" + color + "\",\n"
 				+ "  \"description\": \"" + description + "\",\n" + "  \"isBlocker\": " + isBlocker + ",\n"
 				+ "  \"position\": " + position + ",\n" + "  \"label\": \"" + label + "\",\n" + "  \"iconUrl\": \""
 				+ iconUrl + "\",\n" + "  \"projectId\": " + projectId + "\n" + "}";
 
-		return json;
+		
 	}
 
 	public static String generateEnvironmentJson() {
 
 		boolean isDefault = faker.bool().bool();
-		; // fixed as per your structure
 
 		String[] descriptions = { "Represents a default workflow state.", "Indicates tasks ready for development.",
 				"Marks items currently under processing.", "Shows items pending verification or QA.",
@@ -1158,12 +1136,12 @@ public class DataCreate {
 		int position = faker.number().numberBetween(1000, 9999);
 		int projectId = faker.number().numberBetween(1000, 9999);
 
-		String json = "{\n" + "  \"isDefault\": " + isDefault + ",\n" + "  \"color\": \"" + color + "\",\n"
+		return "{\n" + "  \"isDefault\": " + isDefault + ",\n" + "  \"color\": \"" + color + "\",\n"
 				+ "  \"description\": \"" + description + "\",\n" + "  \"position\": " + position + ",\n"
 				+ "  \"label\": \"" + label + "\",\n" + "  \"iconUrl\": \"" + iconUrl + "\",\n" + "  \"projectId\": "
 				+ projectId + "\n" + "}";
 
-		return json;
+		
 	}
 
 	public static String generateImpactAreaJson() {
@@ -1197,12 +1175,598 @@ public class DataCreate {
 
 		int projectId = faker.number().numberBetween(1000, 9999);
 
-		String json = "{\n" + "  \"description\": \"" + description + "\",\n" + "  \"label\": \"" + label + "\",\n"
+		 return "{\n" + "  \"description\": \"" + description + "\",\n" + "  \"label\": \"" + label + "\",\n"
 				+ "  \"projectId\": " + projectId + "\n" + "}";
 
-		return json;
+	
 	}
 
+	/////////////////////////////-------------------------BULK-------------------------////////////////////////////////
+
+	public static String generateBehaviorBulkJson() {
+
+		return "{\n" + "  \"trace\": false,\n" + "  \"skipErrors\": false,\n" + "  \"updateExisting\": false,\n"
+				+ "  \"bulk\": [\n" + generateBehaviorJson() + ",\n" + generateBehaviorJson() + "\n" + "  ],\n"
+				+ "  \"skipSofDeleteValidation\": false\n" + "}";
+	}
+
+	
+
+	public static String generateBugTypeBulkJson() {
+
+		return "{\n" + "  \"trace\": false,\n" + "  \"skipErrors\": false,\n" + "  \"updateExisting\": false,\n"
+				+ "  \"bulk\": [\n" + generateBugTypeJson() + ",\n" + generateBugTypeJson() + "\n" + "  ],\n"
+				+ "  \"skipSofDeleteValidation\": false\n" + "}";
+	}
+
+	
+
+	public static String generateComponentBulkJson() {
+
+		return "{\n" + "  \"trace\": true,\n" + "  \"skipErrors\": false,\n" + "  \"updateExisting\": false,\n"
+				+ "  \"bulk\": [\n" + generateComponentJson() + ",\n" + generateComponentJson() + "\n" + "  ],\n"
+				+ "  \"skipSofDeleteValidation\": false\n" + "}";
+	}
+
+	
+
+	public static String generateComponentImpactAreaBulkJson() {
+
+		int componentId = faker.number().numberBetween(2000, 100000);
+		int componentId1 = faker.number().numberBetween(5000, 100000);
+		int impactAreaId = faker.number().numberBetween(4000, 100000);
+		int impactAreaId1 = faker.number().numberBetween(6000, 100000);
+		return "{\n" + "  \"trace\": false,\n" + "  \"skipErrors\": false,\n" + "  \"updateExisting\": false,\n"
+				+ "  \"bulk\": [\n" + "    {\n" + "      \"componentId\": " + componentId + ",\n"
+				+ "      \"impactAreaId\": " + impactAreaId + "\n" + "    },\n" + "    {\n" + "      \"componentId\": "
+				+ componentId1 + ",\n" + "      \"impactAreaId\": " + impactAreaId1 + "\n" + "    }\n" + "  ],\n"
+				+ "  \"skipSofDeleteValidation\": false\n" + "}";
+	}
+
+	public static String generateDependencyTypeBulkJson() {
+
+		return "{\n" + "  \"trace\": true,\n" + "  \"skipErrors\": true,\n" + "  \"updateExisting\": true,\n"
+				+ "  \"bulk\": [\n" + generateDependencyTypeJson() + ",\n" + generateDependencyTypeJson() + "\n"
+				+ "  ],\n" + "  \"skipSofDeleteValidation\": true\n" + "}";
+	}
+
+	
+
+	public static String generateEnvironmentBulkJson() {
+
+		return "{\n" + "  \"trace\": false,\n" + "  \"skipErrors\": true,\n" + "  \"updateExisting\": true,\n"
+				+ "  \"bulk\": [\n" + generateEnvironmentJson() + ",\n" + generateEnvironmentJson() + "\n" + "  ],\n"
+				+ "  \"skipSofDeleteValidation\": true\n" + "}";
+	}
+
+	
+
+	public static String generateImpactAreaBulkJson() {
+
+		return "{\n" + "  \"trace\": false,\n" + "  \"skipErrors\": true,\n" + "  \"updateExisting\": true,\n"
+				+ "  \"bulk\": [\n" + generateImpactAreaJson() + ",\n" + generateImpactAreaJson() + "\n"
+				+ "  ],\n" + "  \"skipSofDeleteValidation\": false\n" + "}";
+	}
+
+	
+	
+	public static String generateIssueBulkJson() {
+
+	    return "{\n" +
+	            "  \"trace\": true,\n" +
+	            "  \"skipErrors\": true,\n" +
+	            "  \"updateExisting\": true,\n" +
+	            "  \"bulk\": [\n" +
+	            generateIssueJson() + ",\n" +
+	            generateIssueJson() + "\n" +
+	            "  ],\n" +
+	            "  \"skipSofDeleteValidation\": false\n" +
+	            "}";
+	}
+	
+	public static String generateIssueCodeBulkJson() {
+
+	    String projectCode1 = faker.bothify("PRJ-####");
+	    String projectCode2 = faker.bothify("PRJ-####");
+
+	    return "{\n" +
+	            "  \"trace\": true,\n" +
+	            "  \"skipErrors\": true,\n" +
+	            "  \"updateExisting\": true,\n" +
+	            "  \"bulk\": [\n" +
+	            "    {\n" +
+	            "      \"projectCode\": \"" + projectCode1 + "\"\n" +
+	            "    },\n" +
+	            "    {\n" +
+	            "      \"projectCode\": \"" + projectCode2 + "\"\n" +
+	            "    }\n" +
+	            "  ],\n" +
+	            "  \"skipSofDeleteValidation\": true\n" +
+	            "}";
+	}
+	
+	public static String generateIssueCollaboratorBulkJson() {
+
+	    int issueId1 = faker.number().numberBetween(1000, 9999);
+	    int issueId2 = faker.number().numberBetween(1000, 9999);
+
+	    String userId1 = "USR" + faker.number().digits(6);
+	    String userId2 = "USR" + faker.number().digits(6);
+
+	    return "{\n" +
+	            "  \"trace\": true,\n" +
+	            "  \"skipErrors\": false,\n" +
+	            "  \"updateExisting\": false,\n" +
+	            "  \"bulk\": [\n" +
+	            "    {\n" +
+	            "      \"issueId\": " + issueId1 + ",\n" +
+	            "      \"userId\": \"" + userId1 + "\"\n" +
+	            "    },\n" +
+	            "    {\n" +
+	            "      \"issueId\": " + issueId2 + ",\n" +
+	            "      \"userId\": \"" + userId2 + "\"\n" +
+	            "    }\n" +
+	            "  ],\n" +
+	            "  \"skipSofDeleteValidation\": false\n" +
+	            "}";
+	}
+
+	
+	public static String generateIssueCommentBulkJson() {
+
+	    return "{\n" +
+	            "  \"trace\": true,\n" +
+	            "  \"skipErrors\": true,\n" +
+	            "  \"updateExisting\": false,\n" +
+	            "  \"bulk\": [\n" +
+	            generateIssueCommentsJson() + ",\n" +
+	            generateIssueCommentsJson() + "\n" +
+	            "  ],\n" +
+	            "  \"skipSofDeleteValidation\": false\n" +
+	            "}";
+	}
+
+
+	
+	
+	public static String generateIssueComponentBulkJson() {
+
+	    return "{\n" +
+	            "  \"trace\": false,\n" +
+	            "  \"skipErrors\": false,\n" +
+	            "  \"updateExisting\": false,\n" +
+	            "  \"bulk\": [\n" +
+	            generateIssueComponentJson() + ",\n" +
+	            generateIssueComponentJson() + "\n" +
+	            "  ],\n" +
+	            "  \"skipSofDeleteValidation\": false\n" +
+	            "}";
+	}
+	
+	public static String generateIssueFeatureCatalogBulkJson() {
+
+	    return "{\n" +
+	            "  \"trace\": true,\n" +
+	            "  \"skipErrors\": false,\n" +
+	            "  \"updateExisting\": false,\n" +
+	            "  \"bulk\": [\n" +
+	            generateIssueFeatureCatalogJson() + ",\n" +
+	            generateIssueFeatureCatalogJson() + "\n" +
+	            "  ],\n" +
+	            "  \"skipSofDeleteValidation\": true\n" +
+	            "}";
+	}
+
+	
+	
+	public static String generateIssueFeatureGroupBulkJson() {
+
+	    return "{\n" +
+	            "  \"trace\": true,\n" +
+	            "  \"skipErrors\": false,\n" +
+	            "  \"updateExisting\": false,\n" +
+	            "  \"bulk\": [\n" +
+	            generateIssueFeatureGroupJson() + ",\n" +
+	            generateIssueFeatureGroupJson() + "\n" +
+	            "  ],\n" +
+	            "  \"skipSofDeleteValidation\": false\n" +
+	            "}";
+	}
+	
+	
+	public static String generateIssueFeatureStatisticsBulkJson() {
+
+	    return "{\n" +
+	            "  \"trace\": true,\n" +
+	            "  \"skipErrors\": false,\n" +
+	            "  \"updateExisting\": false,\n" +
+	            "  \"bulk\": [\n" +
+	            generateIssueFeatureStatisticsJson() + ",\n" +
+	            generateIssueFeatureStatisticsJson() + "\n" +
+	            "  ],\n" +
+	            "  \"skipSofDeleteValidation\": true\n" +
+	            "}";
+	}
+	
+	
+	public static String generateIssueGroupBulkJson() {
+
+	    return "{\n" +
+	            "  \"trace\": true,\n" +
+	            "  \"skipErrors\": true,\n" +
+	            "  \"updateExisting\": true,\n" +
+	            "  \"bulk\": [\n" +
+	            generateIssueGroupJson() + ",\n" +
+	            generateIssueGroupJson() + "\n" +
+	            "  ],\n" +
+	            "  \"skipSofDeleteValidation\": true\n" +
+	            "}";
+	}
+	public static String generateIssueImpactAreaBulkJson() {
+
+	    return "{\n" +
+	            "  \"trace\": false,\n" +
+	            "  \"skipErrors\": false,\n" +
+	            "  \"updateExisting\": true,\n" +
+	            "  \"bulk\": [\n" +
+	            generateIssueImpactAreaJson() + ",\n" +
+	            generateIssueImpactAreaJson() + "\n" +
+	            "  ],\n" +
+	            "  \"skipSofDeleteValidation\": false\n" +
+	            "}";
+	}
+	
+	public static String generateIssueLinkedBulkJson() {
+
+	    return "{\n" +
+	            "  \"trace\": false,\n" +
+	            "  \"skipErrors\": true,\n" +
+	            "  \"updateExisting\": false,\n" +
+	            "  \"bulk\": [\n" +
+	            generateIssueLinkedJson() + ",\n" +
+	            generateIssueLinkedJson() + "\n" +
+	            "  ],\n" +
+	            "  \"skipSofDeleteValidation\": true\n" +
+	            "}";
+	}
+
+
+	public static String generateIssueLogBulkJson() {
+
+	    return "{\n" +
+	            "  \"trace\": false,\n" +
+	            "  \"skipErrors\": false,\n" +
+	            "  \"updateExisting\": true,\n" +
+	            "  \"bulk\": [\n" +
+	            generateIssueLogJson() + ",\n" +
+	            generateIssueLogJson() + "\n" +
+	            "  ],\n" +
+	            "  \"skipSofDeleteValidation\": false\n" +
+	            "}";
+	}
+	
+	public static String generateIssueMilestoneBulkJson() {
+
+	    return "{\n" +
+	            "  \"trace\": true,\n" +
+	            "  \"skipErrors\": false,\n" +
+	            "  \"updateExisting\": false,\n" +
+	            "  \"bulk\": [\n" +
+	            generateIssueMilestoneJson() + ",\n" +
+	            generateIssueMilestoneJson() + "\n" +
+	            "  ],\n" +
+	            "  \"skipSofDeleteValidation\": false\n" +
+	            "}";
+	}
+	
+	public static String generateIssueRootCauseBulkJson() {
+
+	    return "{\n" +
+	            "  \"trace\": false,\n" +
+	            "  \"skipErrors\": false,\n" +
+	            "  \"updateExisting\": true,\n" +
+	            "  \"bulk\": [\n" +
+	            generateIssueRootCauseJson() + ",\n" +
+	            generateIssueRootCauseJson() + "\n" +
+	            "  ],\n" +
+	            "  \"skipSofDeleteValidation\": true\n" +
+	            "}";
+	}
+	public static String generateIssueStatusGraphBulkJson() {
+
+	    return "{\n" +
+	            "  \"trace\": true,\n" +
+	            "  \"skipErrors\": true,\n" +
+	            "  \"updateExisting\": true,\n" +
+	            "  \"bulk\": [\n" +
+	            generateIssueStatusGraphson() + ",\n" +
+	            generateIssueStatusGraphson() + "\n" +
+	            "  ],\n" +
+	            "  \"skipSofDeleteValidation\": true\n" +
+	            "}";
+	}
+
+	
+	public static String generateIssueSprintBulkJson() {
+
+	    return "{\n" +
+	            "  \"trace\": true,\n" +
+	            "  \"skipErrors\": false,\n" +
+	            "  \"updateExisting\": false,\n" +
+	            "  \"bulk\": [\n" +
+	            generateIssueSprintJson() + ",\n" +
+	            generateIssueSprintJson() + "\n" +
+	            "  ],\n" +
+	            "  \"skipSofDeleteValidation\": false\n" +
+	            "}";
+	}
+	
+	public static String generateIssueStatusBulkJson() {
+
+	    return "{\n" +
+	            "  \"trace\": true,\n" +
+	            "  \"skipErrors\": true,\n" +
+	            "  \"updateExisting\": false,\n" +
+	            "  \"bulk\": [\n" +
+	            generateIssueStatusJson() + ",\n" +
+	            generateIssueStatusJson() + "\n" +
+	            "  ],\n" +
+	            "  \"skipSofDeleteValidation\": true\n" +
+	            "}";
+	}
+	
+	public static String generateIssueStepsBulkJson() {
+
+	    return "{\n" +
+	            "  \"trace\": false,\n" +
+	            "  \"skipErrors\": false,\n" +
+	            "  \"updateExisting\": true,\n" +
+	            "  \"bulk\": [\n" +
+	            generateIssueStepJson() + ",\n" +
+	            generateIssueStepJson() + "\n" +
+	            "  ],\n" +
+	            "  \"skipSofDeleteValidation\": true\n" +
+	            "}";
+	}
+	
+	public static String generateIssueTestCaseBulkJson() {
+
+	    return "{\n" +
+	            "  \"trace\": false,\n" +
+	            "  \"skipErrors\": true,\n" +
+	            "  \"updateExisting\": true,\n" +
+	            "  \"bulk\": [\n" +
+	            generateIssueTestCaseJson() + ",\n" +
+	            generateIssueTestCaseJson() + "\n" +
+	            "  ],\n" +
+	            "  \"skipSofDeleteValidation\": false\n" +
+	            "}";
+	}
+	
+	public static String generateIssueTypeBulkJson() {
+
+	    return "{\n" +
+	            "  \"trace\": false,\n" +
+	            "  \"skipErrors\": true,\n" +
+	            "  \"updateExisting\": true,\n" +
+	            "  \"bulk\": [\n" +
+	            generateIssueTypeJson() + ",\n" +
+	            generateIssueTypeJson() + "\n" +
+	            "  ],\n" +
+	            "  \"skipSofDeleteValidation\": true\n" +
+	            "}";
+	}
+
+	public static String generateIssueVersionBulkJson() {
+
+	    return "{\n" +
+	            "  \"trace\": false,\n" +
+	            "  \"skipErrors\": true,\n" +
+	            "  \"updateExisting\": true,\n" +
+	            "  \"bulk\": [\n" +
+	            generateIssueVersionJson() + ",\n" +
+	            generateIssueVersionJson() + "\n" +
+	            "  ],\n" +
+	            "  \"skipSofDeleteValidation\": true\n" +
+	            "}";
+	}
+	
+
+	public static String generateIssueVoteBulkJson() {
+
+	    return "{\n" +
+	            "  \"trace\": true,\n" +
+	            "  \"skipErrors\": false,\n" +
+	            "  \"updateExisting\": false,\n" +
+	            "  \"bulk\": [\n" +
+	            generateIssueVoteJson() + ",\n" +
+	            generateIssueVoteJson() + "\n" +
+	            "  ],\n" +
+	            "  \"skipSofDeleteValidation\": false\n" +
+	            "}";
+	}
+
+	public static String generateLucyEventBulkJson() {
+
+	    return "{\n" +
+	            "  \"trace\": false,\n" +
+	            "  \"skipErrors\": false,\n" +
+	            "  \"updateExisting\": false,\n" +
+	            "  \"bulk\": [\n" +
+	            generateLucyEventJson() + ",\n" +
+	            generateLucyEventJson() + "\n" +
+	            "  ],\n" +
+	            "  \"skipSofDeleteValidation\": false\n" +
+	            "}";
+	}
+	
+	public static String generateModuleBulkJson() {
+
+	    return "{\n" +
+	            "  \"trace\": false,\n" +
+	            "  \"skipErrors\": false,\n" +
+	            "  \"updateExisting\": true,\n" +
+	            "  \"bulk\": [\n" +
+	            generateModuleJson() + ",\n" +
+	            generateModuleJson() + "\n" +
+	            "  ],\n" +
+	            "  \"skipSofDeleteValidation\": false\n" +
+	            "}";
+	}
+	
+	public static String generateNatureBulkJson() {
+
+	    return "{\n" +
+	            "  \"trace\": false,\n" +
+	            "  \"skipErrors\": true,\n" +
+	            "  \"updateExisting\": true,\n" +
+	            "  \"bulk\": [\n" +
+	            generateNatureJson() + ",\n" +
+	            generateNatureJson() + "\n" +
+	            "  ],\n" +
+	            "  \"skipSofDeleteValidation\": true\n" +
+	            "}";
+	}
+	
+	public static String generateOccurrenceBulkJson() {
+
+	    return "{\n" +
+	            "  \"trace\": false,\n" +
+	            "  \"skipErrors\": true,\n" +
+	            "  \"updateExisting\": true,\n" +
+	            "  \"bulk\": [\n" +
+	            generateOccurrenceJson() + ",\n" +
+	            generateOccurrenceJson() + "\n" +
+	            "  ],\n" +
+	            "  \"skipSofDeleteValidation\": true\n" +
+	            "}";
+	}
+	public static String generatePriorityBulkJson() {
+
+	    return "{\n" +
+	            "  \"trace\": false,\n" +
+	            "  \"skipErrors\": true,\n" +
+	            "  \"updateExisting\": true,\n" +
+	            "  \"bulk\": [\n" +
+	            generatePriorityJson() + ",\n" +
+	            generatePriorityJson() + "\n" +
+	            "  ],\n" +
+	            "  \"skipSofDeleteValidation\": true\n" +
+	            "}";
+	}
+	
+	public static String generateResolutionBulkJson() {
+
+	    return "{\n" +
+	            "  \"trace\": true,\n" +
+	            "  \"skipErrors\": true,\n" +
+	            "  \"updateExisting\": true,\n" +
+	            "  \"bulk\": [\n" +
+	            generateResolutionJson() + ",\n" +
+	            generateResolutionJson() + "\n" +
+	            "  ],\n" +
+	            "  \"skipSofDeleteValidation\": false\n" +
+	            "}";
+	}
+	
+	public static String generateRootCauseBulkJson() {
+
+	    return "{\n" +
+	            "  \"trace\": true,\n" +
+	            "  \"skipErrors\": true,\n" +
+	            "  \"updateExisting\": true,\n" +
+	            "  \"bulk\": [\n" +
+	            generateRootCauseJson() + ",\n" +
+	            generateRootCauseJson() + "\n" +
+	            "  ],\n" +
+	            "  \"skipSofDeleteValidation\": false\n" +
+	            "}";
+	}
+	
+	
+	public static String generateSprintProposalBulkJson() {
+
+	    return "{\n" +
+	            "  \"trace\": true,\n" +
+	            "  \"skipErrors\": true,\n" +
+	            "  \"updateExisting\": false,\n" +
+	            "  \"bulk\": [\n" +
+	            generateSprintProposalJson() + ",\n" +
+	            generateSprintProposalJson() + "\n" +
+	            "  ],\n" +
+	            "  \"skipSofDeleteValidation\": true\n" +
+	            "}";
+	}
+	
+	public static String generateTestCaseBulkJson() {
+
+		return "{\n" + "  \"trace\": false,\n" + "  \"skipErrors\": false,\n" + "  \"updateExisting\": false,\n"
+				+ "  \"bulk\": [\n" + generateTestCaseJson() + ",\n" + generateTestCaseJson() + "\n" + "  ],\n"
+				+ "  \"skipSofDeleteValidation\": true\n" + "}";
+	}
+	public static String generateUnitTestResultBulkJson() {
+
+		return "{\n" + "  \"trace\": false,\n" + "  \"skipErrors\": false,\n" + "  \"updateExisting\": false,\n"
+				+ "  \"bulk\": [\n" + generateUnitTestResultJson() + ",\n" + generateUnitTestResultJson() + "\n" + "  ],\n"
+				+ "  \"skipSofDeleteValidation\": false\n" + "}";
+	}
+	
+	public static String generateUserProjcetBulkJson() {
+
+	    return "{\n" +
+	            "  \"trace\": true,\n" +
+	            "  \"skipErrors\": true,\n" +
+	            "  \"updateExisting\": false,\n" +
+	            "  \"bulk\": [\n" +
+	            generateUserProjcetJson() + ",\n" +
+	            generateUserProjcetJson() + "\n" +
+	            "  ],\n" +
+	            "  \"skipSofDeleteValidation\": true\n" +
+	            "}";
+	}
+	
+	public static String generateUserBulkJson() {
+
+	    return "{\n" +
+	            "  \"trace\": false,\n" +
+	            "  \"skipErrors\": true,\n" +
+	            "  \"updateExisting\": true,\n" +
+	            "  \"bulk\": [\n" +
+	            generateUserJson() + ",\n" +
+	            generateUserJson() + "\n" +
+	            "  ],\n" +
+	            "  \"skipSofDeleteValidation\": false\n" +
+	            "}";
+	}
+	
+	public static String generateUserStateBulkJson() {
+
+	    return "{\n" +
+	            "  \"trace\": false,\n" +
+	            "  \"skipErrors\": true,\n" +
+	            "  \"updateExisting\": true,\n" +
+	            "  \"bulk\": [\n" +
+	            generateUserStateJson() + ",\n" +
+	            generateUserStateJson() + "\n" +
+	            "  ],\n" +
+	            "  \"skipSofDeleteValidation\": false\n" +
+	            "}";
+	}
+	
+	public static String generateWorklogBulkJson() {
+
+	    return "{\n" +
+	            "  \"trace\": true,\n" +
+	            "  \"skipErrors\": false,\n" +
+	            "  \"updateExisting\": true,\n" +
+	            "  \"bulk\": [\n" +
+	            generateWorkLogJson() + ",\n" +
+	            generateWorkLogJson() + "\n" +
+	            "  ],\n" +
+	            "  \"skipSofDeleteValidation\": true\n" +
+	            "}";
+	}
+	
 	public static void main(String[] args) {
 //        System.out.println(generateUserJson());
 //        System.out.println(generateUserProjcetJson());
@@ -1213,39 +1777,14 @@ public class DataCreate {
 //		System.out.println(generateIssueCommentsJson());
 //		System.out.println(generateIssueComponentJson());
 //		System.out.println(generateIssueFeatureCatalogJson());
-//		System.out.println(generateIssueFeatureGroupJson());
-//		System.out.println(generateissueFeatureStatisticsJson());
-//		System.out.println(generateIssueGroupJson());
-//		System.err.println(generateIssueImpactAreaJson());
-//		System.out.println(generateIssueLinkedJson());
-//		System.out.println(generateIssueLogJson());
-//		System.out.println(generateIssueMilestoneJson());
-//		System.out.println(generateIssueRootCauseJson());
-//		System.out.println(generateIssueSprintJson());
-//		System.out.println(generateIssueStatusGraphson());
-//		System.out.println(generateIssueStatusJson());
-		System.out.println(generateIssueStepJson());
-//		System.out.println(generateIssueTestCaseJson());
-//		System.out.println(generateIssueTypeJson());
-//		System.out.println(generateIssueVersionJson());
-//		System.out.println(generateIssueVoteJson());
-//		System.out.println(generateLucyEventJson());
-//		System.out.println(generateModuleJson());
-//		System.out.println(generateNatureJson());
-//		System.out.println(generateOccurrenceJson());
-//		System.out.println(generatePriorityJson());
-//		System.out.println(generateResolutionJson());
-//		System.out.println(generateRootCauseJson());
-//		System.out.println(generateSprintProposalJson());
-//		System.out.println(generateTestCaseJson());
-//		System.out.println(generateunitTestResultJson());
-//		System.out.println(generateWorkLogJson());
-//		System.out.println(generateBehaviorJson());
-//		System.out.println(generateBugTypeJson());
-//		System.out.println(generateComponentJson());
-//		System.out.println(generateComponentImpactAreaJson());
-//		System.out.println(generateDependencyTypeJson());
-//		System.out.println(generateEnvironmentJson());
-		System.out.println(generateImpactAreaJson());
+//		
+//		System.out.println(generateComponentImpactAreaBulkJson());
+//		System.out.println(generateDependencyTypeBulkJson());
+//		System.out.println(generateEnvironmentBulkJson());
+//		System.out.println(generateImpactAreaBulkJson());
+//		System.out.println(generateIssueCodeBulkJson());
+//		System.out.println(generateIssueComponentBulkJson());
+//		System.out.println(generateIssueFeatureCatalogBulkJson());
+		System.out.println(generateIssueLinkedJson());
 	}
 }

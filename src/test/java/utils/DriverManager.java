@@ -6,27 +6,30 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
 /**
- * Simple DriverManager for local Chrome browser.
- * Creates one WebDriver per thread (safe for parallel runs).
+ * Thread-safe WebDriver manager (supports parallel + headless).
  */
 public final class DriverManager {
 
     private static final ThreadLocal<WebDriver> DRIVER = new ThreadLocal<>();
     private static final boolean HEADLESS = true;
+
     private DriverManager() {}
 
     public static void initDriver() {
         if (DRIVER.get() == null) {
+
             WebDriverManager.chromedriver().setup();
 
             ChromeOptions options = new ChromeOptions();
-            if (HEADLESS) options.addArguments("--headless=new");
-            options.addArguments("--start-maximized");
+
+            if (HEADLESS) {
+                options.addArguments("--headless=new");
+                options.addArguments("--window-size=1920,1080"); // 🔑 REQUIRED
+            }
+
             options.addArguments("--disable-gpu");
             options.addArguments("--no-sandbox");
             options.addArguments("--disable-dev-shm-usage");
-            // Uncomment if running in CI/CD without display:
-            // options.addArguments("--headless=new");
 
             WebDriver driver = new ChromeDriver(options);
             DRIVER.set(driver);

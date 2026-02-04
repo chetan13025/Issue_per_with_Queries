@@ -10,18 +10,24 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.markuputils.CodeLanguage;
 import com.aventstack.extentreports.markuputils.MarkupHelper;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import DataCreate.DataCreate;
+import context.ScenarioContext;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -36,10 +42,14 @@ public class ImpactArea {
 	private Response response;
 	private String requestBody;
 	private String RequestBodyForValidation;
+	public List<Integer> ImpactAreaIds;
 	private static String baseUrl = ConfigReader.getProperty("baseUrl");
 	private static String tenantId = ConfigReader.getProperty("tenantId");
 	private static String author = ConfigReader.getProperty("author");
 	private static String ImpactArea_endpoint = ConfigReader.getProperty("impactarea_endpoint");
+	private static String ImpactAreaBulk_endpoint = ConfigReader.getProperty("impactareabulk_endpoint");
+	private static String ImpactAreaBulkUpdate_endpoint = ConfigReader.getProperty("impactareabulku_endpoint");
+	private static String ImpactAreaBulkDelete_endpoint = ConfigReader.getProperty("impactareabulkd_endpoint");
 
 	private void logToExtent(String action, String reqBody, Response resp) {
 		ExtentTest current = ExtentCucumberListener.getCurrentScenario();
@@ -117,8 +127,17 @@ public class ImpactArea {
 		WebDriver driver = null;
 		try {
 			// Launch Chrome
-			driver = new ChromeDriver();
-			driver.manage().window().maximize();
+//			driver = new ChromeDriver();
+//			driver.manage().window().maximize();
+			ChromeOptions options = new ChromeOptions();
+	        options.addArguments("--headless=new");   // modern headless
+	        options.addArguments("--window-size=1920,1080");
+	        options.addArguments("--disable-gpu");
+	        options.addArguments("--no-sandbox");
+	        options.addArguments("--disable-dev-shm-usage");
+
+	        // ✅ USE options here
+	        driver = new ChromeDriver(options);
 
 			// Open Elasticsearch _search URL
 			String url = "http://10.10.2.45:9200/piqa_issue-persistence_impact-area_index/_search?pretty&size=2000";
@@ -271,6 +290,249 @@ public class ImpactArea {
 		captureDbSnapshot(ImpactAreaId, "Delete ImpactArea");
 		captureElasticScreenshot(ImpactAreaId, "Delete ImpactArea");
 	}
+	
+	
+	@Given("I have Bulk ImpactArea")
+	public void i_have_a_bulk_ImpactArea() {
+		requestBody = DataCreate.generateImpactAreaBulkJson();
+		System.out.println("ImpactArea JSON:\n" + requestBody);
+
+	}
+
+	@When("Create New Bulk ImpactArea")
+	public void Create_new_bulk_ImpactArea() throws Exception {
+
+		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
+				.header("Author", author).body(requestBody).when().post(baseUrl + ImpactAreaBulk_endpoint).then()
+				.extract().response();
+
+		System.out.println("Response Body:\n" + response.getBody().asString());
+		System.out.println("Status Code: " + response.getStatusCode());
+
+		// ✅ STORE IDs FROM DATA[]
+		List<Integer> idsFromResponse = response.jsonPath().getList("DATA.id");
+
+		ScenarioContext.Ids.clear();
+		ScenarioContext.Ids.addAll(idsFromResponse);
+
+		System.out.println("Stored ImpactAreaIds: " + ScenarioContext.Ids);
+
+		ScenarioContext.RequestBodyForValidation = requestBody;
+
+		logToExtent("Create ImpactArea Response", requestBody, response);
+
+		for (Integer id : ScenarioContext.Ids) {
+			captureDbSnapshot(id, "Create Bulk ImpactArea");
+			captureElasticScreenshot(id, "Create Bulk ImpactArea"+": "+id);
+			ApiDataValidator.validateDbNotNullExcept(id, "ImpactArea", null);
+		}
+	}
+
+	private String injectImpactAreaIdsIntoBulk(String json, List<Integer> impactareaIds) throws Exception {
+
+		ObjectMapper mapper = new ObjectMapper();
+
+		Map<String, Object> root = mapper.readValue(json, new TypeReference<Map<String, Object>>() {
+		});
+
+		List<Map<String, Object>> bulk = (List<Map<String, Object>>) root.get("bulk");
+
+		if (bulk.size() != impactareaIds.size()) {
+			throw new IllegalStateException(
+					"Bulk size mismatch. bulk=" + bulk.size() + " ImpactAreaIds=" + impactareaIds.size());
+		}
+
+		for (int i = 0; i < bulk.size(); i++) {
+			bulk.get(i).put("id", impactareaIds.get(i));
+		}
+
+		return mapper.writeValueAsString(root);
+	}
+
+	@When("Update PUT Bulk ImpactArea")
+	public void Update_put_bulk_ImpactArea() throws Exception {
+
+		ImpactAreaIds = ScenarioContext.Ids;
+
+	    if (ImpactAreaIds == null || ImpactAreaIds.isEmpty()) {
+	        throw new IllegalStateException(
+	                "No ImpactAreaIds found. Make sure CREATE scenario ran before UPDATE."
+	        );
+	    }
+
+	    // 1️⃣ Generate bulk JSON
+	    String newJson = DataCreate.generateImpactAreaBulkJson();
+
+	    // 2️⃣ Inject stored IDs
+	    newJson = injectImpactAreaIdsIntoBulk(newJson, ImpactAreaIds);
+
+	    // 3️⃣ Send PUT request
+	    response = given()
+	            .header("Content-Type", "application/json")
+	            .header("X-TENANT-ID", tenantId)
+	            .header("Author", author)
+	            .body(newJson)
+	            .when()
+	            .put(baseUrl + ImpactAreaBulkUpdate_endpoint)
+	            .then()
+	            .extract()
+	            .response();
+
+	    System.out.println("PUT Request Body:\n" + newJson);
+	    System.out.println("PUT Response Body:\n" + response.getBody().asString());
+	    System.out.println("Status Code: " + response.getStatusCode());
+
+	    ScenarioContext.RequestBodyForValidation = newJson;
+
+	    logToExtent("Update ImpactArea (PUT)", newJson, response);
+
+	    for (Integer id : ImpactAreaIds) {
+	        captureDbSnapshot(id, "Update Bulk ImpactArea");
+	        captureElasticScreenshot(id, "Update Bulk ImpactArea"+": "+id);
+	        ApiDataValidator.validateDbNotNullExcept(id, "ImpactArea", null);
+	    }
+	}
+
+	
+	@When("Delete Bulk ImpactArea")
+	public void Delete_bulk_ImpactArea() throws Exception {
+
+		ImpactAreaIds = ScenarioContext.Ids;
+
+	    if (ImpactAreaIds == null || ImpactAreaIds.isEmpty()) {
+	        throw new IllegalStateException(
+	                "No ImpactAreaIds found. Run CREATE scenario first."
+	        );
+	    }
+
+	    // ✅ Build request JSON directly
+	    String updateRequestBody = new ObjectMapper()
+	            .writeValueAsString(Map.of(
+	                    "trace", true,
+	                    "skipErrors", true,
+	                    "updateExisting", true,
+	                    "bulk", ImpactAreaIds,
+	                    "skipSofDeleteValidation", false
+	            ));
+
+	    response = given()
+	            .header("Content-Type", "application/json")
+	            .header("X-TENANT-ID", tenantId)
+	            .header("Author", author)
+	            .body(updateRequestBody)
+	            .when()
+	            .delete(baseUrl + ImpactAreaBulkDelete_endpoint)
+	            .then()
+	            .extract()
+	            .response();
+
+	    System.out.println("Delete Request Body:\n" + updateRequestBody);
+	    System.out.println("Delete Response Body:\n" + response.getBody().asString());
+	    System.out.println("Status Code: " + response.getStatusCode());
+
+	    ScenarioContext.RequestBodyForValidation = updateRequestBody;
+
+	    logToExtent(" ImpactArea (Delete)", updateRequestBody, response);
+
+	    for (Integer id : ImpactAreaIds) {
+	        captureDbSnapshot(id, "Delete Bulk ImpactArea");
+	        captureElasticScreenshot(id, "Delete Bulk ImpactArea");
+	    }
+	}
+	
+	
+//	
+	@Then("Validate Bulk ImpactArea Request Response ES DB")
+	public void validate_bulk_ImpactArea_request_response_es_db() throws Exception {
+
+	    ObjectMapper mapper = new ObjectMapper();
+
+	    int totalIds = 0;
+	    int failedIds = 0;
+
+	    ExtentTest parent = ExtentCucumberListener.getCurrentScenario();
+
+	    // -------- Parse request bulk --------
+	    Map<String, Object> reqRoot =
+	            mapper.readValue(
+	                    ScenarioContext.RequestBodyForValidation,
+	                    new TypeReference<Map<String, Object>>() {}
+	            );
+
+	    List<Map<String, Object>> requestBulk =
+	            (List<Map<String, Object>>) reqRoot.get("bulk");
+
+	    // -------- Parse response DATA --------
+	    List<Map<String, Object>> responseData =
+	            response.jsonPath().getList("DATA");
+
+	    if (requestBulk == null || responseData == null) {
+	        parent.fail("❌ Request bulk or response DATA is null");
+	        throw new AssertionError("Invalid bulk data");
+	    }
+
+	    parent.info("🔍 Bulk validation started | Request size="
+	            + requestBulk.size() + " | Response size=" + responseData.size());
+
+	    // -------- LOOP OVER ALL IDS (DO NOT STOP) --------
+	    for (int i = 0; i < responseData.size(); i++) {
+
+	        totalIds++;
+
+	        try {
+	            Map<String, Object> respObj = responseData.get(i);
+	            Map<String, Object> matchingReq = requestBulk.get(i);
+
+	            int id = Integer.parseInt(respObj.get("id").toString());
+
+//	            parent.info("🔎 Validation Started (ID: " + id + ")");
+
+	            String requestJson  = mapper.writeValueAsString(matchingReq);
+	            String responseJson = mapper.writeValueAsString(respObj);
+
+	            // ✅ CALL VOID METHOD (NO BOOLEAN)
+	            ApiDataValidator.validateKeysAcrosRequestResponseEsDb(
+	                    requestJson,
+	                    responseJson,
+	                    id,
+	                    "impact-area",
+	                    "ImpactArea",
+	                    false,
+	                    new String[]{
+	                            "deleted",
+	                            "createdDate",
+	                            "updatedDate"
+	                    },
+	                    new String[]{"id"},
+	                    new String[]{""}
+	            );
+
+	        } catch (Exception e) {
+	            failedIds++;
+	            parent.info("⚠️ Validation exception for one ID: " + e.getMessage());
+	        }
+	    }
+
+	    // -------- BULK SUMMARY --------
+	    String bannerColor = (failedIds == 0) ? "#1e8e3e" : "#d93025";
+	    String statusWord  = (failedIds == 0) ? "PASSED ✓" : "FAILED ✗";
+
+	    String summaryHtml =
+	            "<div style='padding:12px;border-left:6px solid " + bannerColor + ";'>" +
+	            "<b>Bulk Component Validation " + statusWord + "</b><br>" +
+	            "Total IDs: " + totalIds +
+	            " | Passed: " + (totalIds - failedIds) +
+	            " | Failed: " + failedIds +
+	            "</div>";
+
+	    if (failedIds > 0) {
+	        parent.fail(summaryHtml);
+	        throw new AssertionError("Bulk validation failed. See Extent report.");
+	    } else {
+	        parent.pass(summaryHtml);
+	    }
+	}
+
 
 	@Then("The ImpactArea response status code should be {int}")
 	public void the_impactarea_response_status_code_should_be(Integer statusCode) {

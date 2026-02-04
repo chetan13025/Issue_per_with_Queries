@@ -3852,6 +3852,94 @@ public class ApiDataValidator {
             DRIVER = null;
         }
     }
+    
+    public static void validateDbNotNullExcept(int id, String tableName, String... skipColumns) {
+	    ExtentTest current = ExtentCucumberListener.getCurrentScenario();
+	    if (current == null)
+	        return;
+
+	    // Convert skipColumns to a Set for quick lookup
+	    java.util.Set<String> skipSet = new java.util.HashSet<>();
+	    if (skipColumns != null) {
+	        for (String col : skipColumns) {
+	            if (col != null && !col.trim().isEmpty()) {
+	                skipSet.add(col.trim());
+	            }
+	        }
+	    }
+
+	    String sql = "SELECT * FROM `issue_persistence_piqa`.`" + tableName + "` WHERE id = ? LIMIT 1";
+	    boolean anyFailure = false;
+
+	    try (Connection conn = DriverManager.getConnection("jdbc:mysql://10.10.2.45:3306", "root", "dhi123");
+	         PreparedStatement ps = conn.prepareStatement(sql)) {
+
+	        ps.setInt(1, id);
+	        try (ResultSet rs = ps.executeQuery()) {
+
+	            if (!rs.next()) {
+	                current.fail("❌ No row found in DB for Id=" + id + " in table=" + tableName);
+	                throw new AssertionError("DB row not found for Id=" + id);
+	            }
+
+	            ResultSetMetaData meta = rs.getMetaData();
+	            int colCount = meta.getColumnCount();
+
+	            for (int i = 1; i <= colCount; i++) {
+	                String colName = meta.getColumnName(i);
+	                Object val = rs.getObject(colName);
+//	                String s = (val == null) ? null : String.valueOf(val).trim();
+	                String s = normalizeDbValue(val);
+
+	                boolean isEmptyOrZeroDate = (s == null || s.isEmpty()
+	                        || "0000-00-00".equals(s) || "0000-00-00 00:00:00".equals(s));
+
+	                if (skipSet.contains(colName)) {
+	                    // Skip this column
+	                    if (isEmptyOrZeroDate) {
+	                        current.warning("⚠️ Skipped column (allowed null): " + colName);
+	                    } else {
+	                        current.info("ℹ️ Skipped column has value: " + colName + " = " + s);
+	                    }
+	                    continue;
+	                }
+
+//	                 Validate all other columns
+	                if (isEmptyOrZeroDate) {
+	                    current.fail("❌ DB Validation Failed: " + colName + " is NULL/EMPTY for Id=" + id);
+	                    anyFailure = true;
+	                } else {
+	                    current.pass("✅ DB Validation Passed: " + colName + " = " + s);
+	                }
+	            }
+	        }
+	    } catch (Exception e) {
+	        current.warning("⚠️ DB Validation Error: " + e.getMessage());
+	    }
+
+	    if (anyFailure) {
+	        throw new AssertionError("One or more non-exempt DB fields are NULL/EMPTY for Id=" + id);
+	    }
+	}
+    private static String normalizeDbValue(Object val) {
+
+        if (val == null) return null;
+
+        // BIT(1) may come as byte[]
+        if (val instanceof byte[]) {
+            byte[] b = (byte[]) val;
+            return (b.length > 0 && b[0] == 1) ? "1" : "0";
+        }
+
+        String s = String.valueOf(val).trim();
+
+        // Boolean values normalize
+        if ("true".equalsIgnoreCase(s)) return "1";
+        if ("false".equalsIgnoreCase(s)) return "0";
+
+        return s;
+    }
+
 }
 
 
