@@ -471,10 +471,10 @@ public class BugType {
 	    parent.info("🔍 Bulk BugType validation started | Request size="
 	            + requestBulk.size() + " | Response size=" + responseData.size());
 
-	    int size = Math.min(requestBulk.size(), responseData.size());
+	   
 
 	    // ---------------- INDEX-BASED LOOP (✅ CORRECT) ----------------
-	    for (int i = 0; i < size; i++) {
+	    for (int i = 0; i < responseData.size(); i++) {
 
 	        totalIds++;
 

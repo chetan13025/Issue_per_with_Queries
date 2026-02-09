@@ -560,30 +560,22 @@ public class Behavior {
 
 	    parent.info("🔍 Bulk validation started | Request size="
 	            + requestBulk.size() + " | Response size=" + responseData.size());
-
+	    
 	    // ---------------- Loop per response object ----------------
-	    for (Map<String, Object> respObj : responseData) {
+	    for (int i = 0; i < responseData.size(); i++) {
 
 	        totalIds++;
 
 	        try {
+	            Map<String, Object> reqObj  = requestBulk.get(i);
+	            Map<String, Object> respObj = responseData.get(i);
+
 	            int id = Integer.parseInt(respObj.get("id").toString());
-	            Object respIssueId = respObj.get("issueId");
 
-	            Map<String, Object> matchingReq = requestBulk.stream()
-	                    .filter(r -> Objects.equals(r.get("issueId"), respIssueId))
-	                    .findFirst()
-	                    .orElse(null);
-
-	            if (matchingReq == null) {
-	                parent.fail("❌ No matching request object found for issueId=" + respIssueId);
-	                failedIds++;
-	                continue;
-	            }
-
-	            String requestJson  = mapper.writeValueAsString(matchingReq);
+	            String requestJson  = mapper.writeValueAsString(reqObj);
 	            String responseJson = mapper.writeValueAsString(respObj);
 
+	            parent.info("🔎 Validating BugType ID=" + id);
 	            ApiDataValidator.validateKeysAcrosRequestResponseEsDb(
 	                    requestJson,
 	                    responseJson,
