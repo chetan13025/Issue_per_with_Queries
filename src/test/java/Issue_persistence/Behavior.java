@@ -214,7 +214,7 @@ public class Behavior {
 		System.out.println("Stored BehaviorId: " + BehaviorId);
 		logToExtent("Create Behavior Response", requestBody, response);
 		captureDbSnapshot(BehaviorId, "Create New Behavior");
-		captureElasticScreenshot(BehaviorId, "Create New Behavior");
+		// captureElasticScreenshot(BehaviorId, "Create New Behavior");
 //		ApiValidator.validateRequestKeysWithSeparateScreenshotColumns(
 //		         response,
 //		         requestBody,
@@ -268,7 +268,7 @@ public class Behavior {
 		logToExtent("Update Behavior (PUT)", newJson, response);
 		captureDbSnapshot(BehaviorId, "Update Behavior (PUT)");
 		ApiValidators.validatePathParamToResponse(response, "id", BehaviorId);
-		captureElasticScreenshot(BehaviorId, "Update Behavior (PUT)");
+		// captureElasticScreenshot(BehaviorId, "Update Behavior (PUT)");
 //		ApiValidator.validateRequestKeysWithSeparateScreenshotColumns(
 //		         response,
 //		         newJson,
@@ -300,7 +300,7 @@ public class Behavior {
 		captureDbSnapshot(BehaviorId, "Update Behavior (PATCH)");
 		ApiValidators.validatePathParamToResponse(response, "id", BehaviorId);
 //		ApiValidators.validateRequestToResponse(newJson, response, IssueTypeId, "comments");
-		captureElasticScreenshot(BehaviorId, "Update Behavior (PATCH)");
+		// captureElasticScreenshot(BehaviorId, "Update Behavior (PATCH)");
 //		ApiValidator.validateRequestKeysWithSeparateScreenshotColumns(
 //		         response,
 //		         newJson,
@@ -325,7 +325,7 @@ public class Behavior {
 
 		logToExtent("Delete Behavior", null, response);
 		captureDbSnapshot(BehaviorId, "Delete Behavior");
-		captureElasticScreenshot(BehaviorId, "Delete Behavior");
+		// captureElasticScreenshot(BehaviorId, "Delete Behavior");
 	}
 
 	@Given("i have Bulk Behavior")
@@ -359,7 +359,7 @@ public class Behavior {
 
 		for (Integer id : ScenarioContext.Ids) {
 			captureDbSnapshot(id, "Create Bulk Behavior");
-			captureElasticScreenshot(id, "Create Bulk Behavior"+": "+id);
+			// captureElasticScreenshot(id, "Create Bulk Behavior"+": "+id);
 			ApiDataValidator.validateDbNotNullExcept(id, "Behavior", null);
 		}
 	}
@@ -472,7 +472,7 @@ public class Behavior {
 
 	    for (Integer id : behaviorIds) {
 	        captureDbSnapshot(id, "Delete Bulk Behavior");
-	        captureElasticScreenshot(id, "Delete Bulk Behavior");
+	        // captureElasticScreenshot(id, "Delete Bulk Behavior");
 	        
 	    }
 	}
