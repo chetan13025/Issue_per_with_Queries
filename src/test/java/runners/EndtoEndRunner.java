@@ -111,7 +111,7 @@ public class EndtoEndRunner {
 	
 	// with version
 	
-<<<<<<< HEAD
+
 	// @AfterClass
 	// public static void tearDown() {
 	//     try {
@@ -137,7 +137,7 @@ public class EndtoEndRunner {
 	//         e.printStackTrace();
 	//     }
 	// }
-=======
+
 //	@AfterClass
 //	public static void tearDown() {
 //	    try {
