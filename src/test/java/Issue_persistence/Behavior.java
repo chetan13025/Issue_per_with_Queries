@@ -83,7 +83,11 @@ public class Behavior {
 
 		try (Connection conn = DriverManager.getConnection("jdbc:mysql://10.10.2.45:3306", "root", "dhi123");
 				Statement stmt = conn.createStatement();
+<<<<<<< HEAD
 				// ResultSet rs = stmt.executeQuery("SELECT * FROM `issue_persistence_piqa`.`Behavior` LIMIT 1000"))
+=======
+//				ResultSet rs = stmt.executeQuery("SELECT * FROM `issue_persistence_piqa`.`Behavior` ORDER BY id DESC LIMIT 5;"))
+>>>>>>> 4f4da5e (Removed_ES)
 				ResultSet rs = stmt
 						.executeQuery("SELECT * FROM (" + "   SELECT * FROM `issue_persistence_piqa`.`Behavior` "
 								+ "   ORDER BY id DESC LIMIT 5" + ") AS lastFive " + "ORDER BY id ASC;")) {
@@ -139,14 +143,14 @@ public class Behavior {
 //			driver = new ChromeDriver();
 //			driver.manage().window().maximize();
 			ChromeOptions options = new ChromeOptions();
-	        options.addArguments("--headless=new");   // modern headless
-	        options.addArguments("--window-size=1920,1080");
-	        options.addArguments("--disable-gpu");
-	        options.addArguments("--no-sandbox");
-	        options.addArguments("--disable-dev-shm-usage");
+			options.addArguments("--headless=new"); // modern headless
+			options.addArguments("--window-size=1920,1080");
+			options.addArguments("--disable-gpu");
+			options.addArguments("--no-sandbox");
+			options.addArguments("--disable-dev-shm-usage");
 
-	        // ✅ USE options here
-	        driver = new ChromeDriver(options);
+			// ✅ USE options here
+			driver = new ChromeDriver(options);
 
 			// Open Elasticsearch _search URL
 			String url = "http://10.10.2.45:9200/piqa_issue-persistence_behavior_index/_search?pretty&size=2000";
@@ -362,7 +366,11 @@ public class Behavior {
 
 		for (Integer id : ScenarioContext.Ids) {
 			captureDbSnapshot(id, "Create Bulk Behavior");
+<<<<<<< HEAD
 			// captureElasticScreenshot(id, "Create Bulk Behavior"+": "+id);
+=======
+			captureElasticScreenshot(id, "Create Bulk Behavior" + ": " + id);
+>>>>>>> 4f4da5e (Removed_ES)
 			ApiDataValidator.validateDbNotNullExcept(id, "Behavior", null);
 		}
 	}
@@ -391,95 +399,77 @@ public class Behavior {
 	@When("Update PUT Bulk Behavior")
 	public void Update_put_bulk_behavior() throws Exception {
 
-	    List<Integer> behaviorIds = ScenarioContext.Ids;
+		List<Integer> behaviorIds = ScenarioContext.Ids;
 
-	    if (behaviorIds == null || behaviorIds.isEmpty()) {
-	        throw new IllegalStateException(
-	                "No BehaviorIds found. Make sure CREATE scenario ran before UPDATE."
-	        );
-	    }
+		if (behaviorIds == null || behaviorIds.isEmpty()) {
+			throw new IllegalStateException("No BehaviorIds found. Make sure CREATE scenario ran before UPDATE.");
+		}
 
-	    // 1️⃣ Generate bulk JSON
-	    String newJson = DataCreate.generateBehaviorBulkJson();
+		// 1️⃣ Generate bulk JSON
+		String newJson = DataCreate.generateBehaviorBulkJson();
 
-	    // 2️⃣ Inject stored IDs
-	    newJson = injectBehaviorIdsIntoBulk(newJson, behaviorIds);
+		// 2️⃣ Inject stored IDs
+		newJson = injectBehaviorIdsIntoBulk(newJson, behaviorIds);
 
-	    // 3️⃣ Send PUT request
-	    response = given()
-	            .header("Content-Type", "application/json")
-	            .header("X-TENANT-ID", tenantId)
-	            .header("Author", author)
-	            .body(newJson)
-	            .when()
-	            .put(baseUrl + BehaviorBulkUpdate_endpoint)
-	            .then()
-	            .extract()
-	            .response();
+		// 3️⃣ Send PUT request
+		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
+				.header("Author", author).body(newJson).when().put(baseUrl + BehaviorBulkUpdate_endpoint).then()
+				.extract().response();
 
-	    System.out.println("PUT Request Body:\n" + newJson);
-	    System.out.println("PUT Response Body:\n" + response.getBody().asString());
-	    System.out.println("Status Code: " + response.getStatusCode());
+		System.out.println("PUT Request Body:\n" + newJson);
+		System.out.println("PUT Response Body:\n" + response.getBody().asString());
+		System.out.println("Status Code: " + response.getStatusCode());
 
-	    ScenarioContext.RequestBodyForValidation = newJson;
+		ScenarioContext.RequestBodyForValidation = newJson;
 
-	    logToExtent("Update Behavior (PUT)", newJson, response);
+		logToExtent("Update Behavior (PUT)", newJson, response);
 
-	    for (Integer id : behaviorIds) {
-	        captureDbSnapshot(id, "Update Bulk Behavior");
-	        captureElasticScreenshot(id, "Update Bulk Behavior"+": "+id);
-	        ApiDataValidator.validateDbNotNullExcept(id, "Behavior", null);
-	    }
+		for (Integer id : behaviorIds) {
+			captureDbSnapshot(id, "Update Bulk Behavior");
+			captureElasticScreenshot(id, "Update Bulk Behavior" + ": " + id);
+			ApiDataValidator.validateDbNotNullExcept(id, "Behavior", null);
+		}
 	}
 
-	
 	@When("Delete Bulk Behavior")
 	public void Delete_bulk_behavior() throws Exception {
 
-	    List<Integer> behaviorIds = ScenarioContext.Ids;
+		List<Integer> behaviorIds = ScenarioContext.Ids;
 
-	    if (behaviorIds == null || behaviorIds.isEmpty()) {
-	        throw new IllegalStateException(
-	                "No BehaviorIds found. Run CREATE scenario first."
-	        );
-	    }
+		if (behaviorIds == null || behaviorIds.isEmpty()) {
+			throw new IllegalStateException("No BehaviorIds found. Run CREATE scenario first.");
+		}
 
-	    // ✅ Build request JSON directly
-	    String updateRequestBody = new ObjectMapper()
-	            .writeValueAsString(Map.of(
-	                    "trace", true,
-	                    "skipErrors", true,
-	                    "updateExisting", true,
-	                    "bulk", behaviorIds,
-	                    "skipSofDeleteValidation", false
-	            ));
+		// ✅ Build request JSON directly
+		String updateRequestBody = new ObjectMapper().writeValueAsString(Map.of("trace", true, "skipErrors", true,
+				"updateExisting", true, "bulk", behaviorIds, "skipSofDeleteValidation", false));
 
-	    response = given()
-	            .header("Content-Type", "application/json")
-	            .header("X-TENANT-ID", tenantId)
-	            .header("Author", author)
-	            .body(updateRequestBody)
-	            .when()
-	            .delete(baseUrl + BehaviorBulkDelete_endpoint)
-	            .then()
-	            .extract()
-	            .response();
+		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
+				.header("Author", author).body(updateRequestBody).when().delete(baseUrl + BehaviorBulkDelete_endpoint)
+				.then().extract().response();
 
-	    System.out.println("Delete Request Body:\n" + updateRequestBody);
-	    System.out.println("Delete Response Body:\n" + response.getBody().asString());
-	    System.out.println("Status Code: " + response.getStatusCode());
+		System.out.println("Delete Request Body:\n" + updateRequestBody);
+		System.out.println("Delete Response Body:\n" + response.getBody().asString());
+		System.out.println("Status Code: " + response.getStatusCode());
 
-	    ScenarioContext.RequestBodyForValidation = updateRequestBody;
+		ScenarioContext.RequestBodyForValidation = updateRequestBody;
 
-	    logToExtent("Update Behavior (Delete)", updateRequestBody, response);
+		logToExtent("Update Behavior (Delete)", updateRequestBody, response);
 
+<<<<<<< HEAD
 	    for (Integer id : behaviorIds) {
 	        captureDbSnapshot(id, "Delete Bulk Behavior");
 	        // captureElasticScreenshot(id, "Delete Bulk Behavior");
 	        
 	    }
-	}
+=======
+		for (Integer id : behaviorIds) {
+			captureDbSnapshot(id, "Delete Bulk Behavior");
+			captureElasticScreenshot(id, "Delete Bulk Behavior");
 
+		}
+>>>>>>> 4f4da5e (Removed_ES)
+	}
 
 	@Then("The Behavior response status code should be {int}")
 	public void the_behavior_response_status_code_should_be(Integer statusCode) {
@@ -535,96 +525,71 @@ public class Behavior {
 	@Then("Validate Bulk Behavior Request Response ES DB")
 	public void validate_bulk_behavior_request_response_es_db() throws Exception {
 
-	    ObjectMapper mapper = new ObjectMapper();
+		ObjectMapper mapper = new ObjectMapper();
 
-	    int totalIds = 0;
-	    int failedIds = 0;
+		int totalIds = 0;
+		int failedIds = 0;
 
-	    ExtentTest parent = ExtentCucumberListener.getCurrentScenario();
+		ExtentTest parent = ExtentCucumberListener.getCurrentScenario();
 
-	    // ---------------- Parse request bulk ----------------
-	    Map<String, Object> reqRoot =
-	            mapper.readValue(
-	                    ScenarioContext.RequestBodyForValidation,
-	                    new TypeReference<Map<String, Object>>() {}
-	            );
+		// ---------------- Parse request bulk ----------------
+		Map<String, Object> reqRoot = mapper.readValue(ScenarioContext.RequestBodyForValidation,
+				new TypeReference<Map<String, Object>>() {
+				});
 
-	    List<Map<String, Object>> requestBulk =
-	            (List<Map<String, Object>>) reqRoot.get("bulk");
+		List<Map<String, Object>> requestBulk = (List<Map<String, Object>>) reqRoot.get("bulk");
 
-	    // ---------------- Parse response DATA ----------------
-	    List<Map<String, Object>> responseData =
-	            response.jsonPath().getList("DATA");
+		// ---------------- Parse response DATA ----------------
+		List<Map<String, Object>> responseData = response.jsonPath().getList("DATA");
 
-	    if (requestBulk == null || responseData == null) {
-	        parent.fail("Request bulk or response DATA is null");
-	        return;
-	    }
+		if (requestBulk == null || responseData == null) {
+			parent.fail("Request bulk or response DATA is null");
+			return;
+		}
 
-	    parent.info("🔍 Bulk validation started | Request size="
-	            + requestBulk.size() + " | Response size=" + responseData.size());
-	    
-	    // ---------------- Loop per response object ----------------
-	    for (int i = 0; i < responseData.size(); i++) {
+		parent.info("🔍 Bulk validation started | Request size=" + requestBulk.size() + " | Response size="
+				+ responseData.size());
 
-	        totalIds++;
+		// ---------------- Loop per response object ----------------
+		for (int i = 0; i < responseData.size(); i++) {
 
-	        try {
-	            Map<String, Object> reqObj  = requestBulk.get(i);
-	            Map<String, Object> respObj = responseData.get(i);
+			totalIds++;
 
-	            int id = Integer.parseInt(respObj.get("id").toString());
+			try {
+				Map<String, Object> reqObj = requestBulk.get(i);
+				Map<String, Object> respObj = responseData.get(i);
 
-	            String requestJson  = mapper.writeValueAsString(reqObj);
-	            String responseJson = mapper.writeValueAsString(respObj);
+				int id = Integer.parseInt(respObj.get("id").toString());
 
-	            parent.info("🔎 Validating BugType ID=" + id);
-	            ApiDataValidator.validateKeysAcrosRequestResponseEsDb(
-	                    requestJson,
-	                    responseJson,
-	                    id,
-	                    "behavior",
-	                    "Behavior",
-	                    false,
-	                    new String[]{
-	                    		"deleted",
-	                            "createdDate",
-	                            "updatedDate"
-	                    },
-	                    new String[]{"id"},
-	                    new String[]{"_class"}
-	            );
+				String requestJson = mapper.writeValueAsString(reqObj);
+				String responseJson = mapper.writeValueAsString(respObj);
 
-	        } catch (Exception e) {
-	            failedIds++;
-	            parent.fail("❌ Validation exception: " + e.getMessage());
-	        }
-	    }
+				parent.info("🔎 Validating BugType ID=" + id);
+				ApiDataValidator.validateKeysAcrosRequestResponseEsDb(requestJson, responseJson, id, "behavior",
+						"Behavior", false, new String[] { "deleted", "createdDate", "updatedDate" },
+						new String[] { "id" }, new String[] { "_class" });
 
-	    // ---------------- BULK SUMMARY ----------------
-	    String bannerColor = (failedIds == 0) ? "#1e8e3e" : "#d93025";
-	    String statusWord  = (failedIds == 0) ? "PASSED ✓" : "FAILED ✗";
+			} catch (Exception e) {
+				failedIds++;
+				parent.fail("❌ Validation exception: " + e.getMessage());
+			}
+		}
 
-	    String summaryHtml =
-	    	    "<div style='padding:10px;border-left:6px solid " + bannerColor + ";'>" +
-	    	    "<b>Bulk Behavior Validation " + statusWord + "</b><br>" +
-	    	    "Total IDs: " + totalIds +
-	    	    " | Passed: " + (totalIds - failedIds) +
-	    	    " | Failed: " + failedIds +
-	    	    "</div>";
+		// ---------------- BULK SUMMARY ----------------
+		String bannerColor = (failedIds == 0) ? "#1e8e3e" : "#d93025";
+		String statusWord = (failedIds == 0) ? "PASSED ✓" : "FAILED ✗";
 
-	    	if (failedIds > 0) {
-	    	    parent.fail(summaryHtml);
-	    	} else {
-	    	    parent.pass(summaryHtml);
-	    	}
-;
+		String summaryHtml = "<div style='padding:10px;border-left:6px solid " + bannerColor + ";'>"
+				+ "<b>Bulk Behavior Validation " + statusWord + "</b><br>" + "Total IDs: " + totalIds + " | Passed: "
+				+ (totalIds - failedIds) + " | Failed: " + failedIds + "</div>";
+
+		if (failedIds > 0) {
+			parent.fail(summaryHtml);
+		} else {
+			parent.pass(summaryHtml);
+		}
+		;
 	}
-
-
-
-
-
 
 	private String[] parseCsvKeys(String csv) {
 		if (csv == null || csv.trim().isEmpty() || csv.equalsIgnoreCase("null") || csv.equalsIgnoreCase("none")

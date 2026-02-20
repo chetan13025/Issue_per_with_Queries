@@ -1,24 +1,42 @@
 Feature: Bulk API testing
 
-  @Behavior
-  Scenario: To verify that creating  Bulk Behavior
-    Given i have Bulk Behavior
-    When Create New BulkBehavior
-    Then The Behavior response status code should be 200
-    Then Validate Bulk Behavior Request Response ES DB
 
-  @Behavior
+  #@Behavior
+  #Scenario: To verify that creating  Bulk Behavior
+   # Given i have Bulk Behavior
+    #When Create New BulkBehavior
+    #Then The Behavior response status code should be 200
+    #Then Validate Bulk Behavior Request Response ES DB
+
+  #@Behavior
+  #Scenario: To verify that after PUT request data should get update in DataBase
+   # When Update PUT Bulk Behavior
+    #Then The Behavior response status code should be 200
+    #Then Validate Bulk Behavior Request Response ES DB
+
+  #@Behavior
+  #Scenario: To verify that after Delete request data should get removed from DataBase
+   # When Delete Bulk Behavior
+    #Then The Behavior response status code should be 200
+
+  @IssueCollaborator
+  Scenario: To verify that creating bulk issueCollaborator
+    Given I have Bulk IssueCollaborator
+    When Create New Bulk IssueCollaborator
+    Then The IssueCollaborator response status code should be 200
+    Then Validate Bulk IssueCollaborator Request Response ES DB
+
+  @IssueCollaborator
   Scenario: To verify that after PUT request data should get update in DataBase
-    When Update PUT Bulk Behavior
-    Then The Behavior response status code should be 200
-    Then Validate Bulk Behavior Request Response ES DB
+    When Update PUT Bulk IssueCollaborator
+    Then The IssueCollaborator response status code should be 200
+    Then Validate Bulk IssueCollaborator Request Response ES DB
 
-  @Behavior
-  Scenario: To verify that after Delete request data should get removed from DataBase
-    When Delete Bulk Behavior
-    Then The Behavior response status code should be 200
-
-  @BuyType
+  @IssueCollaborator
+  Scenario: To vertify that after DELETE request data should get removed from DataBase
+    When Delete Bulk IssueCollaborator
+    Then The IssueCollaborator response status code should be 200
+    @BuyType
   Scenario: To verify that creating Bulk BugType
     Given I have Bulk BugType
     When Create New Bulk BugType
@@ -648,7 +666,6 @@ Feature: Bulk API testing
     When Delete Bulk RootCause
     Then The RootCause response status code should be 200
 
-
   @SprintProposal
   Scenario: To verify that creating new Bulk SprintProposal
     Given I have Bulk SprintProposal
@@ -774,3 +791,8 @@ Feature: Bulk API testing
   Scenario: To verify that after Delete request data should get removed from DataBase
     When Delete Bulk Worklog
     Then The Worklog response status code should be 200
+
+
+  
+    
+    

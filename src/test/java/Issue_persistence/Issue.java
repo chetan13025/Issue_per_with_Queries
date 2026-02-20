@@ -70,58 +70,61 @@ public class Issue {
 		}
 	}
 
-//	private void captureDbSnapshot(int IssueId, String action) {
-//		ExtentTest current = ExtentCucumberListener.getCurrentScenario();
-//		if (current == null)
-//			return;
-//
-//		try (Connection conn = DriverManager.getConnection("jdbc:mysql://10.10.2.45:3306", "root", "dhi123");
-//				Statement stmt = conn.createStatement();
-//				ResultSet rs = stmt.executeQuery("SELECT * FROM `issue_persistence_piqa`.`Issue` LIMIT 1000")) {
-//
-//			ResultSetMetaData meta = rs.getMetaData();
-//			int colCount = meta.getColumnCount();
-//
-//			StringBuilder html = new StringBuilder("<table border='1' style='border-collapse:collapse;'>");
-//
-//			// Table header
-//			html.append("<tr style='background-color:#f2f2f2;'>");
-//			for (int i = 1; i <= colCount; i++) {
-//				html.append("<th>").append(meta.getColumnName(i)).append("</th>");
-//			}
-//			html.append("</tr>");
-//
-//			// Table rows
-//			while (rs.next()) {
-//				int currentId;
-//				try {
-//					currentId = rs.getInt("id"); // ✅ use Id if exists
-//				} catch (Exception e) {
-//					currentId = rs.getInt("id"); // fallback
-//				}
-//
-//				if (currentId == IssueId) {
-//					html.append("<tr style='background-color:#90EE90; font-weight:bold;'>"); // highlight
-//				} else {
-//					html.append("<tr>");
-//				}
-//
-//				for (int i = 1; i <= colCount; i++) {
-//					html.append("<td>").append(rs.getString(i)).append("</td>");
-//				}
-//				html.append("</tr>");
-//			}
-//
-//			html.append("</table>");
-//
-//			// ✅ Attach HTML table into Extent report
-//			current.info("Database Snapshot after: " + action);
-//			current.info(html.toString());
-//
-//		} catch (Exception e) {
-//			current.warning("⚠️ Failed to capture DB snapshot: " + e.getMessage());
-//		}
-//	}
+	private void captureDbSnapshot(int IssueId, String action) {
+		ExtentTest current = ExtentCucumberListener.getCurrentScenario();
+		if (current == null)
+			return;
+
+		try (Connection conn = DriverManager.getConnection("jdbc:mysql://10.10.2.45:3306", "root", "dhi123");
+				Statement stmt = conn.createStatement();
+//				ResultSet rs = stmt.executeQuery("SELECT * FROM `issue_persistence_piqa`.`Issue` LIMIT 1000"))
+				ResultSet rs = stmt
+						.executeQuery("SELECT * FROM (" + "   SELECT * FROM `issue_persistence_piqa`.`Issue` "
+								+ "   ORDER BY id DESC LIMIT 5" + ") AS lastFive " + "ORDER BY id ASC;")){
+
+			ResultSetMetaData meta = rs.getMetaData();
+			int colCount = meta.getColumnCount();
+
+			StringBuilder html = new StringBuilder("<table border='1' style='border-collapse:collapse;'>");
+
+			// Table header
+			html.append("<tr style='background-color:#f2f2f2;'>");
+			for (int i = 1; i <= colCount; i++) {
+				html.append("<th>").append(meta.getColumnName(i)).append("</th>");
+			}
+			html.append("</tr>");
+
+			// Table rows
+			while (rs.next()) {
+				int currentId;
+				try {
+					currentId = rs.getInt("id"); // ✅ use Id if exists
+				} catch (Exception e) {
+					currentId = rs.getInt("id"); // fallback
+				}
+
+				if (currentId == IssueId) {
+					html.append("<tr style='background-color:#90EE90; font-weight:bold;'>"); // highlight
+				} else {
+					html.append("<tr>");
+				}
+
+				for (int i = 1; i <= colCount; i++) {
+					html.append("<td>").append(rs.getString(i)).append("</td>");
+				}
+				html.append("</tr>");
+			}
+
+			html.append("</table>");
+
+			// ✅ Attach HTML table into Extent report
+			current.info("Database Snapshot after: " + action);
+			current.info(html.toString());
+
+		} catch (Exception e) {
+			current.warning("⚠️ Failed to capture DB snapshot: " + e.getMessage());
+		}
+	}
 
 //	private void captureElasticScreenshot(int IssueId, String action) {
 //		WebDriver driver = null;
@@ -199,8 +202,9 @@ public class Issue {
 		System.out.println("Stored IssueId: " + IssueId);
 		logToExtent("Create Issue Response", requestBody, response);
 //		captureElasticScreenshot(IssueId, "Create New Issue");
-		ApiValidators.captureDbSnapshot(IssueId, "Issue", "Create New Issue");
-		ApiValidators.captureElasticScreenshot(IssueId, "issue", "Create New Issue");
+//		ApiValidators.captureDbSnapshot(IssueId, "Issue", "Create New Issue");
+		captureDbSnapshot(IssueId, "Create New Issue");
+//		ApiValidators.captureElasticScreenshot(IssueId, "issue", "Create New Issue");
 //		ApiValidators.validateKeysAcrossResponseEsDb(response, IssueId, "issue","Issue");
 	}
 
@@ -241,7 +245,7 @@ public class Issue {
 		System.out.println("Status Code: " + response.getStatusCode());
 		RequestBodyForValidation = newJson;
 		logToExtent("Update Issue (PUT)", newJson, response);
-		ApiValidators.captureDbSnapshot(IssueId, "Issue", "Update Issue (PUT)");
+		captureDbSnapshot(IssueId, "Update Issue (PUT)");
 //		ApiValidators.captureElasticScreenshot(IssueId,"issue", "Update Issue (PUT)");
 //		ApiValidators.validateKeysAcrossResponseEsDb(response, IssueId, "issue","Issue");
 
@@ -263,8 +267,8 @@ public class Issue {
 		System.out.println("Status Code: " + response.getStatusCode());
 		RequestBodyForValidation = newJson;
 		logToExtent("Update Issue (PATCH)", newJson, response);
-		ApiValidators.captureDbSnapshot(IssueId, "Issue", "Update Issue (PATCH)");
-		ApiValidators.captureElasticScreenshot(IssueId, "issue", "Update Issue (PATCH)");
+		captureDbSnapshot(IssueId, "Update Issue (PATCH)");
+//		ApiValidators.captureElasticScreenshot(IssueId, "issue", "Update Issue (PATCH)");
 
 	}
 
@@ -278,8 +282,8 @@ public class Issue {
 		System.out.println("Delete Status Code: " + response.getStatusCode());
 
 		logToExtent("Delete Issue", null, response);
-		ApiValidators.captureDbSnapshot(IssueId, "Issue", "Delete Issue");
-		ApiValidators.captureElasticScreenshot(IssueId, "issue", "Delete Issue");
+		captureDbSnapshot(IssueId,  "Delete Issue");
+//		ApiValidators.captureElasticScreenshot(IssueId, "issue", "Delete Issue");
 	}
 	
 	@Given("I have Bulk Issue")

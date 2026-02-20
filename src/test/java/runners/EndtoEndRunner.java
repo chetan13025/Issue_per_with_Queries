@@ -42,6 +42,7 @@ import utils.ReportUtils;
    		// "src/test/resources/features/occurrence.feature",
    		// "src/test/resources/features/priority.feature",
 //    		20-11
+<<<<<<< HEAD
    		// "src/test/resources/features/rootcause.feature",
    		// "src/test/resources/features/sprintproposal.feature",
    		// "src/test/resources/features/testcase.feature",
@@ -50,6 +51,16 @@ import utils.ReportUtils;
    		"src/test/resources/features/behavior.feature",
     		// "src/test/resources/features/bulk.feature",
    		"src/test/resources/features/bugtype.feature",
+=======
+//    		"src/test/resources/features/rootcause.feature",
+//    		"src/test/resources/features/sprintproposal.feature",
+//    		"src/test/resources/features/testcase.feature",
+//    		"src/test/resources/features/unittestresult.feature",
+//    		"src/test/resources/features/worklog.feature",
+//    		"src/test/resources/features/behavior.feature",
+//    		"src/test/resources/features/bulk.feature",
+    		"src/test/resources/features/bugtype.feature",
+>>>>>>> 4f4da5e (Removed_ES)
     		//21-11
    		// "src/test/resources/features/issuecomponent.feature",
    		// "src/test/resources/features/component.feature",
@@ -100,6 +111,7 @@ public class EndtoEndRunner {
 	
 	// with version
 	
+<<<<<<< HEAD
 	// @AfterClass
 	// public static void tearDown() {
 	//     try {
@@ -125,4 +137,31 @@ public class EndtoEndRunner {
 	//         e.printStackTrace();
 	//     }
 	// }
+=======
+//	@AfterClass
+//	public static void tearDown() {
+//	    try {
+//	        // Optional: ask your Extent listener to flush if available so HTML is finalized
+//	        try {
+//	            // if you implemented a flush method on your listener/manager, call it:
+//	            // reports.ExtentCucumberListener.flushReports();
+//	        } catch (Throwable ignored) {}
+//
+//	        // Print the resolved latest file (debug)
+//	        String latest = ReportUtils.getLatestReportFile("target", ".html");
+//	        System.out.println("Latest report file : " + latest);
+//
+//	        // Read version stored earlier by VersionSteps
+//	        String version = System.getProperty("detected.version", "").trim();
+//
+//	        // Call EmailReportSender which will find the latest HTML and include version in subject/body
+//	        EmailReportSender.sendReport("chetan.patil@dharbor.com", version);
+//
+//	        System.out.println("Email triggered with version=" + version);
+//
+//	    } catch (Exception e) {
+//	        e.printStackTrace();
+//	    }
+//	}
+>>>>>>> 4f4da5e (Removed_ES)
 	}
