@@ -362,11 +362,11 @@ public class Behavior {
 
 		for (Integer id : ScenarioContext.Ids) {
 			captureDbSnapshot(id, "Create Bulk Behavior");
-<<<<<<< HEAD
+
 			// captureElasticScreenshot(id, "Create Bulk Behavior"+": "+id);
-=======
+
 			captureElasticScreenshot(id, "Create Bulk Behavior" + ": " + id);
->>>>>>> 4f4da5e (Removed_ES)
+
 			ApiDataValidator.validateDbNotNullExcept(id, "Behavior", null);
 		}
 	}
@@ -452,19 +452,19 @@ public class Behavior {
 
 		logToExtent("Update Behavior (Delete)", updateRequestBody, response);
 
-<<<<<<< HEAD
+
 	    for (Integer id : behaviorIds) {
 	        captureDbSnapshot(id, "Delete Bulk Behavior");
 	        // captureElasticScreenshot(id, "Delete Bulk Behavior");
 	        
 	    }
-=======
+
 		for (Integer id : behaviorIds) {
 			captureDbSnapshot(id, "Delete Bulk Behavior");
 			captureElasticScreenshot(id, "Delete Bulk Behavior");
 
 		}
->>>>>>> 4f4da5e (Removed_ES)
+
 	}
 
 	@Then("The Behavior response status code should be {int}")
