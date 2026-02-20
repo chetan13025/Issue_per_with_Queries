@@ -42,7 +42,7 @@ import utils.ReportUtils;
    		// "src/test/resources/features/occurrence.feature",
    		// "src/test/resources/features/priority.feature",
 //    		20-11
-<<<<<<< HEAD
+
    		// "src/test/resources/features/rootcause.feature",
    		// "src/test/resources/features/sprintproposal.feature",
    		// "src/test/resources/features/testcase.feature",
@@ -51,7 +51,7 @@ import utils.ReportUtils;
    		"src/test/resources/features/behavior.feature",
     		// "src/test/resources/features/bulk.feature",
    		"src/test/resources/features/bugtype.feature",
-=======
+
 //    		"src/test/resources/features/rootcause.feature",
 //    		"src/test/resources/features/sprintproposal.feature",
 //    		"src/test/resources/features/testcase.feature",
@@ -60,7 +60,7 @@ import utils.ReportUtils;
 //    		"src/test/resources/features/behavior.feature",
 //    		"src/test/resources/features/bulk.feature",
     		"src/test/resources/features/bugtype.feature",
->>>>>>> 4f4da5e (Removed_ES)
+
     		//21-11
    		// "src/test/resources/features/issuecomponent.feature",
    		// "src/test/resources/features/component.feature",
@@ -163,5 +163,5 @@ public class EndtoEndRunner {
 //	        e.printStackTrace();
 //	    }
 //	}
->>>>>>> 4f4da5e (Removed_ES)
+
 	}
