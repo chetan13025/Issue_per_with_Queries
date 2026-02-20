@@ -77,7 +77,10 @@ public class BugType {
 
 		try (Connection conn = DriverManager.getConnection("jdbc:mysql://10.10.2.45:3306", "root", "dhi123");
 				Statement stmt = conn.createStatement();
-				ResultSet rs = stmt.executeQuery("SELECT * FROM `issue_persistence_piqa`.`BugType` LIMIT 1000")) {
+				// ResultSet rs = stmt.executeQuery("SELECT * FROM `issue_persistence_piqa`.`BugType` LIMIT 1000"))
+				ResultSet rs = stmt
+						.executeQuery("SELECT * FROM (" + "   SELECT * FROM `issue_persistence_piqa`.`BugType` "
+								+ "   ORDER BY id DESC LIMIT 5" + ") AS lastFive " + "ORDER BY id ASC;")) {
 
 			ResultSetMetaData meta = rs.getMetaData();
 			int colCount = meta.getColumnCount();
@@ -207,7 +210,7 @@ public class BugType {
 		System.out.println("Stored BugTypeId: " + BugTypeId);
 		logToExtent("Create BugType Response", requestBody, response);
 		captureDbSnapshot(BugTypeId, "Create New BugType");
-		captureElasticScreenshot(BugTypeId, "Create New BugType");
+		// captureElasticScreenshot(BugTypeId, "Create New BugType");
 	}
 	
 	@When("Fetch All BugType Details")
@@ -250,7 +253,7 @@ public class BugType {
 		logToExtent("Update BugType (PUT)", newJson, response);
 		captureDbSnapshot(BugTypeId, "Update BugType (PUT)");
 		ApiValidators.validatePathParamToResponse(response, "id", BugTypeId);
-		captureElasticScreenshot(BugTypeId, "Update BugType (PUT)");
+		// captureElasticScreenshot(BugTypeId, "Update BugType (PUT)");
 
 	}
 	
@@ -272,7 +275,7 @@ public class BugType {
 		captureDbSnapshot(BugTypeId, "Update BugType (PATCH)");
 		ApiValidators.validatePathParamToResponse(response, "id", BugTypeId);
 //		ApiValidators.validateRequestToResponse(newJson, response, IssueTypeId, "comments");
-		captureElasticScreenshot(BugTypeId, "Update BugType (PATCH)");
+		// captureElasticScreenshot(BugTypeId, "Update BugType (PATCH)");
 
 	}
 	@When("Delete BugType with ID")
@@ -286,7 +289,7 @@ public class BugType {
 
 		logToExtent("Delete BugType", null, response);
 		captureDbSnapshot(BugTypeId, "Delete BugType");
-		captureElasticScreenshot(BugTypeId, "Delete BugType");
+		// captureElasticScreenshot(BugTypeId, "Delete BugType");
 	}
 	
 	@Given("I have Bulk BugType")
@@ -320,7 +323,7 @@ public class BugType {
 
 		for (Integer id : ScenarioContext.Ids) {
 			captureDbSnapshot(id, "Create Bulk BugType");
-			captureElasticScreenshot(id, "Create Bulk BugType"+": "+id);
+			// captureElasticScreenshot(id, "Create Bulk BugType"+": "+id);
 			ApiDataValidator.validateDbNotNullExcept(id, "BugType", null);
 		}
 	}
@@ -385,7 +388,7 @@ public class BugType {
 
 	    for (Integer id : bugtypeIds) {
 	        captureDbSnapshot(id, "Update Bulk BugType");
-	        captureElasticScreenshot(id, "Update Bulk BugType"+": "+id);
+	        // captureElasticScreenshot(id, "Update Bulk BugType"+": "+id);
 	        ApiDataValidator.validateDbNotNullExcept(id, "BugType", null);
 	    }
 	}
@@ -433,7 +436,7 @@ public class BugType {
 
 	    for (Integer id : bugtypeIds) {
 	        captureDbSnapshot(id, "Delete Bulk BugType");
-	        captureElasticScreenshot(id, "Delete Bulk BugType");
+	        // captureElasticScreenshot(id, "Delete Bulk BugType");
 	        
 	    }
 	}
