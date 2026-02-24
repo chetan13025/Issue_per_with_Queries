@@ -75,7 +75,10 @@ public class IssueComments {
 
 		try (Connection conn = DriverManager.getConnection("jdbc:mysql://10.10.2.45:3306", "root", "dhi123");
 				Statement stmt = conn.createStatement();
-				ResultSet rs = stmt.executeQuery("SELECT * FROM `issue_persistence_piqa`.`IssueComments` LIMIT 1000")) {
+				// ResultSet rs = stmt.executeQuery("SELECT * FROM `issue_persistence_piqa`.`IssueComments` LIMIT 1000"))
+				ResultSet rs = stmt
+						.executeQuery("SELECT * FROM (" + "   SELECT * FROM `issue_persistence_piqa`.`IssueComments` "
+								+ "   ORDER BY id DESC LIMIT 5" + ") AS lastFive " + "ORDER BY id ASC;")) {
 
 			ResultSetMetaData meta = rs.getMetaData();
 			int colCount = meta.getColumnCount();
@@ -205,7 +208,7 @@ public class IssueComments {
 		System.out.println("Stored UserId: " + IssueCommentsId);
 		logToExtent("Create IssueComments Response", requestBody, response);
 		captureDbSnapshot(IssueCommentsId, "Create IssueComments User");
-		captureElasticScreenshot(IssueCommentsId, "Create IssueComments");
+		// captureElasticScreenshot(IssueCommentsId, "Create IssueComments");
 	}
 	
 	@When("Fetch All IssueComments Details")
@@ -246,7 +249,7 @@ public class IssueComments {
 		RequestBodyForValidation=newJson;
 		logToExtent("Update User (PUT)", newJson, response);
 		captureDbSnapshot(IssueCommentsId, "Update IssueComments (PUT)");
-		captureElasticScreenshot(IssueCommentsId, "Update IssueComments (PUT)");
+		// captureElasticScreenshot(IssueCommentsId, "Update IssueComments (PUT)");
 
 	}
 
@@ -267,7 +270,7 @@ public class IssueComments {
 		RequestBodyForValidation=newJson;
 		logToExtent("Update User (PATCH)", newJson, response);
 		captureDbSnapshot(IssueCommentsId, "Update User (PATCH)");
-		captureElasticScreenshot(IssueCommentsId, "Update User (PATCH)");
+		// captureElasticScreenshot(IssueCommentsId, "Update User (PATCH)");
 
 	}
 
@@ -282,7 +285,7 @@ public class IssueComments {
 
 		logToExtent("Delete IssueComment", null, response);
 		captureDbSnapshot(IssueCommentsId, "Delete IssueComment");
-		captureElasticScreenshot(IssueCommentsId, "Delete IssueComment");
+		// captureElasticScreenshot(IssueCommentsId, "Delete IssueComment");
 	}
 	
 	@Given("I have Bulk IssueComment")
@@ -316,7 +319,7 @@ public class IssueComments {
 
 		for (Integer id : ScenarioContext.Ids) {
 			captureDbSnapshot(id,  "Create Bulk IssueComment"+": "+id);
-			captureElasticScreenshot(id,  "Create Bulk IssueComment"+": "+id);
+			// captureElasticScreenshot(id,  "Create Bulk IssueComment"+": "+id);
 			ApiDataValidator.validateDbNotNullExcept(id, "IssueComments", null);
 		}
 	}
@@ -381,7 +384,7 @@ public class IssueComments {
 
 	    for (Integer id : IssueCommentsIds) {
 	    	captureDbSnapshot(id, "Update IssueComment (PUT)"+": "+id);
-			captureElasticScreenshot(id, "Update IssueComment (PUT)"+": "+id);
+			// captureElasticScreenshot(id, "Update IssueComment (PUT)"+": "+id);
 			ApiDataValidator.validateDbNotNullExcept(id, "IssueComments", null);
 	    }
 	}
@@ -429,7 +432,7 @@ public class IssueComments {
 
 	    for (Integer id : IssueCommentsIds) {
 	    	captureDbSnapshot(id, "Delete IssueComment"+": "+id);
-			captureElasticScreenshot(id, "Delete IssueComment"+": "+id);
+			// captureElasticScreenshot(id, "Delete IssueComment"+": "+id);
 	    }
 	}
 		
@@ -488,7 +491,7 @@ public class IssueComments {
 	                    id,
 	                    "issue-comments",
 	                    "IssueComments",
-	                    false,
+	                    true,
 	                    new String[]{
 	                            "deleted"
 	                    },
