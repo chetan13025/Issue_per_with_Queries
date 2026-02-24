@@ -317,7 +317,7 @@ public class Issue {
 
 		for (Integer id : ScenarioContext.Ids) {
 			ApiValidators.captureDbSnapshot(id, "Issue", "Create Bulk Issue"+": "+id);
-			ApiValidators.captureElasticScreenshot(id, "issue", "Create Bulk Issue"+": "+id);
+			// ApiValidators.captureElasticScreenshot(id, "issue", "Create Bulk Issue"+": "+id);
 			ApiDataValidator.validateDbNotNullExcept(id, "Issue", null);
 		}
 	}
@@ -382,7 +382,7 @@ public class Issue {
 
 	    for (Integer id : IssueIds) {
 	    	ApiValidators.captureDbSnapshot(id, "Issue", "Update Issue (PUT)"+": "+id);
-			ApiValidators.captureElasticScreenshot(id, "issue", "Update Issue (PUT)"+": "+id);
+			// ApiValidators.captureElasticScreenshot(id, "issue", "Update Issue (PUT)"+": "+id);
 			ApiDataValidator.validateDbNotNullExcept(id, "Issue", null);
 	    }
 	}
@@ -430,7 +430,7 @@ public class Issue {
 
 	    for (Integer id : IssueIds) {
 	    	ApiValidators.captureDbSnapshot(id, "Issue", "Delete Issue"+": "+id);
-			ApiValidators.captureElasticScreenshot(id, "issue", "Delete Issue"+": "+id);
+			// ApiValidators.captureElasticScreenshot(id, "issue", "Delete Issue"+": "+id);
 	    }
 	}
 	
@@ -491,7 +491,7 @@ public class Issue {
 	                    id,
 	                    "issue",
 	                    "Issue",
-	                    false,
+	                    true,
 	                    new String[]{
 	                            "deleted"
 	                    },
