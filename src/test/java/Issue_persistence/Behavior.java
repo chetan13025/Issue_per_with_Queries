@@ -365,7 +365,7 @@ public class Behavior {
 
 			// captureElasticScreenshot(id, "Create Bulk Behavior"+": "+id);
 
-			captureElasticScreenshot(id, "Create Bulk Behavior" + ": " + id);
+			// captureElasticScreenshot(id, "Create Bulk Behavior" + ": " + id);
 
 			ApiDataValidator.validateDbNotNullExcept(id, "Behavior", null);
 		}
@@ -422,7 +422,7 @@ public class Behavior {
 
 		for (Integer id : behaviorIds) {
 			captureDbSnapshot(id, "Update Bulk Behavior");
-			captureElasticScreenshot(id, "Update Bulk Behavior" + ": " + id);
+			// captureElasticScreenshot(id, "Update Bulk Behavior" + ": " + id);
 			ApiDataValidator.validateDbNotNullExcept(id, "Behavior", null);
 		}
 	}
@@ -453,15 +453,9 @@ public class Behavior {
 		logToExtent("Update Behavior (Delete)", updateRequestBody, response);
 
 
-	    for (Integer id : behaviorIds) {
-	        captureDbSnapshot(id, "Delete Bulk Behavior");
-	        // captureElasticScreenshot(id, "Delete Bulk Behavior");
-	        
-	    }
-
 		for (Integer id : behaviorIds) {
 			captureDbSnapshot(id, "Delete Bulk Behavior");
-			captureElasticScreenshot(id, "Delete Bulk Behavior");
+			// captureElasticScreenshot(id, "Delete Bulk Behavior");
 
 		}
 
