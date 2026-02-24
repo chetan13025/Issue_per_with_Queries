@@ -208,7 +208,7 @@ public class IssueCollaborator {
 		System.out.println("Stored UserId: " + IssueCollaboratorId);
 		logToExtent("Create IssueCollaborator Response", requestBody, response);
 		captureDbSnapshot(IssueCollaboratorId, "Create New IssueCollaborator");
-		captureElasticScreenshot(IssueCollaboratorId, "Create IssueCollaborator");
+		// captureElasticScreenshot(IssueCollaboratorId, "Create IssueCollaborator");
 	}
 	@When("Fetch All IssueCollaborator Details")
 	public void Fetch_All_issuecollaborator_Details() {
@@ -248,7 +248,7 @@ public class IssueCollaborator {
 		RequestBodyForValidation = newJson;
 		logToExtent("Update IssueCollaborator (PUT)", newJson, response);
 		captureDbSnapshot(IssueCollaboratorId, "Update IssueCollaborator (PUT)");
-		captureElasticScreenshot(IssueCollaboratorId, "Update IssueCollaborator (PUT)");
+		// captureElasticScreenshot(IssueCollaboratorId, "Update IssueCollaborator (PUT)");
 
 	}
 	
@@ -269,7 +269,7 @@ public class IssueCollaborator {
 		RequestBodyForValidation = newJson;
 		logToExtent("Update IssueCollaborator (PATCH)", newJson, response);
 		captureDbSnapshot(IssueCollaboratorId, "Update IssueCollaborator (PATCH)");
-		captureElasticScreenshot(IssueCollaboratorId, "Update IssueCollaborator (PATCH)");
+		// captureElasticScreenshot(IssueCollaboratorId, "Update IssueCollaborator (PATCH)");
 
 	}
 	
@@ -284,7 +284,7 @@ public class IssueCollaborator {
 
 		logToExtent("Delete IssueCollaborator", null, response);
 		captureDbSnapshot(IssueCollaboratorId, "Delete IssueCollaborator");
-		captureElasticScreenshot(IssueCollaboratorId, "Delete IssueCollaborator");
+		// captureElasticScreenshot(IssueCollaboratorId, "Delete IssueCollaborator");
 	}
 	
 	@Given("I have Bulk IssueCollaborator")
@@ -318,7 +318,7 @@ public class IssueCollaborator {
 
 		for (Integer id : ScenarioContext.Ids) {
 			captureDbSnapshot(id,  "Create Bulk IssueCollaborator"+": "+id);
-			captureElasticScreenshot(id,  "Create Bulk IssueCollaborator"+": "+id);
+			// captureElasticScreenshot(id,  "Create Bulk IssueCollaborator"+": "+id);
 			ApiDataValidator.validateDbNotNullExcept(id, "IssueCollaborator", null);
 		}
 	}
@@ -383,7 +383,7 @@ public class IssueCollaborator {
 
 	    for (Integer id : IssueCollaboratorIds) {
 	    	captureDbSnapshot(id, "Update IssueCollaborator (PUT)"+": "+id);
-			captureElasticScreenshot(id, "Update IssueCollaborator (PUT)"+": "+id);
+			// captureElasticScreenshot(id, "Update IssueCollaborator (PUT)"+": "+id);
 			ApiDataValidator.validateDbNotNullExcept(id, "IssueCollaborator", null);
 	    }
 	}
@@ -490,7 +490,7 @@ public class IssueCollaborator {
 	                    id,
 	                    "issue-collaborator",
 	                    "IssueCollaborator",
-	                    false,
+	                    true,
 	                    new String[]{
 	                            "deleted"
 	                    },
