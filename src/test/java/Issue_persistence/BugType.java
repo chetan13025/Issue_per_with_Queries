@@ -498,7 +498,7 @@ public class BugType {
 	                    id,
 	                    "bug-type",      // ES index
 	                    "BugType",       // DB table
-	                    false,
+	                    true,
 	                    new String[]{
 	                            "deleted",
 	                            "createdDate",
