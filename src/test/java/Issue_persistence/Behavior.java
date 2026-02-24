@@ -562,7 +562,7 @@ public class Behavior {
 
 				parent.info("🔎 Validating BugType ID=" + id);
 				ApiDataValidator.validateKeysAcrosRequestResponseEsDb(requestJson, responseJson, id, "behavior",
-						"Behavior", false, new String[] { "deleted", "createdDate", "updatedDate" },
+						"Behavior", true, new String[] { "deleted", "createdDate", "updatedDate" },
 						new String[] { "id" }, new String[] { "_class" });
 
 			} catch (Exception e) {
