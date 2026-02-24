@@ -210,7 +210,7 @@ public class Environment {
 		System.out.println("Stored EnvironmentId: " + EnvironmentId);
 		logToExtent("Create Environment Response", requestBody, response);
 		captureDbSnapshot(EnvironmentId, "Create New Environment");
-		captureElasticScreenshot(EnvironmentId, "Create New Environment");
+		// captureElasticScreenshot(EnvironmentId, "Create New Environment");
 	}
 	
 	@When("Fetch All Environment Details")
@@ -253,7 +253,7 @@ public class Environment {
 		logToExtent("Update Environment (PUT)", newJson, response);
 		captureDbSnapshot(EnvironmentId, "Update Environment (PUT)");
 		ApiValidators.validatePathParamToResponse(response, "id", EnvironmentId);
-		captureElasticScreenshot(EnvironmentId, "Update Environment (PUT)");
+		// captureElasticScreenshot(EnvironmentId, "Update Environment (PUT)");
 
 	}
 	
@@ -275,7 +275,7 @@ public class Environment {
 		captureDbSnapshot(EnvironmentId, "Update Environment (PATCH)");
 		ApiValidators.validatePathParamToResponse(response, "id", EnvironmentId);
 //		ApiValidators.validateRequestToResponse(newJson, response, IssueTypeId, "comments");
-		captureElasticScreenshot(EnvironmentId, "Update Environment (PATCH)");
+		// captureElasticScreenshot(EnvironmentId, "Update Environment (PATCH)");
 
 	}
 	@When("Delete Environment with ID")
@@ -289,7 +289,7 @@ public class Environment {
 
 		logToExtent("Delete Environment", null, response);
 		captureDbSnapshot(EnvironmentId, "Delete Environment");
-		captureElasticScreenshot(EnvironmentId, "Delete Environment");
+		// captureElasticScreenshot(EnvironmentId, "Delete Environment");
 	}
 	
 	@Given("I have Bulk Environment")
@@ -323,7 +323,7 @@ public class Environment {
 
 		for (Integer id : ScenarioContext.Ids) {
 			captureDbSnapshot(id, "Create Bulk Environment");
-			captureElasticScreenshot(id, "Create Bulk Environment"+": "+id);
+			// captureElasticScreenshot(id, "Create Bulk Environment"+": "+id);
 			ApiDataValidator.validateDbNotNullExcept(id, "Environment", null);
 		}
 	}
@@ -388,7 +388,7 @@ public class Environment {
 
 	    for (Integer id : EnvironmentIds) {
 	        captureDbSnapshot(id, "Update Bulk Environment");
-	        captureElasticScreenshot(id, "Update Bulk Environment"+": "+id);
+	        // captureElasticScreenshot(id, "Update Bulk Environment"+": "+id);
 	        ApiDataValidator.validateDbNotNullExcept(id, "Environment", null);
 	    }
 	}
@@ -436,7 +436,7 @@ public class Environment {
 
 	    for (Integer id : EnvironmentIds) {
 	        captureDbSnapshot(id, "Delete Bulk Environment");
-	        captureElasticScreenshot(id, "Delete Bulk Environment");
+	        // captureElasticScreenshot(id, "Delete Bulk Environment");
 	    }
 	}
 	
@@ -497,7 +497,7 @@ public class Environment {
 	                    id,
 	                    "environment",
 	                    "Environment",
-	                    false,
+	                    true,
 	                    new String[]{
 	                            "deleted",
 	                            "createdDate",
