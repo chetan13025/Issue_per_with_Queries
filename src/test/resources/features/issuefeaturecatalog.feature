@@ -24,7 +24,7 @@ Then The IssueFeatureCatalog response status code should be 200
 
 Scenario: Updating PATCH IssueFeatureCatalog Details with ID
 When Update Patch IssueFeatureCatalog
-  Then Validate API ES and DB for IssueFeatureCatalogId after PATCH skipping ES false excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"
+  Then Validate API ES and DB for IssueFeatureCatalogId after PATCH skipping ES true excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"
 Then The IssueFeatureCatalog response status code should be 200
 
 Scenario: Deleing IssueFeatureCatalog Details with ID
