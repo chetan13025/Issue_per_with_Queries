@@ -214,7 +214,7 @@ public class Component {
 		System.out.println("Stored ComponentId: " + ComponentId);
 		logToExtent("Create Component Response", requestBody, response);
 		captureDbSnapshot(ComponentId, "Create New Component");
-		captureElasticScreenshot(ComponentId, "Create New Component");
+		// captureElasticScreenshot(ComponentId, "Create New Component");
 	}
 	
 	@When("Fetch All Component Details")
@@ -257,7 +257,7 @@ public class Component {
 		logToExtent("Update Component (PUT)", newJson, response);
 		captureDbSnapshot(ComponentId, "Update BugType (PUT)");
 		ApiValidators.validatePathParamToResponse(response, "id", ComponentId);
-		captureElasticScreenshot(ComponentId, "Update Component (PUT)");
+		// captureElasticScreenshot(ComponentId, "Update Component (PUT)");
 
 	}
 	
@@ -279,7 +279,7 @@ public class Component {
 		captureDbSnapshot(ComponentId, "Update Component (PATCH)");
 		ApiValidators.validatePathParamToResponse(response, "id", ComponentId);
 //		ApiValidators.validateRequestToResponse(newJson, response, IssueTypeId, "comments");
-		captureElasticScreenshot(ComponentId, "Update Component (PATCH)");
+		// captureElasticScreenshot(ComponentId, "Update Component (PATCH)");
 
 	}
 	@When("Delete Component with ID")
@@ -293,7 +293,7 @@ public class Component {
 
 		logToExtent("Delete Component", null, response);
 		captureDbSnapshot(ComponentId, "Delete Component");
-		captureElasticScreenshot(ComponentId, "Delete Component");
+		// captureElasticScreenshot(ComponentId, "Delete Component");
 	}
 	
 	@Given("I have Bulk Component")
@@ -327,7 +327,7 @@ public class Component {
 
 		for (Integer id : ScenarioContext.Ids) {
 			captureDbSnapshot(id, "Create Bulk Component");
-			captureElasticScreenshot(id, "Create Bulk Component"+": "+id);
+			// captureElasticScreenshot(id, "Create Bulk Component"+": "+id);
 			ApiDataValidator.validateDbNotNullExcept(id, "Components", null);
 		}
 	}
@@ -392,7 +392,7 @@ public class Component {
 
 	    for (Integer id : componentIds) {
 	        captureDbSnapshot(id, "Update Bulk Component");
-	        captureElasticScreenshot(id, "Update Bulk Component"+": "+id);
+	        // captureElasticScreenshot(id, "Update Bulk Component"+": "+id);
 	        ApiDataValidator.validateDbNotNullExcept(id, "Components", null);
 	    }
 	}
@@ -440,7 +440,7 @@ public class Component {
 
 	    for (Integer id : componentIds) {
 	        captureDbSnapshot(id, "Delete Bulk Component");
-	        captureElasticScreenshot(id, "Delete Bulk Component");
+	        // captureElasticScreenshot(id, "Delete Bulk Component");
 	    }
 	}
 	
@@ -501,7 +501,7 @@ public class Component {
 	                    id,
 	                    "components",
 	                    "Components",
-	                    false,
+	                    true,
 	                    new String[]{
 	                            "deleted",
 	                            "createdDate",
