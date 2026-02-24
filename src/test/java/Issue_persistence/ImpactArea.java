@@ -439,7 +439,7 @@ public class ImpactArea {
 
 	    for (Integer id : ImpactAreaIds) {
 	        captureDbSnapshot(id, "Delete Bulk ImpactArea");
-	        captureElasticScreenshot(id, "Delete Bulk ImpactArea");
+	        // captureElasticScreenshot(id, "Delete Bulk ImpactArea");
 	    }
 	}
 	
