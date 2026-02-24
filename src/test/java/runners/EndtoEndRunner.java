@@ -50,14 +50,14 @@ import utils.ReportUtils;
    		// "src/test/resources/features/worklog.feature",
    		"src/test/resources/features/behavior.feature",
     		// "src/test/resources/features/bulk.feature",
-   		// "src/test/resources/features/bugtype.feature",
+   		"src/test/resources/features/bugtype.feature",
 
     		//21-11
    		// "src/test/resources/features/issuecomponent.feature",
    		"src/test/resources/features/component.feature",
-   		// "src/test/resources/features/componentimpactarea.feature",
-   		// "src/test/resources/features/dependencytype.feature",
-   		// "src/test/resources/features/environment.feature",
+   		"src/test/resources/features/componentimpactarea.feature",
+   		"src/test/resources/features/dependencytype.feature",
+   		"src/test/resources/features/environment.feature",
    		// "src/test/resources/features/impactarea.feature",
     	    		
     },
