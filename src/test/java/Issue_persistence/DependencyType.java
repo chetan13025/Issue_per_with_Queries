@@ -210,7 +210,7 @@ public class DependencyType {
 		System.out.println("Stored DependencyTypeId: " + DependencyTypeId);
 		logToExtent("Create DependencyType Response", requestBody, response);
 		captureDbSnapshot(DependencyTypeId, "Create New DependencyType");
-		captureElasticScreenshot(DependencyTypeId, "Create New DependencyType");
+		// captureElasticScreenshot(DependencyTypeId, "Create New DependencyType");
 	}
 	
 	@When("Fetch All DependencyType Details")
@@ -253,7 +253,7 @@ public class DependencyType {
 		logToExtent("Update DependencyType (PUT)", newJson, response);
 		captureDbSnapshot(DependencyTypeId, "Update DependencyType (PUT)");
 		ApiValidators.validatePathParamToResponse(response, "id", DependencyTypeId);
-		captureElasticScreenshot(DependencyTypeId, "Update DependencyType (PUT)");
+		// captureElasticScreenshot(DependencyTypeId, "Update DependencyType (PUT)");
 
 	}
 	
@@ -275,7 +275,7 @@ public class DependencyType {
 		captureDbSnapshot(DependencyTypeId, "Update DependencyType (PATCH)");
 		ApiValidators.validatePathParamToResponse(response, "id", DependencyTypeId);
 //		ApiValidators.validateRequestToResponse(newJson, response, IssueTypeId, "comments");
-		captureElasticScreenshot(DependencyTypeId, "Update DependencyType (PATCH)");
+		// captureElasticScreenshot(DependencyTypeId, "Update DependencyType (PATCH)");
 
 	}
 	@When("Delete DependencyType with ID")
@@ -289,7 +289,7 @@ public class DependencyType {
 
 		logToExtent("Delete DependencyType", null, response);
 		captureDbSnapshot(DependencyTypeId, "Delete DependencyType");
-		captureElasticScreenshot(DependencyTypeId, "Delete DependencyType");
+		// captureElasticScreenshot(DependencyTypeId, "Delete DependencyType");
 	}
 	
 	@Given("I have Bulk DependencyType")
@@ -323,7 +323,7 @@ public class DependencyType {
 
 		for (Integer id : ScenarioContext.Ids) {
 			captureDbSnapshot(id, "Create Bulk DependencyType");
-			captureElasticScreenshot(id, "Create Bulk DependencyType"+": "+id);
+			// captureElasticScreenshot(id, "Create Bulk DependencyType"+": "+id);
 			ApiDataValidator.validateDbNotNullExcept(id, "DependencyType", null);
 		}
 	}
@@ -388,7 +388,7 @@ public class DependencyType {
 
 	    for (Integer id : DependencyTypeIds) {
 	        captureDbSnapshot(id, "Update Bulk DependencyType");
-	        captureElasticScreenshot(id, "Update Bulk DependencyType"+": "+id);
+	        // captureElasticScreenshot(id, "Update Bulk DependencyType"+": "+id);
 	        ApiDataValidator.validateDbNotNullExcept(id, "DependencyType", null);
 	    }
 	}
@@ -436,7 +436,7 @@ public class DependencyType {
 
 	    for (Integer id : DependencyTypeIds) {
 	        captureDbSnapshot(id, "Delete Bulk DependencyType");
-	        captureElasticScreenshot(id, "Delete Bulk DependencyType");
+	        // captureElasticScreenshot(id, "Delete Bulk DependencyType");
 	    }
 	}
 	
@@ -497,7 +497,7 @@ public class DependencyType {
 	                    id,
 	                    "dependency-type",
 	                    "DependencyType",
-	                    false,
+	                    true,
 	                    new String[]{
 	                            "deleted",
 	                            "createdDate",
