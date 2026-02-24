@@ -54,7 +54,7 @@ import utils.ReportUtils;
 
     		//21-11
    		// "src/test/resources/features/issuecomponent.feature",
-   		// "src/test/resources/features/component.feature",
+   		"src/test/resources/features/component.feature",
    		// "src/test/resources/features/componentimpactarea.feature",
    		// "src/test/resources/features/dependencytype.feature",
    		// "src/test/resources/features/environment.feature",
