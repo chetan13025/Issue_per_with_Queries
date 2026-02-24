@@ -209,7 +209,7 @@ public class ComponentsImpactArea {
 		System.out.println("Stored ComponentImpactAreaId: " + ComponentImpactAreaId);
 		logToExtent("Create ComponentImpactArea Response", requestBody, response);
 		captureDbSnapshot(ComponentImpactAreaId, "Create New ComponentImpactArea");
-		captureElasticScreenshot(ComponentImpactAreaId, "Create New ComponentImpactArea");
+		// captureElasticScreenshot(ComponentImpactAreaId, "Create New ComponentImpactArea");
 	}
 	
 	@When("Fetch All ComponentImpactArea Details")
@@ -252,7 +252,7 @@ public class ComponentsImpactArea {
 		logToExtent("Update ComponentImpactArea (PUT)", newJson, response);
 		captureDbSnapshot(ComponentImpactAreaId, "Update ComponentImpactArea (PUT)");
 		ApiValidators.validatePathParamToResponse(response, "id", ComponentImpactAreaId);
-		captureElasticScreenshot(ComponentImpactAreaId, "Update ComponentImpactArea (PUT)");
+		// captureElasticScreenshot(ComponentImpactAreaId, "Update ComponentImpactArea (PUT)");
 
 	}
 	
@@ -274,7 +274,7 @@ public class ComponentsImpactArea {
 		captureDbSnapshot(ComponentImpactAreaId, "Update ComponentImpactArea (PATCH)");
 		ApiValidators.validatePathParamToResponse(response, "id", ComponentImpactAreaId);
 //		ApiValidators.validateRequestToResponse(newJson, response, IssueTypeId, "comments");
-		captureElasticScreenshot(ComponentImpactAreaId, "Update ComponentImpactArea (PATCH)");
+		// captureElasticScreenshot(ComponentImpactAreaId, "Update ComponentImpactArea (PATCH)");
 
 	}
 	@When("Delete ComponentImpactArea with ID")
@@ -288,7 +288,7 @@ public class ComponentsImpactArea {
 
 		logToExtent("Delete ComponentImpactArea", null, response);
 		captureDbSnapshot(ComponentImpactAreaId, "Delete ComponentImpactArea");
-		captureElasticScreenshot(ComponentImpactAreaId, "Delete ComponentImpactArea");
+		// captureElasticScreenshot(ComponentImpactAreaId, "Delete ComponentImpactArea");
 	}
 	
 	@Given("I have Bulk ComponentImpactArea")
@@ -322,7 +322,7 @@ public class ComponentsImpactArea {
 
 		for (Integer id : ScenarioContext.Ids) {
 			captureDbSnapshot(id, "Create Bulk ComponentImpactArea");
-			captureElasticScreenshot(id, "Create Bulk ComponentImpactArea"+": "+id);
+			// captureElasticScreenshot(id, "Create Bulk ComponentImpactArea"+": "+id);
 			ApiDataValidator.validateDbNotNullExcept(id, "ComponentsImpactArea", null);
 		}
 	}
@@ -387,7 +387,7 @@ public class ComponentsImpactArea {
 
 	    for (Integer id : ComponentImpactAreaIds) {
 	        captureDbSnapshot(id, "Update Bulk ComponentImpactArea");
-	        captureElasticScreenshot(id, "Update Bulk ComponentImpactArea"+": "+id);
+	        // captureElasticScreenshot(id, "Update Bulk ComponentImpactArea"+": "+id);
 	        ApiDataValidator.validateDbNotNullExcept(id, "ComponentsImpactArea", null);
 	    }
 	}
@@ -435,7 +435,7 @@ public class ComponentsImpactArea {
 
 	    for (Integer id : ComponentImpactAreaIds) {
 	        captureDbSnapshot(id, "Delete Bulk ComponentImpactArea");
-	        captureElasticScreenshot(id, "Delete Bulk ComponentImpactArea");
+	        // captureElasticScreenshot(id, "Delete Bulk ComponentImpactArea");
 	    }
 	}
 	
@@ -496,7 +496,7 @@ public class ComponentsImpactArea {
 	                    id,
 	                    "components-impact-area",
 	                    "ComponentsImpactArea",
-	                    false,
+	                    true,
 	                    new String[]{
 	                            "deleted",
 	                            "createdDate",
