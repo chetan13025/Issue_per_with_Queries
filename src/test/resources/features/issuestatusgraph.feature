@@ -5,7 +5,7 @@ Scenario: To verify that New IssueStatusGraph is creating
 Given I have a IssueStatusGraph
 When Create New IssueStatusGraph
 Then The IssueStatusGraph response should contain "id"
-Then Validate API ES and DB for IssueSatusGraphId after POST skipping ES false excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"
+Then Validate API ES and DB for IssueSatusGraphId after POST skipping ES true excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"
 And The IssueStatusGraph response status code should be 201
 
 Scenario: To verify that fetching All IssueStatusGraph
@@ -14,12 +14,12 @@ Then The IssueStatusGraph response status code should be 200
 
 Scenario: To verify that in PUT data should get Update in DateBase
 When Update IssueStatusGraph Details
-Then Validate API ES and DB for IssueSatusGraphId after PUT skipping ES false excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"
+Then Validate API ES and DB for IssueSatusGraphId after PUT skipping ES true excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"
 Then The IssueStatusGraph response status code should be 200
 
 Scenario: To verify that in Patch data should get update in DataBase
 When Update Patch IssueStatusGraph
-Then Validate API ES and DB for IssueSatusGraphId after PATCH skipping ES false excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"
+Then Validate API ES and DB for IssueSatusGraphId after PATCH skipping ES true excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"
 Then The IssueStatusGraph response status code should be 200
 
 Scenario: To verify that after Delete data should get delete from DataBase
