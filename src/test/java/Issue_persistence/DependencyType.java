@@ -584,7 +584,7 @@ public class DependencyType {
 	            response,
 	            DependencyTypeId,
 	            "dependency-type",          // ES index suffix
-	            "cc",          // DB table name
+	            "DependencyType",          // DB table name
 	            skipEs,                // <== comes from feature
 	            excludeEverywhere,     // <== comes from feature
 	            excludeReqOnly,        // <== comes from feature
