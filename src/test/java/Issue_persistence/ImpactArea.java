@@ -211,7 +211,7 @@ public class ImpactArea {
 		System.out.println("Stored ImpactAreaId: " + ImpactAreaId);
 		logToExtent("Create ImpactArea Response", requestBody, response);
 		captureDbSnapshot(ImpactAreaId, "Create New ImpactArea");
-		captureElasticScreenshot(ImpactAreaId, "Create New ImpactArea");
+		// captureElasticScreenshot(ImpactAreaId, "Create New ImpactArea");
 	}
 
 	@When("Fetch All ImpactArea Details")
@@ -254,7 +254,7 @@ public class ImpactArea {
 		logToExtent("Update ImpactArea (PUT)", newJson, response);
 		captureDbSnapshot(ImpactAreaId, "Update ImpactArea (PUT)");
 		ApiValidators.validatePathParamToResponse(response, "id", ImpactAreaId);
-		captureElasticScreenshot(ImpactAreaId, "Update ImpactArea (PUT)");
+		// captureElasticScreenshot(ImpactAreaId, "Update ImpactArea (PUT)");
 
 	}
 
@@ -276,7 +276,7 @@ public class ImpactArea {
 		captureDbSnapshot(ImpactAreaId, "Update ImpactArea (PATCH)");
 		ApiValidators.validatePathParamToResponse(response, "id", ImpactAreaId);
 //		ApiValidators.validateRequestToResponse(newJson, response, IssueTypeId, "comments");
-		captureElasticScreenshot(ImpactAreaId, "Update ImpactArea (PATCH)");
+		// captureElasticScreenshot(ImpactAreaId, "Update ImpactArea (PATCH)");
 
 	}
 
@@ -291,7 +291,7 @@ public class ImpactArea {
 
 		logToExtent("Delete Impactarea", null, response);
 		captureDbSnapshot(ImpactAreaId, "Delete ImpactArea");
-		captureElasticScreenshot(ImpactAreaId, "Delete ImpactArea");
+		// captureElasticScreenshot(ImpactAreaId, "Delete ImpactArea");
 	}
 	
 	
@@ -326,7 +326,7 @@ public class ImpactArea {
 
 		for (Integer id : ScenarioContext.Ids) {
 			captureDbSnapshot(id, "Create Bulk ImpactArea");
-			captureElasticScreenshot(id, "Create Bulk ImpactArea"+": "+id);
+			// captureElasticScreenshot(id, "Create Bulk ImpactArea"+": "+id);
 			ApiDataValidator.validateDbNotNullExcept(id, "ImpactArea", null);
 		}
 	}
@@ -391,7 +391,7 @@ public class ImpactArea {
 
 	    for (Integer id : ImpactAreaIds) {
 	        captureDbSnapshot(id, "Update Bulk ImpactArea");
-	        captureElasticScreenshot(id, "Update Bulk ImpactArea"+": "+id);
+	        // captureElasticScreenshot(id, "Update Bulk ImpactArea"+": "+id);
 	        ApiDataValidator.validateDbNotNullExcept(id, "ImpactArea", null);
 	    }
 	}
@@ -500,7 +500,7 @@ public class ImpactArea {
 	                    id,
 	                    "impact-area",
 	                    "ImpactArea",
-	                    false,
+	                    true,
 	                    new String[]{
 	                            "deleted",
 	                            "createdDate",
