@@ -50,16 +50,7 @@ import utils.ReportUtils;
    		// "src/test/resources/features/worklog.feature",
    		"src/test/resources/features/behavior.feature",
     		// "src/test/resources/features/bulk.feature",
-   		"src/test/resources/features/bugtype.feature",
-
-//    		"src/test/resources/features/rootcause.feature",
-//    		"src/test/resources/features/sprintproposal.feature",
-//    		"src/test/resources/features/testcase.feature",
-//    		"src/test/resources/features/unittestresult.feature",
-//    		"src/test/resources/features/worklog.feature",
-//    		"src/test/resources/features/behavior.feature",
-//    		"src/test/resources/features/bulk.feature",
-    		"src/test/resources/features/bugtype.feature",
+   		// "src/test/resources/features/bugtype.feature",
 
     		//21-11
    		// "src/test/resources/features/issuecomponent.feature",
