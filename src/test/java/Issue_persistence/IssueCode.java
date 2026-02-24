@@ -251,7 +251,7 @@ public class IssueCode {
 		RequestBodyForValidation = newJson;
 		logToExtent("Update User (PUT)", newJson, response);
 		captureDbSnapshot(IssueCodeId, "Update IssueCode (PUT)");
-		captureElasticScreenshot(IssueCodeId, "Update IssueCode (PUT)");
+		// captureElasticScreenshot(IssueCodeId, "Update IssueCode (PUT)");
 
 	}
 	
@@ -272,7 +272,7 @@ public class IssueCode {
 		RequestBodyForValidation = newJson;
 		logToExtent("Update User (PATCH)", newJson, response);
 		captureDbSnapshot(IssueCodeId, "Update IssueCode (PATCH)");
-		captureElasticScreenshot(IssueCodeId, "Update IssueCode (PATCH)");
+		// captureElasticScreenshot(IssueCodeId, "Update IssueCode (PATCH)");
 
 	}
 	@When("Delete IssueCode with ID")
@@ -286,7 +286,7 @@ public class IssueCode {
 
 		logToExtent("Delete IssueCode", null, response);
 		captureDbSnapshot(IssueCodeId, "Delete IssueCode");
-		captureElasticScreenshot(IssueCodeId, "Delete IssueCode");
+		// captureElasticScreenshot(IssueCodeId, "Delete IssueCode");
 	}
 	@Given("I have Bulk IssueCode")
 	public void i_have_a_bulk_IssueCode() {
@@ -319,7 +319,7 @@ public class IssueCode {
 
 		for (Integer id : ScenarioContext.Ids) {
 			captureDbSnapshot(id,  "Create Bulk IssueCode"+": "+id);
-			captureElasticScreenshot(id,  "Create Bulk IssueCode"+": "+id);
+			// captureElasticScreenshot(id,  "Create Bulk IssueCode"+": "+id);
 			ApiDataValidator.validateDbNotNullExcept(id, "IssueCode", null);
 		}
 	}
@@ -384,7 +384,7 @@ public class IssueCode {
 
 	    for (Integer id : IssueCodeIds) {
 	    	captureDbSnapshot(id, "Update IssueCode (PUT)"+": "+id);
-			captureElasticScreenshot(id, "Update IssueCode (PUT)"+": "+id);
+			// captureElasticScreenshot(id, "Update IssueCode (PUT)"+": "+id);
 			ApiDataValidator.validateDbNotNullExcept(id, "IssueCode", null);
 	    }
 	}
@@ -432,7 +432,7 @@ public class IssueCode {
 
 	    for (Integer id : IssueCodeIds) {
 	    	captureDbSnapshot(id, "Delete IssueCode"+": "+id);
-			captureElasticScreenshot(id, "Delete IssueCode"+": "+id);
+			// captureElasticScreenshot(id, "Delete IssueCode"+": "+id);
 	    }
 	}
 		
@@ -491,7 +491,7 @@ public class IssueCode {
 	                    id,
 	                    "issue-code",
 	                    "IssueCode",
-	                    false,
+	                    true,
 	                    new String[]{
 	                            "deleted"
 	                    },
