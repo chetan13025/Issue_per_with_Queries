@@ -76,7 +76,10 @@ public class IssueComponent {
 
 		try (Connection conn = DriverManager.getConnection("jdbc:mysql://10.10.2.45:3306", "root", "dhi123");
 				Statement stmt = conn.createStatement();
-				ResultSet rs = stmt.executeQuery("SELECT * FROM `issue_persistence_piqa`.`IssueComponent` LIMIT 1000")) {
+				// ResultSet rs = stmt.executeQuery("SELECT * FROM `issue_persistence_piqa`.`IssueComponent` LIMIT 1000"))
+				ResultSet rs = stmt
+						.executeQuery("SELECT * FROM (" + "   SELECT * FROM `issue_persistence_piqa`.`IssueComponent` "
+								+ "   ORDER BY id DESC LIMIT 5" + ") AS lastFive " + "ORDER BY id ASC;")) {
 
 			ResultSetMetaData meta = rs.getMetaData();
 			int colCount = meta.getColumnCount();
@@ -203,7 +206,7 @@ public class IssueComponent {
 		System.out.println("Stored IssueComponent: " + IssueComponentId);
 		logToExtent("Create IssueComponent Response", requestBody, response);
 		captureDbSnapshot(IssueComponentId, "Create IssueComponent User");
-		captureElasticScreenshot(IssueComponentId, "Create IssueComponent");
+		// captureElasticScreenshot(IssueComponentId, "Create IssueComponent");
 	}
 	
 	@When("Fetch All IssueComponent Details")
@@ -244,7 +247,7 @@ public class IssueComponent {
 		RequestBodyForValidation=newJson;
 		logToExtent("Update IssueComponent (PUT)", newJson, response);
 		captureDbSnapshot(IssueComponentId, "Update IssueComponent (PUT)");
-		captureElasticScreenshot(IssueComponentId, "Update IssueComponent (PUT)");
+		// captureElasticScreenshot(IssueComponentId, "Update IssueComponent (PUT)");
 
 	}
 
@@ -265,7 +268,7 @@ public class IssueComponent {
 		RequestBodyForValidation=newJson;
 		logToExtent("Update IssueComponent (PATCH)", newJson, response);
 		captureDbSnapshot(IssueComponentId, "Update IssueComponent (PATCH)");
-		captureElasticScreenshot(IssueComponentId, "Update IssueComponent (PATCH)");
+		// captureElasticScreenshot(IssueComponentId, "Update IssueComponent (PATCH)");
 
 	}
 
@@ -280,7 +283,7 @@ public class IssueComponent {
 
 		logToExtent("Delete IssueComponent", null, response);
 		captureDbSnapshot(IssueComponentId, "Delete IssueComponent");
-		captureElasticScreenshot(IssueComponentId, "Delete IssueComponent");
+		// captureElasticScreenshot(IssueComponentId, "Delete IssueComponent");
 	}
 	
 	@Given("I have Bulk IssueComponent")
@@ -314,7 +317,7 @@ public class IssueComponent {
 
 		for (Integer id : ScenarioContext.Ids) {
 			captureDbSnapshot(id,  "Create Bulk IssueComponent"+": "+id);
-			captureElasticScreenshot(id,  "Create Bulk IssueComponent"+": "+id);
+			// captureElasticScreenshot(id,  "Create Bulk IssueComponent"+": "+id);
 			ApiDataValidator.validateDbNotNullExcept(id, "IssueComponent", null);
 		}
 	}
@@ -379,7 +382,7 @@ public class IssueComponent {
 
 	    for (Integer id : IssueComponentIds) {
 	    	captureDbSnapshot(id, "Update IssueComponent (PUT)"+": "+id);
-			captureElasticScreenshot(id, "Update IssueComponent (PUT)"+": "+id);
+			// captureElasticScreenshot(id, "Update IssueComponent (PUT)"+": "+id);
 			ApiDataValidator.validateDbNotNullExcept(id, "IssueComponent", null);
 	    }
 	}
@@ -427,7 +430,7 @@ public class IssueComponent {
 
 	    for (Integer id : IssueComponentIds) {
 	    	captureDbSnapshot(id, "Delete IssueComponent"+": "+id);
-			captureElasticScreenshot(id, "Delete IssueComponent"+": "+id);
+			// captureElasticScreenshot(id, "Delete IssueComponent"+": "+id);
 	    }
 	}
 		
@@ -486,7 +489,7 @@ public class IssueComponent {
 	                    id,
 	                    "issue-component",
 	                    "IssueComponent",
-	                    false,
+	                    true,
 	                    new String[]{
 	                            "deleted"
 	                    },
