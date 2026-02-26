@@ -76,7 +76,9 @@ public class IssueFeatureStatistics {
 
 		try (Connection conn = DriverManager.getConnection("jdbc:mysql://10.10.2.45:3306", "root", "dhi123");
 				Statement stmt = conn.createStatement();
-				ResultSet rs = stmt.executeQuery("SELECT * FROM `issue_persistence_piqa`.`IssueFeatureStatistics` LIMIT 1000")) {
+				// ResultSet rs = stmt.executeQuery("SELECT * FROM `issue_persistence_piqa`.`IssueFeatureStatistics` LIMIT 1000"))ResultSet rs = stmt
+						.executeQuery("SELECT * FROM (" + "   SELECT * FROM `issue_persistence_piqa`.`IssueFeatureStatistics` "
+								+ "   ORDER BY id DESC LIMIT 5" + ") AS lastFive " + "ORDER BY id ASC;")) {
 
 			ResultSetMetaData meta = rs.getMetaData();
 			int colCount = meta.getColumnCount();
@@ -208,7 +210,7 @@ public class IssueFeatureStatistics {
 		System.out.println("Stored UserId: " + IssueFeatureStatisticsID);
 		logToExtent("Create IssueFeatureStatistics Response", requestBody, response);
 		captureDbSnapshot(IssueFeatureStatisticsID, "Create New IssueFeatureStatistics");
-		captureElasticScreenshot(IssueFeatureStatisticsID, "Create IssueFeatureStatistics");
+		// captureElasticScreenshot(IssueFeatureStatisticsID, "Create IssueFeatureStatistics");
 	}
 
 	@When("Fetch All IssueFeatureStatistics Details")
@@ -249,7 +251,7 @@ public class IssueFeatureStatistics {
 		RequestBodyForValidation=newJson;
 		logToExtent("Update IssueFeatureStatistics (PUT)", newJson, response);
 		captureDbSnapshot(IssueFeatureStatisticsID, "Update IssueFeatureStatistics (PUT)");
-		captureElasticScreenshot(IssueFeatureStatisticsID, "Update IssueFeatureStatistics (PUT)");
+		// captureElasticScreenshot(IssueFeatureStatisticsID, "Update IssueFeatureStatistics (PUT)");
 
 	}
 
@@ -270,7 +272,7 @@ public class IssueFeatureStatistics {
 		RequestBodyForValidation=newJson;
 		logToExtent("Update IssueFeatureStatistics (PATCH)", newJson, response);
 		captureDbSnapshot(IssueFeatureStatisticsID, "Update IssueFeatureStatistics (PATCH)");
-		captureElasticScreenshot(IssueFeatureStatisticsID, "Update IssueFeatureStatistics (PATCH)");
+		// captureElasticScreenshot(IssueFeatureStatisticsID, "Update IssueFeatureStatistics (PATCH)");
 
 	}
 
@@ -285,7 +287,7 @@ public class IssueFeatureStatistics {
 
 		logToExtent("Delete IssueFeatureStatistics", null, response);
 		captureDbSnapshot(IssueFeatureStatisticsID, "Delete IssueFeatureStatistics");
-		captureElasticScreenshot(IssueFeatureStatisticsID, "Delete IssueFeatureStatistics");
+		// captureElasticScreenshot(IssueFeatureStatisticsID, "Delete IssueFeatureStatistics");
 	}
 	
 	
@@ -320,7 +322,7 @@ public class IssueFeatureStatistics {
 
 		for (Integer id : ScenarioContext.Ids) {
 			captureDbSnapshot(id,  "Create Bulk IssueFeatureStatistics"+": "+id);
-			captureElasticScreenshot(id,  "Create Bulk IssueFeatureStatistics"+": "+id);
+			// captureElasticScreenshot(id,  "Create Bulk IssueFeatureStatistics"+": "+id);
 			ApiDataValidator.validateDbNotNullExcept(id, "IssueFeatureStatistics", null);
 		}
 	}
@@ -385,7 +387,7 @@ public class IssueFeatureStatistics {
 
 	    for (Integer id : IssueFeatureStatisticsIds) {
 	    	captureDbSnapshot(id, "Update IssueFeatureStatistics (PUT)"+": "+id);
-			captureElasticScreenshot(id, "Update IssueFeatureStatistics (PUT)"+": "+id);
+			// captureElasticScreenshot(id, "Update IssueFeatureStatistics (PUT)"+": "+id);
 			ApiDataValidator.validateDbNotNullExcept(id, "IssueFeatureStatistics", null);
 	    }
 	}
@@ -433,7 +435,7 @@ public class IssueFeatureStatistics {
 
 	    for (Integer id : IssueFeatureStatisticsIds) {
 	    	captureDbSnapshot(id, "Delete IssueFeatureStatistics"+": "+id);
-			captureElasticScreenshot(id, "Delete IssueFeatureStatistics"+": "+id);
+			// captureElasticScreenshot(id, "Delete IssueFeatureStatistics"+": "+id);
 	    }
 	}
 		
@@ -492,7 +494,7 @@ public class IssueFeatureStatistics {
 	                    id,
 	                    "issue-feature-statistics",
 	                    "IssueFeatureStatistics",
-	                    false,
+	                    true,
 	                    new String[]{
 	                            "deleted"
 	                    },
