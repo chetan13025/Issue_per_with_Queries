@@ -76,7 +76,10 @@ public class IssueLog {
 
 		try (Connection conn = DriverManager.getConnection("jdbc:mysql://10.10.2.45:3306", "root", "dhi123");
 				Statement stmt = conn.createStatement();
-				ResultSet rs = stmt.executeQuery("SELECT * FROM `issue_persistence_piqa`.`IssueLog` LIMIT 1000")) {
+				// ResultSet rs = stmt.executeQuery("SELECT * FROM `issue_persistence_piqa`.`IssueLog` LIMIT 1000"))
+				ResultSet rs = stmt
+						.executeQuery("SELECT * FROM (" + "   SELECT * FROM `issue_persistence_piqa`.`IssueLog` "
+								+ "   ORDER BY id DESC LIMIT 5" + ") AS lastFive " + "ORDER BY id ASC;")) {
 
 			ResultSetMetaData meta = rs.getMetaData();
 			int colCount = meta.getColumnCount();
@@ -207,7 +210,7 @@ public class IssueLog {
 		System.out.println("Stored IssueLogId: " + IssueLogId);
 		logToExtent("Create IssueLog Response", requestBody, response);
 		captureDbSnapshot(IssueLogId, "Create New IssueLog");
-		captureElasticScreenshot(IssueLogId, "Create New IssueLog");
+		// captureElasticScreenshot(IssueLogId, "Create New IssueLog");
 	}
 	
 	@When("Fetch All IssueLog Details")
@@ -248,7 +251,7 @@ public class IssueLog {
 		RequestBodyForValidation=newJson;
 		logToExtent("Update IssueLog (PUT)", newJson, response);
 		captureDbSnapshot(IssueLogId, "Update IssueLog (PUT)");
-		captureElasticScreenshot(IssueLogId, "Update IssueLog (PUT)");
+		// captureElasticScreenshot(IssueLogId, "Update IssueLog (PUT)");
 
 	}
 	
@@ -269,7 +272,7 @@ public class IssueLog {
 		RequestBodyForValidation=newJson;
 		logToExtent("Update IssueLog (PATCH)", newJson, response);
 		captureDbSnapshot(IssueLogId, "Update IssueLog (PATCH)");
-		captureElasticScreenshot(IssueLogId, "Update IssueLog (PATCH)");
+		// captureElasticScreenshot(IssueLogId, "Update IssueLog (PATCH)");
 
 	}
 	@When("Delete IssueLog with ID")
@@ -283,7 +286,7 @@ public class IssueLog {
 
 		logToExtent("Delete IssueLog", null, response);
 		captureDbSnapshot(IssueLogId, "Delete IssueLog");
-		captureElasticScreenshot(IssueLogId, "Delete IssueLog");
+		// captureElasticScreenshot(IssueLogId, "Delete IssueLog");
 	}
 	
 	@Given("I have Bulk IssueLog")
@@ -317,7 +320,7 @@ public class IssueLog {
 
 		for (Integer id : ScenarioContext.Ids) {
 			captureDbSnapshot(id,  "Create Bulk IssueLog"+": "+id);
-			captureElasticScreenshot(id,  "Create Bulk IssueLog"+": "+id);
+			// captureElasticScreenshot(id,  "Create Bulk IssueLog"+": "+id);
 			ApiDataValidator.validateDbNotNullExcept(id, "IssueLog", null);
 		}
 	}
@@ -382,7 +385,7 @@ public class IssueLog {
 
 	    for (Integer id : IssueLogIds) {
 	    	captureDbSnapshot(id, "Update IssueLog (PUT)"+": "+id);
-			captureElasticScreenshot(id, "Update IssueLog (PUT)"+": "+id);
+			// captureElasticScreenshot(id, "Update IssueLog (PUT)"+": "+id);
 			ApiDataValidator.validateDbNotNullExcept(id, "IssueLog", null);
 	    }
 	}
@@ -489,7 +492,7 @@ public class IssueLog {
 	                    id,
 	                    "issue-log",
 	                    "IssueLog",
-	                    false,
+	                    true,
 	                    new String[]{
 	                            "deleted"
 	                    },
