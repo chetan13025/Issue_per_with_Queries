@@ -76,7 +76,10 @@ public class IssueRootCause {
 
 		try (Connection conn = DriverManager.getConnection("jdbc:mysql://10.10.2.45:3306", "root", "dhi123");
 				Statement stmt = conn.createStatement();
-				ResultSet rs = stmt.executeQuery("SELECT * FROM `issue_persistence_piqa`.`IssueRootCause` LIMIT 1000")) {
+				// ResultSet rs = stmt.executeQuery("SELECT * FROM `issue_persistence_piqa`.`IssueRootCause` LIMIT 1000"))
+				ResultSet rs = stmt
+						.executeQuery("SELECT * FROM (" + "   SELECT * FROM `issue_persistence_piqa`.`IssueRootCause` "
+								+ "   ORDER BY id DESC LIMIT 5" + ") AS lastFive " + "ORDER BY id ASC;")) {
 
 			ResultSetMetaData meta = rs.getMetaData();
 			int colCount = meta.getColumnCount();
@@ -206,7 +209,7 @@ public class IssueRootCause {
 		System.out.println("Stored IssueRootCauseId: " + IssueRootCauseId);
 		logToExtent("Create IssueRootCause Response", requestBody, response);
 		captureDbSnapshot(IssueRootCauseId, "Create New IssueRootCause");
-		captureElasticScreenshot(IssueRootCauseId, "Create New IssueRootCause");
+		// captureElasticScreenshot(IssueRootCauseId, "Create New IssueRootCause");
 	}
 	
 	@When("Fetch All IssueRootCause Details")
@@ -248,7 +251,7 @@ public class IssueRootCause {
 		logToExtent("Update IssueRootCause (PUT)", newJson, response);
 		captureDbSnapshot(IssueRootCauseId, "Update IssueRootCause (PUT)");
 		ApiValidators.validatePathParamToResponse(response, "id", IssueRootCauseId);
-		captureElasticScreenshot(IssueRootCauseId, "Update IssueRootCause (PUT)");
+		// captureElasticScreenshot(IssueRootCauseId, "Update IssueRootCause (PUT)");
 
 	}
 	
@@ -270,7 +273,7 @@ public class IssueRootCause {
 		captureDbSnapshot(IssueRootCauseId, "Update IssueRootCause (PATCH)");
 //		ApiValidators.validatePathParamToResponse(response, "id", IssueRootCauseId);
 //		ApiValidators.validateRequestToResponse(newJson, response, IssueRootCauseId, "comments");
-		captureElasticScreenshot(IssueRootCauseId, "Update IssueRootCause (PATCH)");
+		// captureElasticScreenshot(IssueRootCauseId, "Update IssueRootCause (PATCH)");
 
 	}
 	@When("Delete IssueRootCause with ID")
@@ -284,7 +287,7 @@ public class IssueRootCause {
 
 		logToExtent("Delete IssueRootCause", null, response);
 		captureDbSnapshot(IssueRootCauseId, "Delete IssueRootCause");
-		captureElasticScreenshot(IssueRootCauseId, "Delete IssueRootCause");
+		// captureElasticScreenshot(IssueRootCauseId, "Delete IssueRootCause");
 	}
 	
 	@Given("I have Bulk IssueRootCause")
@@ -318,7 +321,7 @@ public class IssueRootCause {
 
 		for (Integer id : ScenarioContext.Ids) {
 			captureDbSnapshot(id,  "Create Bulk IssueRootCause"+": "+id);
-			captureElasticScreenshot(id,  "Create Bulk IssueRootCause"+": "+id);
+			// captureElasticScreenshot(id,  "Create Bulk IssueRootCause"+": "+id);
 			ApiDataValidator.validateDbNotNullExcept(id, "IssueRootCause", null);
 		}
 	}
@@ -383,7 +386,7 @@ public class IssueRootCause {
 
 	    for (Integer id : IssueRootCauseIds) {
 	    	captureDbSnapshot(id, "Update IssueRootCause (PUT)"+": "+id);
-			captureElasticScreenshot(id, "Update IssueRootCause (PUT)"+": "+id);
+			// captureElasticScreenshot(id, "Update IssueRootCause (PUT)"+": "+id);
 	    }
 	}
 
@@ -430,7 +433,7 @@ public class IssueRootCause {
 
 	    for (Integer id : IssueRootCauseIds) {
 	    	captureDbSnapshot(id, "Delete IssueRootCause"+": "+id);
-			captureElasticScreenshot(id, "Delete IssueRootCause"+": "+id);
+			// captureElasticScreenshot(id, "Delete IssueRootCause"+": "+id);
 			ApiDataValidator.validateDbNotNullExcept(id, "IssueRootCause", null);
 	    }
 	}
@@ -490,7 +493,7 @@ public class IssueRootCause {
 	                    id,
 	                    "issue-root-cause",
 	                    "IssueRootCause",
-	                    false,
+	                    true,
 	                    new String[]{
 	                            "deleted"
 	                    },
