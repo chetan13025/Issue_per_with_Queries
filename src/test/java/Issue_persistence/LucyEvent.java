@@ -77,7 +77,10 @@ public class LucyEvent {
 
 		try (Connection conn = DriverManager.getConnection("jdbc:mysql://10.10.2.45:3306", "root", "dhi123");
 				Statement stmt = conn.createStatement();
-				ResultSet rs = stmt.executeQuery("SELECT * FROM `issue_persistence_piqa`.`LucyEvent` LIMIT 1000")) {
+				// ResultSet rs = stmt.executeQuery("SELECT * FROM `issue_persistence_piqa`.`LucyEvent` LIMIT 1000"))
+				ResultSet rs = stmt
+						.executeQuery("SELECT * FROM (" + "   SELECT * FROM `issue_persistence_piqa`.`LucyEvent` "
+								+ "   ORDER BY id DESC LIMIT 5" + ") AS lastFive " + "ORDER BY id ASC;")) {
 
 			ResultSetMetaData meta = rs.getMetaData();
 			int colCount = meta.getColumnCount();
@@ -207,7 +210,7 @@ public class LucyEvent {
 		System.out.println("Stored IssueVersionId: " + LucyEventId);
 		logToExtent("Create LucyEvent Response", requestBody, response);
 		captureDbSnapshot(LucyEventId, "Create New LucyEvent");
-		captureElasticScreenshot(LucyEventId, "Create New LucyEvent");
+		// captureElasticScreenshot(LucyEventId, "Create New LucyEvent");
 	}
 	
 	@When("Fetch All LucyEvent Details")
@@ -249,7 +252,7 @@ public class LucyEvent {
 		logToExtent("Update LucyEvent (PUT)", newJson, response);
 		captureDbSnapshot(LucyEventId, "Update LucyEvent (PUT)");
 		ApiValidators.validatePathParamToResponse(response, "id", LucyEventId);
-		captureElasticScreenshot(LucyEventId, "Update LucyEvent (PUT)");
+		// captureElasticScreenshot(LucyEventId, "Update LucyEvent (PUT)");
 
 	}
 	
@@ -271,7 +274,7 @@ public class LucyEvent {
 		captureDbSnapshot(LucyEventId, "Update LucyEvent (PATCH)");
 //		ApiValidators.validatePathParamToResponse(response, "id", IssueTypeId);
 //		ApiValidators.validateRequestToResponse(newJson, response, IssueTypeId, "comments");
-		captureElasticScreenshot(LucyEventId, "Update LucyEvent (PATCH)");
+		// captureElasticScreenshot(LucyEventId, "Update LucyEvent (PATCH)");
 
 	}
 	@When("Delete LucyEvent with ID")
@@ -285,7 +288,7 @@ public class LucyEvent {
 
 		logToExtent("Delete LucyEvent", null, response);
 		captureDbSnapshot(LucyEventId, "Delete LucyEvent");
-		captureElasticScreenshot(LucyEventId, "Delete LucyEvent");
+		// captureElasticScreenshot(LucyEventId, "Delete LucyEvent");
 	}
 	
 	@Given("I have Bulk LucyEvent")
@@ -319,7 +322,7 @@ public class LucyEvent {
 
 		for (Integer id : ScenarioContext.Ids) {
 			captureDbSnapshot(id, "Create Bulk LucyEvent" + ": " + id);
-			captureElasticScreenshot(id, "Create Bulk LucyEvent" + ": " + id);
+			// captureElasticScreenshot(id, "Create Bulk LucyEvent" + ": " + id);
 			ApiDataValidator.validateDbNotNullExcept(id, "LucyEvent", null);
 		}
 	}
@@ -375,7 +378,7 @@ public class LucyEvent {
 
 		for (Integer id : LucyEventIds) {
 			captureDbSnapshot(id, "Update LucyEvent (PUT)" + ": " + id);
-			captureElasticScreenshot(id, "Update LucyEvent (PUT)" + ": " + id);
+			// captureElasticScreenshot(id, "Update LucyEvent (PUT)" + ": " + id);
 			ApiDataValidator.validateDbNotNullExcept(id, "LucyEvent", null);
 		}
 	}
@@ -407,7 +410,7 @@ public class LucyEvent {
 
 		for (Integer id : LucyEventIds) {
 			captureDbSnapshot(id, "Delete LucyEvent" + ": " + id);
-			captureElasticScreenshot(id, "Delete LucyEvent" + ": " + id);
+			// captureElasticScreenshot(id, "Delete LucyEvent" + ": " + id);
 		}
 	}
 
@@ -457,7 +460,7 @@ public class LucyEvent {
 
 				// ✅ CALL VOID METHOD (NO BOOLEAN)
 				ApiDataValidator.validateKeysAcrosRequestResponseEsDb(requestJson, responseJson, id, "lucy-event",
-						"LucyEvent", false, new String[] { "deleted" },
+						"LucyEvent", true, new String[] { "deleted" },
 						new String[] { "id", "updatedate", "createdate", "eventDate" }, new String[] { "" });
 
 			} catch (Exception e) {
