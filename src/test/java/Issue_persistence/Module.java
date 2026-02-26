@@ -77,7 +77,10 @@ public class Module {
 
 		try (Connection conn = DriverManager.getConnection("jdbc:mysql://10.10.2.45:3306", "root", "dhi123");
 				Statement stmt = conn.createStatement();
-				ResultSet rs = stmt.executeQuery("SELECT * FROM `issue_persistence_piqa`.`Module` LIMIT 1000")) {
+				// ResultSet rs = stmt.executeQuery("SELECT * FROM `issue_persistence_piqa`.`Module` LIMIT 1000"))
+				ResultSet rs = stmt
+						.executeQuery("SELECT * FROM (" + "   SELECT * FROM `issue_persistence_piqa`.`Module` "
+								+ "   ORDER BY id DESC LIMIT 5" + ") AS lastFive " + "ORDER BY id ASC;")) {
 
 			ResultSetMetaData meta = rs.getMetaData();
 			int colCount = meta.getColumnCount();
@@ -207,7 +210,7 @@ public class Module {
 		System.out.println("Stored ModuleId: " + ModuleId);
 		logToExtent("Create Module Response", requestBody, response);
 		captureDbSnapshot(ModuleId, "Create New Module");
-		captureElasticScreenshot(ModuleId, "Create New Module");
+		// captureElasticScreenshot(ModuleId, "Create New Module");
 	}
 	
 	@When("Fetch All Module Details")
@@ -249,7 +252,7 @@ public class Module {
 		logToExtent("Update Module (PUT)", newJson, response);
 		captureDbSnapshot(ModuleId, "Update Module (PUT)");
 		ApiValidators.validatePathParamToResponse(response, "id", ModuleId);
-		captureElasticScreenshot(ModuleId, "Update Module (PUT)");
+		// captureElasticScreenshot(ModuleId, "Update Module (PUT)");
 
 	}
 	
@@ -271,7 +274,7 @@ public class Module {
 		captureDbSnapshot(ModuleId, "Update Module (PATCH)");
 //		ApiValidators.validatePathParamToResponse(response, "id", IssueTypeId);
 //		ApiValidators.validateRequestToResponse(newJson, response, IssueTypeId, "comments");
-		captureElasticScreenshot(ModuleId, "Update Module (PATCH)");
+		// captureElasticScreenshot(ModuleId, "Update Module (PATCH)");
 
 	}
 	@When("Delete Module with ID")
@@ -285,7 +288,7 @@ public class Module {
 
 		logToExtent("Delete Module", null, response);
 		captureDbSnapshot(ModuleId, "Delete Module");
-		captureElasticScreenshot(ModuleId, "Delete Module");
+		// captureElasticScreenshot(ModuleId, "Delete Module");
 	}
 	@Given("I have Bulk Module")
 	public void i_have_a_bulk_Module() {
@@ -318,7 +321,7 @@ public class Module {
 
 		for (Integer id : ScenarioContext.Ids) {
 			captureDbSnapshot(id, "Create Bulk Module" + ": " + id);
-			captureElasticScreenshot(id, "Create Bulk Module" + ": " + id);
+			// captureElasticScreenshot(id, "Create Bulk Module" + ": " + id);
 			ApiDataValidator.validateDbNotNullExcept(id, "Module", null);
 		}
 	}
@@ -374,7 +377,7 @@ public class Module {
 
 		for (Integer id : ModuleIds) {
 			captureDbSnapshot(id, "Update Module (PUT)" + ": " + id);
-			captureElasticScreenshot(id, "Update Module (PUT)" + ": " + id);
+			// captureElasticScreenshot(id, "Update Module (PUT)" + ": " + id);
 			ApiDataValidator.validateDbNotNullExcept(id, "Module", null);
 		}
 	}
@@ -406,7 +409,7 @@ public class Module {
 
 		for (Integer id : ModuleIds) {
 			captureDbSnapshot(id, "Delete Module" + ": " + id);
-			captureElasticScreenshot(id, "Delete Module" + ": " + id);
+			// captureElasticScreenshot(id, "Delete Module" + ": " + id);
 		}
 	}
 
