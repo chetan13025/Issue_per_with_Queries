@@ -433,7 +433,7 @@ public class IssueLog {
 
 	    for (Integer id : IssueLogIds) {
 	    	captureDbSnapshot(id, "Delete IssueLog"+": "+id);
-			captureElasticScreenshot(id, "Delete IssueLog"+": "+id);
+			// captureElasticScreenshot(id, "Delete IssueLog"+": "+id);
 	    }
 	}
 		
