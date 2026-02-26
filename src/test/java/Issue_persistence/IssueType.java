@@ -77,7 +77,10 @@ public class IssueType {
 
 		try (Connection conn = DriverManager.getConnection("jdbc:mysql://10.10.2.45:3306", "root", "dhi123");
 				Statement stmt = conn.createStatement();
-				ResultSet rs = stmt.executeQuery("SELECT * FROM `issue_persistence_piqa`.`IssueType` LIMIT 1000")) {
+				// ResultSet rs = stmt.executeQuery("SELECT * FROM `issue_persistence_piqa`.`IssueType` LIMIT 1000"))
+				ResultSet rs = stmt
+						.executeQuery("SELECT * FROM (" + "   SELECT * FROM `issue_persistence_piqa`.`IssueType` "
+								+ "   ORDER BY id DESC LIMIT 5" + ") AS lastFive " + "ORDER BY id ASC;")) {
 
 			ResultSetMetaData meta = rs.getMetaData();
 			int colCount = meta.getColumnCount();
@@ -208,7 +211,7 @@ public class IssueType {
 		System.out.println("Stored IssueTypeId: " + IssueTypeId);
 		logToExtent("Create IssueType Response", requestBody, response);
 		captureDbSnapshot(IssueTypeId, "Create New IssueType");
-		captureElasticScreenshot(IssueTypeId, "Create New IssueType");
+		// captureElasticScreenshot(IssueTypeId, "Create New IssueType");
 	}
 
 	@When("Fetch All IssueType Details")
@@ -250,7 +253,7 @@ public class IssueType {
 		logToExtent("Update IssueType (PUT)", newJson, response);
 		captureDbSnapshot(IssueTypeId, "Update IssueType (PUT)");
 		ApiValidators.validatePathParamToResponse(response, "id", IssueTypeId);
-		captureElasticScreenshot(IssueTypeId, "Update IssueType (PUT)");
+		// captureElasticScreenshot(IssueTypeId, "Update IssueType (PUT)");
 
 	}
 
@@ -272,7 +275,7 @@ public class IssueType {
 		captureDbSnapshot(IssueTypeId, "Update IssueType (PATCH)");
 //		ApiValidators.validatePathParamToResponse(response, "id", IssueTypeId);
 //		ApiValidators.validateRequestToResponse(newJson, response, IssueTypeId, "comments");
-		captureElasticScreenshot(IssueTypeId, "Update IssueType (PATCH)");
+		// captureElasticScreenshot(IssueTypeId, "Update IssueType (PATCH)");
 
 	}
 
@@ -287,7 +290,7 @@ public class IssueType {
 
 		logToExtent("Delete IssueType", null, response);
 		captureDbSnapshot(IssueTypeId, "Delete IssueType");
-		captureElasticScreenshot(IssueTypeId, "Delete IssueType");
+		// captureElasticScreenshot(IssueTypeId, "Delete IssueType");
 	}
 
 	@Given("I have Bulk IssueType")
@@ -321,7 +324,7 @@ public class IssueType {
 
 		for (Integer id : ScenarioContext.Ids) {
 			captureDbSnapshot(id, "Create Bulk IssueType" + ": " + id);
-			captureElasticScreenshot(id, "Create Bulk IssueType" + ": " + id);
+			// captureElasticScreenshot(id, "Create Bulk IssueType" + ": " + id);
 			ApiDataValidator.validateDbNotNullExcept(id, "IssueType", null);
 		}
 	}
@@ -377,7 +380,7 @@ public class IssueType {
 
 		for (Integer id : IssueTypeIds) {
 			captureDbSnapshot(id, "Update IssueType (PUT)" + ": " + id);
-			captureElasticScreenshot(id, "Update IssueType (PUT)" + ": " + id);
+			// captureElasticScreenshot(id, "Update IssueType (PUT)" + ": " + id);
 			ApiDataValidator.validateDbNotNullExcept(id, "IssueType", null);
 		}
 	}
@@ -409,7 +412,7 @@ public class IssueType {
 
 		for (Integer id : IssueTypeIds) {
 			captureDbSnapshot(id, "Delete IssueType" + ": " + id);
-			captureElasticScreenshot(id, "Delete IssueType" + ": " + id);
+			// captureElasticScreenshot(id, "Delete IssueType" + ": " + id);
 		}
 	}
 
@@ -459,7 +462,7 @@ public class IssueType {
 
 				// ✅ CALL VOID METHOD (NO BOOLEAN)
 				ApiDataValidator.validateKeysAcrosRequestResponseEsDb(requestJson, responseJson, id, "issue-type",
-						"IssueType", false, new String[] { "deleted" },
+						"IssueType", true, new String[] { "deleted" },
 						new String[] { "id", "updatedate", "createdate", "eventDate" }, new String[] { "" });
 
 			} catch (Exception e) {
