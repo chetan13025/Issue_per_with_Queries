@@ -77,7 +77,10 @@ public class IssueStep {
 
 		try (Connection conn = DriverManager.getConnection("jdbc:mysql://10.10.2.45:3306", "root", "dhi123");
 				Statement stmt = conn.createStatement();
-				ResultSet rs = stmt.executeQuery("SELECT * FROM `issue_persistence_piqa`.`IssueSteps` LIMIT 1000")) {
+				// ResultSet rs = stmt.executeQuery("SELECT * FROM `issue_persistence_piqa`.`IssueSteps` LIMIT 1000"))
+				ResultSet rs = stmt
+						.executeQuery("SELECT * FROM (" + "   SELECT * FROM `issue_persistence_piqa`.`IssueSteps` "
+								+ "   ORDER BY id DESC LIMIT 5" + ") AS lastFive " + "ORDER BY id ASC;")) {
 
 			ResultSetMetaData meta = rs.getMetaData();
 			int colCount = meta.getColumnCount();
@@ -207,7 +210,7 @@ public class IssueStep {
 		System.out.println("Stored IssueStepId: " + IssueStepId);
 		logToExtent("Create IssueStep Response", requestBody, response);
 		captureDbSnapshot(IssueStepId, "Create New IssueStep");
-		captureElasticScreenshot(IssueStepId, "Create New IssueStep");
+		// captureElasticScreenshot(IssueStepId, "Create New IssueStep");
 	}
 	
 	@When("Fetch All IssueStep Details")
@@ -249,7 +252,7 @@ public class IssueStep {
 		logToExtent("Update IssueStep (PUT)", newJson, response);
 		captureDbSnapshot(IssueStepId, "Update IssueStep (PUT)");
 		ApiValidators.validatePathParamToResponse(response, "id", IssueStepId);
-		captureElasticScreenshot(IssueStepId, "Update IssueStep (PUT)");
+		// captureElasticScreenshot(IssueStepId, "Update IssueStep (PUT)");
 
 	}
 	
@@ -271,7 +274,7 @@ public class IssueStep {
 		captureDbSnapshot(IssueStepId, "Update IssueStep (PATCH)");
 //		ApiValidators.validatePathParamToResponse(response, "id", IssueRootCauseId);
 //		ApiValidators.validateRequestToResponse(newJson, response, IssueRootCauseId, "comments");
-		captureElasticScreenshot(IssueStepId, "Update IssueStep (PATCH)");
+		// captureElasticScreenshot(IssueStepId, "Update IssueStep (PATCH)");
 
 	}
 	@When("Delete IssueStep with ID")
@@ -285,7 +288,7 @@ public class IssueStep {
 
 		logToExtent("Delete IssueStep", null, response);
 		captureDbSnapshot(IssueStepId, "Delete IssueStep");
-		captureElasticScreenshot(IssueStepId, "Delete IssueStep");
+		// captureElasticScreenshot(IssueStepId, "Delete IssueStep");
 	}
 	
 	@Given("I have Bulk IssueStep")
@@ -319,7 +322,7 @@ public class IssueStep {
 
 		for (Integer id : ScenarioContext.Ids) {
 			captureDbSnapshot(id,  "Create Bulk IssueStep"+": "+id);
-			captureElasticScreenshot(id,  "Create Bulk IssueStep"+": "+id);
+			// captureElasticScreenshot(id,  "Create Bulk IssueStep"+": "+id);
 			ApiDataValidator.validateDbNotNullExcept(id, "IssueSteps", null);
 		}
 	}
@@ -384,7 +387,7 @@ public class IssueStep {
 
 	    for (Integer id : IssueStepIds) {
 	    	captureDbSnapshot(id, "Update IssueStep (PUT)"+": "+id);
-			captureElasticScreenshot(id, "Update IssueStep (PUT)"+": "+id);
+			// captureElasticScreenshot(id, "Update IssueStep (PUT)"+": "+id);
 			ApiDataValidator.validateDbNotNullExcept(id, "IssueSteps", null);
 	    }
 	}
@@ -432,7 +435,7 @@ public class IssueStep {
 
 	    for (Integer id : IssueStepIds) {
 	    	captureDbSnapshot(id, "Delete IssueStatus"+": "+id);
-			captureElasticScreenshot(id, "Delete IssueStatus"+": "+id);
+			// captureElasticScreenshot(id, "Delete IssueStatus"+": "+id);
 	    }
 	}
 		
@@ -491,7 +494,7 @@ public class IssueStep {
 	                    id,
 	                    "issue-steps",
 	                    "IssueSteps",
-	                    false,
+	                    true,
 	                    new String[]{
 	                            "deleted"
 	                    },
