@@ -76,7 +76,10 @@ public class IssueFeatureGroup {
 
 		try (Connection conn = DriverManager.getConnection("jdbc:mysql://10.10.2.45:3306", "root", "dhi123");
 				Statement stmt = conn.createStatement();
-				ResultSet rs = stmt.executeQuery("SELECT * FROM `issue_persistence_piqa`.`IssueFeatureGroup` LIMIT 1000")) {
+				// ResultSet rs = stmt.executeQuery("SELECT * FROM `issue_persistence_piqa`.`IssueFeatureGroup` LIMIT 1000"))
+				ResultSet rs = stmt
+						.executeQuery("SELECT * FROM (" + "   SELECT * FROM `issue_persistence_piqa`.`IssueFeatureGroup` "
+								+ "   ORDER BY id DESC LIMIT 5" + ") AS lastFive " + "ORDER BY id ASC;")) {
 
 			ResultSetMetaData meta = rs.getMetaData();
 			int colCount = meta.getColumnCount();
@@ -208,7 +211,7 @@ public class IssueFeatureGroup {
 		System.out.println("Stored IsueFeatureGroupId: " + IsueFeatureGroupId);
 		logToExtent("Create IssueFeatureGroup Response", requestBody, response);
 		captureDbSnapshot(IsueFeatureGroupId, "Create New IssueFeatureGroup");
-		captureElasticScreenshot(IsueFeatureGroupId, "Create IssueFeatureGroup");
+		// captureElasticScreenshot(IsueFeatureGroupId, "Create IssueFeatureGroup");
 	}
 
 	@When("Fetch All IssueFeatureGroup Details")
@@ -249,7 +252,7 @@ public class IssueFeatureGroup {
 		RequestBodyForValidation=newJson;
 		logToExtent("Update IssueFeatureGroup (PUT)", newJson, response);
 		captureDbSnapshot(IsueFeatureGroupId, "Update IssueFeatureGroup (PUT)");
-		captureElasticScreenshot(IsueFeatureGroupId, "Update IssueFeatureGroup (PUT)");
+		// captureElasticScreenshot(IsueFeatureGroupId, "Update IssueFeatureGroup (PUT)");
 
 	}
 
@@ -270,7 +273,7 @@ public class IssueFeatureGroup {
 		RequestBodyForValidation=newJson;
 		logToExtent("Update IssueFeatureGroup (PATCH)", newJson, response);
 		captureDbSnapshot(IsueFeatureGroupId, "Update IssueFeatureGroup (PATCH)");
-		captureElasticScreenshot(IsueFeatureGroupId, "Update IssueFeatureGroup (PATCH)");
+		// captureElasticScreenshot(IsueFeatureGroupId, "Update IssueFeatureGroup (PATCH)");
 
 	}
 
@@ -285,7 +288,7 @@ public class IssueFeatureGroup {
 
 		logToExtent("Delete IssueFeatureGroup", null, response);
 		captureDbSnapshot(IsueFeatureGroupId, "Delete IssueFeatureGroup");
-		captureElasticScreenshot(IsueFeatureGroupId, "Delete IssueFeatureGroup");
+		// captureElasticScreenshot(IsueFeatureGroupId, "Delete IssueFeatureGroup");
 	}
 	
 	
@@ -320,7 +323,7 @@ public class IssueFeatureGroup {
 
 		for (Integer id : ScenarioContext.Ids) {
 			captureDbSnapshot(id,  "Create Bulk IssueFeatureGroup"+": "+id);
-			captureElasticScreenshot(id,  "Create Bulk IssueFeatureGroup"+": "+id);
+			// captureElasticScreenshot(id,  "Create Bulk IssueFeatureGroup"+": "+id);
 			ApiDataValidator.validateDbNotNullExcept(id, "IssueFeatureGroup", null);
 		}
 	}
@@ -385,7 +388,7 @@ public class IssueFeatureGroup {
 
 	    for (Integer id : IsueFeatureGroupIds) {
 	    	captureDbSnapshot(id, "Update IssueFeatureGroup (PUT)"+": "+id);
-			captureElasticScreenshot(id, "Update IssueFeatureGroup (PUT)"+": "+id);
+			// captureElasticScreenshot(id, "Update IssueFeatureGroup (PUT)"+": "+id);
 			ApiDataValidator.validateDbNotNullExcept(id, "IssueFeatureGroup", null);
 	    }
 	}
@@ -433,7 +436,7 @@ public class IssueFeatureGroup {
 
 	    for (Integer id : IsueFeatureGroupIds) {
 	    	captureDbSnapshot(id, "Delete IssueFeatureGroup"+": "+id);
-			captureElasticScreenshot(id, "Delete IssueFeatureGroup"+": "+id);
+			// captureElasticScreenshot(id, "Delete IssueFeatureGroup"+": "+id);
 	    }
 	}
 		
@@ -492,7 +495,7 @@ public class IssueFeatureGroup {
 	                    id,
 	                    "issue-feature-group",
 	                    "IssueFeatureGroup",
-	                    false,
+	                    true,
 	                    new String[]{
 	                            "deleted"
 	                    },
