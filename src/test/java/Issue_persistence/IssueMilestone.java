@@ -76,7 +76,10 @@ public class IssueMilestone {
 
 		try (Connection conn = DriverManager.getConnection("jdbc:mysql://10.10.2.45:3306", "root", "dhi123");
 				Statement stmt = conn.createStatement();
-				ResultSet rs = stmt.executeQuery("SELECT * FROM `issue_persistence_piqa`.`IssueMilestone` LIMIT 1000")) {
+				// ResultSet rs = stmt.executeQuery("SELECT * FROM `issue_persistence_piqa`.`IssueMilestone` LIMIT 1000"))
+				ResultSet rs = stmt
+						.executeQuery("SELECT * FROM (" + "   SELECT * FROM `issue_persistence_piqa`.`IssueMilestone` "
+								+ "   ORDER BY id DESC LIMIT 5" + ") AS lastFive " + "ORDER BY id ASC;")) {
 
 			ResultSetMetaData meta = rs.getMetaData();
 			int colCount = meta.getColumnCount();
@@ -207,7 +210,7 @@ public class IssueMilestone {
 		System.out.println("Stored IssueLogId: " + IssueMilestoneId);
 		logToExtent("Create IssueMilestone Response", requestBody, response);
 		captureDbSnapshot(IssueMilestoneId, "Create New IssueMilestone");
-		captureElasticScreenshot(IssueMilestoneId, "Create New IssueMilestone");
+		// captureElasticScreenshot(IssueMilestoneId, "Create New IssueMilestone");
 	}
 	
 	@When("Fetch All IssueMilestone Details")
@@ -248,7 +251,7 @@ public class IssueMilestone {
 		RequestBodyForValidation=newJson;
 		logToExtent("Update IssueMilestone (PUT)", newJson, response);
 		captureDbSnapshot(IssueMilestoneId, "Update IssueMilestone (PUT)");
-		captureElasticScreenshot(IssueMilestoneId, "Update IssueMilestone (PUT)");
+		// captureElasticScreenshot(IssueMilestoneId, "Update IssueMilestone (PUT)");
 
 	}
 	
@@ -269,7 +272,7 @@ public class IssueMilestone {
 		RequestBodyForValidation=newJson;
 		logToExtent("Update IssueMilestone (PATCH)", newJson, response);
 		captureDbSnapshot(IssueMilestoneId, "Update IssueMilestone (PATCH)");
-		captureElasticScreenshot(IssueMilestoneId, "Update IssueMilestone (PATCH)");
+		// captureElasticScreenshot(IssueMilestoneId, "Update IssueMilestone (PATCH)");
 
 	}
 	@When("Delete IssueMilestone with ID")
@@ -283,7 +286,7 @@ public class IssueMilestone {
 
 		logToExtent("Delete IssueMilestone", null, response);
 		captureDbSnapshot(IssueMilestoneId, "Delete IssueMilestone");
-		captureElasticScreenshot(IssueMilestoneId, "Delete IssueMilestone");
+		// captureElasticScreenshot(IssueMilestoneId, "Delete IssueMilestone");
 	}
 	
 	@Given("I have Bulk IssueMilestone")
@@ -317,7 +320,7 @@ public class IssueMilestone {
 
 		for (Integer id : ScenarioContext.Ids) {
 			captureDbSnapshot(id,  "Create Bulk IssueMilestone"+": "+id);
-			captureElasticScreenshot(id,  "Create Bulk IssueMilestone"+": "+id);
+			// captureElasticScreenshot(id,  "Create Bulk IssueMilestone"+": "+id);
 			ApiDataValidator.validateDbNotNullExcept(id, "IssueMilestone", null);
 		}
 	}
@@ -382,7 +385,7 @@ public class IssueMilestone {
 
 	    for (Integer id : IssueMilestoneIds) {
 	    	captureDbSnapshot(id, "Update IssueMilestone (PUT)"+": "+id);
-			captureElasticScreenshot(id, "Update IssueMilestone (PUT)"+": "+id);
+			// captureElasticScreenshot(id, "Update IssueMilestone (PUT)"+": "+id);
 			ApiDataValidator.validateDbNotNullExcept(id, "IssueMilestone", null);
 	    }
 	}
@@ -430,7 +433,7 @@ public class IssueMilestone {
 
 	    for (Integer id : IssueMilestoneIds) {
 	    	captureDbSnapshot(id, "Delete IssueMilestone"+": "+id);
-			captureElasticScreenshot(id, "Delete IssueMilestone"+": "+id);
+			// captureElasticScreenshot(id, "Delete IssueMilestone"+": "+id);
 	    }
 	}
 		
@@ -489,7 +492,7 @@ public class IssueMilestone {
 	                    id,
 	                    "issue-milestone",
 	                    "IssueMilestone",
-	                    false,
+	                    true,
 	                    new String[]{
 	                            "deleted"
 	                    },
