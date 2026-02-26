@@ -288,7 +288,7 @@ public class IssueSatusGraph {
 
 		logToExtent("Delete IssueStatusGraph", null, response);
 		captureDbSnapshot(IssueSatusGraphId, "Delete IssueStatusGraph");
-		captureElasticScreenshot(IssueSatusGraphId, "Delete IssueStatusGraph");
+		// captureElasticScreenshot(IssueSatusGraphId, "Delete IssueStatusGraph");
 	}
 	
 	@Given("I have Bulk IssueStatusGraph")
