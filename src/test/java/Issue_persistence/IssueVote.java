@@ -78,7 +78,10 @@ public class IssueVote {
 
 		try (Connection conn = DriverManager.getConnection("jdbc:mysql://10.10.2.45:3306", "root", "dhi123");
 				Statement stmt = conn.createStatement();
-				ResultSet rs = stmt.executeQuery("SELECT * FROM `issue_persistence_piqa`.`IssueVote` LIMIT 1000")) {
+				// ResultSet rs = stmt.executeQuery("SELECT * FROM `issue_persistence_piqa`.`IssueVote` LIMIT 1000")) 
+				ResultSet rs = stmt
+						.executeQuery("SELECT * FROM (" + "   SELECT * FROM `issue_persistence_piqa`.`IssueVote` "
+								+ "   ORDER BY id DESC LIMIT 5" + ") AS lastFive " + "ORDER BY id ASC;")){
 
 			ResultSetMetaData meta = rs.getMetaData();
 			int colCount = meta.getColumnCount();
@@ -208,7 +211,7 @@ public class IssueVote {
 		System.out.println("Stored IssueVoteId: " + IssueVoteId);
 		logToExtent("Create IssueVote Response", requestBody, response);
 		captureDbSnapshot(IssueVoteId, "Create New IssueVote");
-		captureElasticScreenshot(IssueVoteId, "Create New IssueVote");
+		// captureElasticScreenshot(IssueVoteId, "Create New IssueVote");
 	}
 	
 	@When("Fetch All IssueVote Details")
@@ -250,7 +253,7 @@ public class IssueVote {
 		logToExtent("Update IssueVote (PUT)", newJson, response);
 		captureDbSnapshot(IssueVoteId, "Update IssueVote (PUT)");
 		ApiValidators.validatePathParamToResponse(response, "id", IssueVoteId);
-		captureElasticScreenshot(IssueVoteId, "Update IssueVote (PUT)");
+		// captureElasticScreenshot(IssueVoteId, "Update IssueVote (PUT)");
 
 	}
 	
@@ -272,7 +275,7 @@ public class IssueVote {
 		captureDbSnapshot(IssueVoteId, "Update IssueVote (PATCH)");
 //		ApiValidators.validatePathParamToResponse(response, "id", IssueTypeId);
 //		ApiValidators.validateRequestToResponse(newJson, response, IssueTypeId, "comments");
-		captureElasticScreenshot(IssueVoteId, "Update IssueVote (PATCH)");
+		// captureElasticScreenshot(IssueVoteId, "Update IssueVote (PATCH)");
 
 	}
 	@When("Delete IssueVote with ID")
@@ -286,7 +289,7 @@ public class IssueVote {
 
 		logToExtent("Delete IssueVote", null, response);
 		captureDbSnapshot(IssueVoteId, "Delete IssueVote");
-		captureElasticScreenshot(IssueVoteId, "Delete IssueVote");
+		// captureElasticScreenshot(IssueVoteId, "Delete IssueVote");
 	}
 	
 	@Given("I have Bulk IssueVote")
@@ -320,7 +323,7 @@ public class IssueVote {
 
 		for (Integer id : ScenarioContext.Ids) {
 			captureDbSnapshot(id, "Create Bulk IssueVote" + ": " + id);
-			captureElasticScreenshot(id, "Create Bulk IssueVote" + ": " + id);
+			// captureElasticScreenshot(id, "Create Bulk IssueVote" + ": " + id);
 			ApiDataValidator.validateDbNotNullExcept(id, "IssueVote", null);
 		}
 	}
@@ -376,7 +379,7 @@ public class IssueVote {
 
 		for (Integer id : IssueVoteIds) {
 			captureDbSnapshot(id, "Update IssueVote (PUT)" + ": " + id);
-			captureElasticScreenshot(id, "Update IssueVote (PUT)" + ": " + id);
+			// captureElasticScreenshot(id, "Update IssueVote (PUT)" + ": " + id);
 			ApiDataValidator.validateDbNotNullExcept(id, "IssueVote", null);
 		}
 	}
@@ -408,7 +411,7 @@ public class IssueVote {
 
 		for (Integer id : IssueVoteIds) {
 			captureDbSnapshot(id, "Delete IssueVote" + ": " + id);
-			captureElasticScreenshot(id, "Delete IssueVote" + ": " + id);
+			// captureElasticScreenshot(id, "Delete IssueVote" + ": " + id);
 		}
 	}
 
@@ -458,7 +461,7 @@ public class IssueVote {
 
 				// ✅ CALL VOID METHOD (NO BOOLEAN)
 				ApiDataValidator.validateKeysAcrosRequestResponseEsDb(requestJson, responseJson, id, "issue-vote",
-						"IssueVote", false, new String[] { "deleted" },
+						"IssueVote", true, new String[] { "deleted" },
 						new String[] { "id", "updatedate", "createdate", "eventDate" }, new String[] { "" });
 
 			} catch (Exception e) {
