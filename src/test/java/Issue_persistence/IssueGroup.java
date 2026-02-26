@@ -77,7 +77,10 @@ public class IssueGroup {
 
 		try (Connection conn = DriverManager.getConnection("jdbc:mysql://10.10.2.45:3306", "root", "dhi123");
 				Statement stmt = conn.createStatement();
-				ResultSet rs = stmt.executeQuery("SELECT * FROM `issue_persistence_piqa`.`IssueGroup` LIMIT 1000")) {
+				// ResultSet rs = stmt.executeQuery("SELECT * FROM `issue_persistence_piqa`.`IssueGroup` LIMIT 1000"))
+				ResultSet rs = stmt
+						.executeQuery("SELECT * FROM (" + "   SELECT * FROM `issue_persistence_piqa`.`IssueGroup` "
+								+ "   ORDER BY id DESC LIMIT 5" + ") AS lastFive " + "ORDER BY id ASC;")) {
 
 			ResultSetMetaData meta = rs.getMetaData();
 			int colCount = meta.getColumnCount();
@@ -207,7 +210,7 @@ public class IssueGroup {
 		System.out.println("Stored UserId: " + IssueGroupId);
 		logToExtent("Create IssueGroup Response", requestBody, response);
 		captureDbSnapshot(IssueGroupId, "Create New IssueGroup");
-		captureElasticScreenshot(IssueGroupId, "Create New IssueGroup");
+		// captureElasticScreenshot(IssueGroupId, "Create New IssueGroup");
 	}
 	
 	@When("Fetch All IssueGroups Details")
@@ -248,7 +251,7 @@ public class IssueGroup {
 		RequestBodyForValidation=newJson;
 		logToExtent("Update IssueGroup (PUT)", newJson, response);
 		captureDbSnapshot(IssueGroupId, "Update IssueGroup (PUT)");
-		captureElasticScreenshot(IssueGroupId, "Update IssueGroup (PUT)");
+		// captureElasticScreenshot(IssueGroupId, "Update IssueGroup (PUT)");
 
 	}
 	
@@ -269,7 +272,7 @@ public class IssueGroup {
 		RequestBodyForValidation=newJson;
 		logToExtent("Update IssueGroup (PATCH)", newJson, response);
 		captureDbSnapshot(IssueGroupId, "Update IssueGroup (PATCH)");
-		captureElasticScreenshot(IssueGroupId, "Update IssueGroup (PATCH)");
+		// captureElasticScreenshot(IssueGroupId, "Update IssueGroup (PATCH)");
 
 	}
 	@When("Delete IssueGroup with ID")
@@ -283,7 +286,7 @@ public class IssueGroup {
 
 		logToExtent("Delete IssueGroup", null, response);
 		captureDbSnapshot(IssueGroupId, "Delete IssueGroup");
-		captureElasticScreenshot(IssueGroupId, "Delete IssueGroup");
+		// captureElasticScreenshot(IssueGroupId, "Delete IssueGroup");
 	}
 	
 	@Given("I have Bulk IssueGroup")
@@ -317,7 +320,7 @@ public class IssueGroup {
 
 		for (Integer id : ScenarioContext.Ids) {
 			captureDbSnapshot(id,  "Create Bulk IssueGroup"+": "+id);
-			captureElasticScreenshot(id,  "Create Bulk IssueGroup"+": "+id);
+			// captureElasticScreenshot(id,  "Create Bulk IssueGroup"+": "+id);
 			ApiDataValidator.validateDbNotNullExcept(id, "IssueGroup", null);
 		}
 	}
@@ -382,7 +385,7 @@ public class IssueGroup {
 
 	    for (Integer id : IssueGroupIds) {
 	    	captureDbSnapshot(id, "Update IssueGroup (PUT)"+": "+id);
-			captureElasticScreenshot(id, "Update IssueGroup (PUT)"+": "+id);
+			// captureElasticScreenshot(id, "Update IssueGroup (PUT)"+": "+id);
 			ApiDataValidator.validateDbNotNullExcept(id, "IssueGroup", null);
 	    }
 	}
@@ -489,7 +492,7 @@ public class IssueGroup {
 	                    id,
 	                    "issue-group",
 	                    "IssueGroup",
-	                    false,
+	                    true,
 	                    new String[]{
 	                            "deleted"
 	                    },
