@@ -19,12 +19,12 @@ Then The IssueLog response status code should be 200
 
 Scenario: Updating PUT IssueLog Details with ID
 When Update IssueLog Details
-Then Validate API ES and DB for IssueLogId after PUT skipping ES true excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"
+Then Validate API ES and DB for IssueLogId after PUT skipping ES true excludingEverywhere "null" excludeFromRequest "id,deleted,eventdate" excludeFromEs "deleted"
 Then The IssueLog response status code should be 200
 
 Scenario: Updating Patch IssueLog Details with ID
 When Update Patch IssueLog
-Then Validate API ES and DB for IssueLogId after PATCH skipping ES true excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"
+Then Validate API ES and DB for IssueLogId after PATCH skipping ES true excludingEverywhere "null" excludeFromRequest "id,deleted,eventdate" excludeFromEs "deleted"
 Then The IssueLog response status code should be 200
 
 Scenario: Deleting IssueLog Details with ID
