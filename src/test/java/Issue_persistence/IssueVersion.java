@@ -77,7 +77,10 @@ public class IssueVersion {
 
 		try (Connection conn = DriverManager.getConnection("jdbc:mysql://10.10.2.45:3306", "root", "dhi123");
 				Statement stmt = conn.createStatement();
-				ResultSet rs = stmt.executeQuery("SELECT * FROM `issue_persistence_piqa`.`IssueVersion` LIMIT 1000")) {
+				// ResultSet rs = stmt.executeQuery("SELECT * FROM `issue_persistence_piqa`.`IssueVersion` LIMIT 1000"))
+				ResultSet rs = stmt
+						.executeQuery("SELECT * FROM (" + "   SELECT * FROM `issue_persistence_piqa`.`IssueVersion` "
+								+ "   ORDER BY id DESC LIMIT 5" + ") AS lastFive " + "ORDER BY id ASC;")) {
 
 			ResultSetMetaData meta = rs.getMetaData();
 			int colCount = meta.getColumnCount();
@@ -207,7 +210,7 @@ public class IssueVersion {
 		System.out.println("Stored IssueVersionId: " + IssueVersionId);
 		logToExtent("Create IssueVersion Response", requestBody, response);
 		captureDbSnapshot(IssueVersionId, "Create New IssueVersion");
-		captureElasticScreenshot(IssueVersionId, "Create New IssueVersion");
+		// captureElasticScreenshot(IssueVersionId, "Create New IssueVersion");
 	}
 	
 	@When("Fetch All IssueVersion Details")
@@ -249,7 +252,7 @@ public class IssueVersion {
 		logToExtent("Update IssueVersion (PUT)", newJson, response);
 		captureDbSnapshot(IssueVersionId, "Update IssueVersion (PUT)");
 		ApiValidators.validatePathParamToResponse(response, "id", IssueVersionId);
-		captureElasticScreenshot(IssueVersionId, "Update IssueVersion (PUT)");
+		// captureElasticScreenshot(IssueVersionId, "Update IssueVersion (PUT)");
 
 	}
 	
@@ -271,7 +274,7 @@ public class IssueVersion {
 		captureDbSnapshot(IssueVersionId, "Update IssueVersion (PATCH)");
 //		ApiValidators.validatePathParamToResponse(response, "id", IssueTypeId);
 //		ApiValidators.validateRequestToResponse(newJson, response, IssueTypeId, "comments");
-		captureElasticScreenshot(IssueVersionId, "Update IssueVersion (PATCH)");
+		// captureElasticScreenshot(IssueVersionId, "Update IssueVersion (PATCH)");
 
 	}
 	@When("Delete IssueVersion with ID")
@@ -285,7 +288,7 @@ public class IssueVersion {
 
 		logToExtent("Delete IssueVersion", null, response);
 		captureDbSnapshot(IssueVersionId, "Delete IssueVersion");
-		captureElasticScreenshot(IssueVersionId, "Delete IssueVersion");
+		// captureElasticScreenshot(IssueVersionId, "Delete IssueVersion");
 	}
 	
 	@Given("I have Bulk IssueVersion")
@@ -319,7 +322,7 @@ public class IssueVersion {
 
 		for (Integer id : ScenarioContext.Ids) {
 			captureDbSnapshot(id, "Create Bulk IssueVersion" + ": " + id);
-			captureElasticScreenshot(id, "Create Bulk IssueVersion" + ": " + id);
+			// captureElasticScreenshot(id, "Create Bulk IssueVersion" + ": " + id);
 			ApiDataValidator.validateDbNotNullExcept(id, "IssueVersion", null);
 		}
 	}
@@ -375,7 +378,7 @@ public class IssueVersion {
 
 		for (Integer id : IssueVersionIds) {
 			captureDbSnapshot(id, "Update IssueVersion (PUT)" + ": " + id);
-			captureElasticScreenshot(id, "Update IssueVersion (PUT)" + ": " + id);
+			// captureElasticScreenshot(id, "Update IssueVersion (PUT)" + ": " + id);
 			ApiDataValidator.validateDbNotNullExcept(id, "IssueVersion", null);
 		}
 	}
@@ -407,7 +410,7 @@ public class IssueVersion {
 
 		for (Integer id : IssueVersionIds) {
 			captureDbSnapshot(id, "Delete IssueVersion" + ": " + id);
-			captureElasticScreenshot(id, "Delete IssueVersion" + ": " + id);
+			// captureElasticScreenshot(id, "Delete IssueVersion" + ": " + id);
 		}
 	}
 
@@ -457,7 +460,7 @@ public class IssueVersion {
 
 				// ✅ CALL VOID METHOD (NO BOOLEAN)
 				ApiDataValidator.validateKeysAcrosRequestResponseEsDb(requestJson, responseJson, id, "issue-version",
-						"IssueVersion", false, new String[] { "deleted" },
+						"IssueVersion", true, new String[] { "deleted" },
 						new String[] { "id", "updatedate", "createdate", "eventDate" }, new String[] { "" });
 
 			} catch (Exception e) {
