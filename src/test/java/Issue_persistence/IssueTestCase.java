@@ -77,7 +77,10 @@ public class IssueTestCase {
 
 		try (Connection conn = DriverManager.getConnection("jdbc:mysql://10.10.2.45:3306", "root", "dhi123");
 				Statement stmt = conn.createStatement();
-				ResultSet rs = stmt.executeQuery("SELECT * FROM `issue_persistence_piqa`.`IssueTestCase` LIMIT 1000")) {
+				// ResultSet rs = stmt.executeQuery("SELECT * FROM `issue_persistence_piqa`.`IssueTestCase` LIMIT 1000"))
+				ResultSet rs = stmt
+						.executeQuery("SELECT * FROM (" + "   SELECT * FROM `issue_persistence_piqa`.`IssueTestCase` "
+								+ "   ORDER BY id DESC LIMIT 5" + ") AS lastFive " + "ORDER BY id ASC;")) {
 
 			ResultSetMetaData meta = rs.getMetaData();
 			int colCount = meta.getColumnCount();
@@ -207,7 +210,7 @@ public class IssueTestCase {
 		System.out.println("Stored IssueTestCaseId: " + IssueTestCaseId);
 		logToExtent("Create IssueTestCase Response", requestBody, response);
 		captureDbSnapshot(IssueTestCaseId, "Create New IssueTestCase");
-		captureElasticScreenshot(IssueTestCaseId, "Create New IssueTestCase");
+		// captureElasticScreenshot(IssueTestCaseId, "Create New IssueTestCase");
 	}
 	
 	@When("Fetch All IssueTestCase Details")
@@ -249,7 +252,7 @@ public class IssueTestCase {
 		logToExtent("Update IssueTestCase (PUT)", newJson, response);
 		captureDbSnapshot(IssueTestCaseId, "Update IssueTestCase (PUT)");
 		ApiValidators.validatePathParamToResponse(response, "id", IssueTestCaseId);
-		captureElasticScreenshot(IssueTestCaseId, "Update IssueTestCase (PUT)");
+		// captureElasticScreenshot(IssueTestCaseId, "Update IssueTestCase (PUT)");
 
 	}
 	
@@ -271,7 +274,7 @@ public class IssueTestCase {
 		captureDbSnapshot(IssueTestCaseId, "Update IssueTestCase (PATCH)");
 //		ApiValidators.validatePathParamToResponse(response, "id", IssueRootCauseId);
 //		ApiValidators.validateRequestToResponse(newJson, response, IssueRootCauseId, "comments");
-		captureElasticScreenshot(IssueTestCaseId, "Update IssueTestCase (PATCH)");
+		// captureElasticScreenshot(IssueTestCaseId, "Update IssueTestCase (PATCH)");
 
 	}
 	@When("Delete IssueTestCase with ID")
@@ -285,7 +288,7 @@ public class IssueTestCase {
 
 		logToExtent("Delete IssueTestCase", null, response);
 		captureDbSnapshot(IssueTestCaseId, "Delete IssueTestCase");
-		captureElasticScreenshot(IssueTestCaseId, "Delete IssueTestCase");
+		// captureElasticScreenshot(IssueTestCaseId, "Delete IssueTestCase");
 	}
 	@Given("I have Bulk IssueTestCase")
 	public void i_have_a_bulk_IssueTestCase() {
@@ -318,7 +321,7 @@ public class IssueTestCase {
 
 		for (Integer id : ScenarioContext.Ids) {
 			captureDbSnapshot(id,  "Create Bulk IssueTestCase"+": "+id);
-			captureElasticScreenshot(id,  "Create Bulk IssueTestCase"+": "+id);
+			// captureElasticScreenshot(id,  "Create Bulk IssueTestCase"+": "+id);
 			ApiDataValidator.validateDbNotNullExcept(id, "IssueTestCase", null);
 		}
 	}
@@ -383,7 +386,7 @@ public class IssueTestCase {
 
 	    for (Integer id : IssueTestCaseIds) {
 	    	captureDbSnapshot(id, "Update IssueTestCase (PUT)"+": "+id);
-			captureElasticScreenshot(id, "Update IssueTestCase (PUT)"+": "+id);
+			// captureElasticScreenshot(id, "Update IssueTestCase (PUT)"+": "+id);
 			ApiDataValidator.validateDbNotNullExcept(id, "IssueTestCase", null);
 	    }
 	}
@@ -431,7 +434,7 @@ public class IssueTestCase {
 
 	    for (Integer id : IssueTestCaseIds) {
 	    	captureDbSnapshot(id, "Delete IssueTestCase"+": "+id);
-			captureElasticScreenshot(id, "Delete IssueTestCase"+": "+id);
+			// captureElasticScreenshot(id, "Delete IssueTestCase"+": "+id);
 	    }
 	}
 		
@@ -490,7 +493,7 @@ public class IssueTestCase {
 	                    id,
 	                    "issue-test-case",
 	                    "IssueTestCase",
-	                    false,
+	                    true,
 	                    new String[]{
 	                            "deleted"
 	                    },
