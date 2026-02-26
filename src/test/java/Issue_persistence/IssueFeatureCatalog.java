@@ -76,7 +76,10 @@ public class IssueFeatureCatalog {
 
 		try (Connection conn = DriverManager.getConnection("jdbc:mysql://10.10.2.45:3306", "root", "dhi123");
 				Statement stmt = conn.createStatement();
-				ResultSet rs = stmt.executeQuery("SELECT * FROM `issue_persistence_piqa`.`IssueFeatureCatalog` LIMIT 1000")) {
+				// ResultSet rs = stmt.executeQuery("SELECT * FROM `issue_persistence_piqa`.`IssueFeatureCatalog` LIMIT 1000"))
+				ResultSet rs = stmt
+						.executeQuery("SELECT * FROM (" + "   SELECT * FROM `issue_persistence_piqa`.`IssueFeatureCatalog` "
+								+ "   ORDER BY id DESC LIMIT 5" + ") AS lastFive " + "ORDER BY id ASC;")) {
 
 			ResultSetMetaData meta = rs.getMetaData();
 			int colCount = meta.getColumnCount();
@@ -206,7 +209,7 @@ public class IssueFeatureCatalog {
 		System.out.println("Stored UserId: " + IssueFeatureCatalogId);
 		logToExtent("Create IssueFeatureCatalog Response", requestBody, response);
 		captureDbSnapshot(IssueFeatureCatalogId, "Create New IssueFeatureCatalog");
-		captureElasticScreenshot(IssueFeatureCatalogId, "Create IssueFeatureCatalog");
+		// captureElasticScreenshot(IssueFeatureCatalogId, "Create IssueFeatureCatalog");
 	}
 	
 	@When("Fetch All IssueFeatureCatalog Details")
@@ -246,7 +249,7 @@ public class IssueFeatureCatalog {
 		RequestBodyForValidation=newJson;
 		logToExtent("Update User (PUT)", newJson, response);
 		captureDbSnapshot(IssueFeatureCatalogId, "Update User (PUT)");
-		captureElasticScreenshot(IssueFeatureCatalogId, "Update User (PUT)");
+		// captureElasticScreenshot(IssueFeatureCatalogId, "Update User (PUT)");
 
 	}
 
@@ -267,7 +270,7 @@ public class IssueFeatureCatalog {
 		RequestBodyForValidation=newJson;
 		logToExtent("Update User (PATCH)", newJson, response);
 		captureDbSnapshot(IssueFeatureCatalogId, "Update User (PATCH)");
-		captureElasticScreenshot(IssueFeatureCatalogId, "Update User (PATCH)");
+		// captureElasticScreenshot(IssueFeatureCatalogId, "Update User (PATCH)");
 
 	}
 
@@ -282,7 +285,7 @@ public class IssueFeatureCatalog {
 
 		logToExtent("Delete User", null, response);
 		captureDbSnapshot(IssueFeatureCatalogId, "Delete IssueFeatureCatalog");
-		captureElasticScreenshot(IssueFeatureCatalogId, "Delete IssueFeatureCatalog");
+		// captureElasticScreenshot(IssueFeatureCatalogId, "Delete IssueFeatureCatalog");
 	}
 	
 	
@@ -317,7 +320,7 @@ public class IssueFeatureCatalog {
 
 		for (Integer id : ScenarioContext.Ids) {
 			captureDbSnapshot(id,  "Create Bulk IssueFeatureCatalog"+": "+id);
-			captureElasticScreenshot(id,  "Create Bulk IssueFeatureCatalog"+": "+id);
+			// captureElasticScreenshot(id,  "Create Bulk IssueFeatureCatalog"+": "+id);
 			ApiDataValidator.validateDbNotNullExcept(id, "IssueFeatureCatalog", null);
 		}
 	}
@@ -382,7 +385,7 @@ public class IssueFeatureCatalog {
 
 	    for (Integer id : IssueFeatureCatalogIds) {
 	    	captureDbSnapshot(id, "Update IssueFeatureCatalog (PUT)"+": "+id);
-			captureElasticScreenshot(id, "Update IssueFeatureCatalog (PUT)"+": "+id);
+			// captureElasticScreenshot(id, "Update IssueFeatureCatalog (PUT)"+": "+id);
 			ApiDataValidator.validateDbNotNullExcept(id, "IssueFeatureCatalog", null);
 	    }
 	}
@@ -489,7 +492,7 @@ public class IssueFeatureCatalog {
 	                    id,
 	                    "issue-feature-catalog",
 	                    "IssueFeatureCatalog",
-	                    false,
+	                    true,
 	                    new String[]{
 	                            "deleted"
 	                    },
