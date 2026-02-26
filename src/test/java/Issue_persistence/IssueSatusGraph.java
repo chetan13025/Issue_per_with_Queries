@@ -77,7 +77,10 @@ public class IssueSatusGraph {
 
 		try (Connection conn = DriverManager.getConnection("jdbc:mysql://10.10.2.45:3306", "root", "dhi123");
 				Statement stmt = conn.createStatement();
-				ResultSet rs = stmt.executeQuery("SELECT * FROM `issue_persistence_piqa`.`IssueStatusGraph` LIMIT 1000")) {
+				// ResultSet rs = stmt.executeQuery("SELECT * FROM `issue_persistence_piqa`.`IssueStatusGraph` LIMIT 1000"))
+				ResultSet rs = stmt
+						.executeQuery("SELECT * FROM (" + "   SELECT * FROM `issue_persistence_piqa`.`IssueStatusGraph` "
+								+ "   ORDER BY id DESC LIMIT 5" + ") AS lastFive " + "ORDER BY id ASC;")) {
 
 			ResultSetMetaData meta = rs.getMetaData();
 			int colCount = meta.getColumnCount();
@@ -207,7 +210,7 @@ public class IssueSatusGraph {
 		System.out.println("Stored IssueStatusGraphId: " + IssueSatusGraphId);
 		logToExtent("Create IssueStatusGraph Response", requestBody, response);
 		captureDbSnapshot(IssueSatusGraphId, "Create New IssueStatusGraph");
-		captureElasticScreenshot(IssueSatusGraphId, "Create New IssueStatusGraph");
+		// captureElasticScreenshot(IssueSatusGraphId, "Create New IssueStatusGraph");
 	}
 	
 	@When("Fetch All IssueStatusGraph Details")
@@ -249,7 +252,7 @@ public class IssueSatusGraph {
 		logToExtent("Update IssueStatusGraph (PUT)", newJson, response);
 		captureDbSnapshot(IssueSatusGraphId, "Update IssueStatusGraph (PUT)");
 		ApiValidators.validatePathParamToResponse(response, "id", IssueSatusGraphId);
-		captureElasticScreenshot(IssueSatusGraphId, "Update IssueStatusGraph (PUT)");
+		// captureElasticScreenshot(IssueSatusGraphId, "Update IssueStatusGraph (PUT)");
 
 	}
 	
@@ -271,7 +274,7 @@ public class IssueSatusGraph {
 		captureDbSnapshot(IssueSatusGraphId, "Update IssueStatusGraph (PATCH)");
 //		ApiValidators.validatePathParamToResponse(response, "id", IssueRootCauseId);
 //		ApiValidators.validateRequestToResponse(newJson, response, IssueRootCauseId, "comments");
-		captureElasticScreenshot(IssueSatusGraphId, "Update IssueStatusGraph (PATCH)");
+		// captureElasticScreenshot(IssueSatusGraphId, "Update IssueStatusGraph (PATCH)");
 
 	}
 	@When("Delete IssueStatusGraph with ID")
@@ -319,7 +322,7 @@ public class IssueSatusGraph {
 
 		for (Integer id : ScenarioContext.Ids) {
 			captureDbSnapshot(id,  "Create Bulk IssueStatusGraph"+": "+id);
-			captureElasticScreenshot(id,  "Create Bulk IssueStatusGraph"+": "+id);
+			// captureElasticScreenshot(id,  "Create Bulk IssueStatusGraph"+": "+id);
 			ApiDataValidator.validateDbNotNullExcept(id, "IssueStatusGraph", null);
 		}
 	}
@@ -384,7 +387,7 @@ public class IssueSatusGraph {
 
 	    for (Integer id : IssueSatusGraphIds) {
 	    	captureDbSnapshot(id, "Update IssueStatusGraph (PUT)"+": "+id);
-			captureElasticScreenshot(id, "Update IssueStatusGraph (PUT)"+": "+id);
+			// captureElasticScreenshot(id, "Update IssueStatusGraph (PUT)"+": "+id);
 			ApiDataValidator.validateDbNotNullExcept(id, "IssueStatusGraph", null);
 	    }
 	}
@@ -491,7 +494,7 @@ public class IssueSatusGraph {
 	                    id,
 	                    "issue-status-graph",
 	                    "IssueStatusGraph",
-	                    false,
+	                    true,
 	                    new String[]{
 	                            "deleted"
 	                    },
