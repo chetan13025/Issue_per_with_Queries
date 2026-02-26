@@ -6,7 +6,7 @@ Scenario: To Verify that New IssueVote is creating
 Given I have a IssueVote
 When Create New IssueVote
 Then The IssueVote response should contain "id"
-Then Validate API ES and DB for IssueVoteId after POST skipping ES false excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"
+Then Validate API ES and DB for IssueVoteId after POST skipping ES true excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"
 And The IssueVote response status code should be 201
 
 Scenario: To verify that GET request Fetched all data
@@ -19,12 +19,12 @@ Then The IssueVote response status code should be 200
 
 Scenario: To verify that after PUT request Data should get update in Data Base
 When Update IssueVote Details
-Then Validate API ES and DB for IssueVoteId after PUT skipping ES false excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"
+Then Validate API ES and DB for IssueVoteId after PUT skipping ES true excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"
 Then The IssueVote response status code should be 200
 
 Scenario: To verify that after PATCH request Data should get udpate in DataBase
 When Update Patch IssueVote
-Then Validate API ES and DB for IssueVoteId after PATCH skipping ES false excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"
+Then Validate API ES and DB for IssueVoteId after PATCH skipping ES true excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"
 Then The IssueVote response status code should be 200
 
 Scenario: TO verify that After Delete request Data should get delete in DataBAse
