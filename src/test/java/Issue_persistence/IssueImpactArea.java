@@ -76,7 +76,10 @@ public class IssueImpactArea {
 
 		try (Connection conn = DriverManager.getConnection("jdbc:mysql://10.10.2.45:3306", "root", "dhi123");
 				Statement stmt = conn.createStatement();
-				ResultSet rs = stmt.executeQuery("SELECT * FROM `issue_persistence_piqa`.`IssueImpactArea` LIMIT 1000")) {
+				// ResultSet rs = stmt.executeQuery("SELECT * FROM `issue_persistence_piqa`.`IssueImpactArea` LIMIT 1000"))
+				ResultSet rs = stmt
+						.executeQuery("SELECT * FROM (" + "   SELECT * FROM `issue_persistence_piqa`.`IssueImpactArea` "
+								+ "   ORDER BY id DESC LIMIT 5" + ") AS lastFive " + "ORDER BY id ASC;")) {
 
 			ResultSetMetaData meta = rs.getMetaData();
 			int colCount = meta.getColumnCount();
@@ -207,7 +210,7 @@ public class IssueImpactArea {
 		System.out.println("Stored IsueImpactAreaId: " + IssueImpactAreaId);
 		logToExtent("Create IssueImpactArea Response", requestBody, response);
 		captureDbSnapshot(IssueImpactAreaId, "Create New IssueImpactArea");
-		captureElasticScreenshot(IssueImpactAreaId, "Create IssueImpactArea");
+		// captureElasticScreenshot(IssueImpactAreaId, "Create IssueImpactArea");
 	}
 
 	@When("Fetch All IssueImpactArea Details")
@@ -248,7 +251,7 @@ public class IssueImpactArea {
 		RequestBodyForValidation=newJson;
 		logToExtent("Update IssueImpactArea (PUT)", newJson, response);
 		captureDbSnapshot(IssueImpactAreaId, "Update IssueImpactArea (PUT)");
-		captureElasticScreenshot(IssueImpactAreaId, "Update IssueImpactArea (PUT)");
+		// captureElasticScreenshot(IssueImpactAreaId, "Update IssueImpactArea (PUT)");
 
 	}
 
@@ -269,7 +272,7 @@ public class IssueImpactArea {
 		RequestBodyForValidation=newJson;
 		logToExtent("Update IssueImpactArea (PATCH)", newJson, response);
 		captureDbSnapshot(IssueImpactAreaId, "Update IssueImpactArea (PATCH)");
-		captureElasticScreenshot(IssueImpactAreaId, "Update IssueImpactArea (PATCH)");
+		// captureElasticScreenshot(IssueImpactAreaId, "Update IssueImpactArea (PATCH)");
 
 	}
 
@@ -284,7 +287,7 @@ public class IssueImpactArea {
 
 		logToExtent("Delete IssueImpactArea", null, response);
 		captureDbSnapshot(IssueImpactAreaId, "Delete IssueImpactArea");
-		captureElasticScreenshot(IssueImpactAreaId, "Delete IssueImpactArea");
+		// captureElasticScreenshot(IssueImpactAreaId, "Delete IssueImpactArea");
 	}
 	
 	@Given("I have Bulk IssueImpactArea")
@@ -318,7 +321,7 @@ public class IssueImpactArea {
 
 		for (Integer id : ScenarioContext.Ids) {
 			captureDbSnapshot(id,  "Create Bulk IssueImpactArea"+": "+id);
-			captureElasticScreenshot(id,  "Create Bulk IssueImpactArea"+": "+id);
+			// captureElasticScreenshot(id,  "Create Bulk IssueImpactArea"+": "+id);
 			ApiDataValidator.validateDbNotNullExcept(id, "IssueImpactArea", null);
 		}
 	}
@@ -383,7 +386,7 @@ public class IssueImpactArea {
 
 	    for (Integer id : IssueImpactAreaIds) {
 	    	captureDbSnapshot(id, "Update IssueImpactArea (PUT)"+": "+id);
-			captureElasticScreenshot(id, "Update IssueImpactArea (PUT)"+": "+id);
+			// captureElasticScreenshot(id, "Update IssueImpactArea (PUT)"+": "+id);
 			ApiDataValidator.validateDbNotNullExcept(id, "IssueImpactArea", null);
 	    }
 	}
@@ -431,7 +434,7 @@ public class IssueImpactArea {
 
 	    for (Integer id : IssueImpactAreaIds) {
 	    	captureDbSnapshot(id, "Delete IssueImpactArea"+": "+id);
-			captureElasticScreenshot(id, "Delete IssueImpactArea"+": "+id);
+			// captureElasticScreenshot(id, "Delete IssueImpactArea"+": "+id);
 	    }
 	}
 		
@@ -490,7 +493,7 @@ public class IssueImpactArea {
 	                    id,
 	                    "issue-impact-area",
 	                    "IssueImpactArea",
-	                    false,
+	                    true,
 	                    new String[]{
 	                            "deleted"
 	                    },
