@@ -78,7 +78,10 @@ public class SprintProposal {
 
 		try (Connection conn = DriverManager.getConnection("jdbc:mysql://10.10.2.45:3306", "root", "dhi123");
 				Statement stmt = conn.createStatement();
-				ResultSet rs = stmt.executeQuery("SELECT * FROM `issue_persistence_piqa`.`SprintProposal` LIMIT 1000")) {
+				// ResultSet rs = stmt.executeQuery("SELECT * FROM `issue_persistence_piqa`.`SprintProposal` LIMIT 1000"))
+				ResultSet rs = stmt
+						.executeQuery("SELECT * FROM (" + "   SELECT * FROM `issue_persistence_piqa`.`SprintProposal` "
+								+ "   ORDER BY id DESC LIMIT 5" + ") AS lastFive " + "ORDER BY id ASC;")) {
 
 			ResultSetMetaData meta = rs.getMetaData();
 			int colCount = meta.getColumnCount();
@@ -208,7 +211,7 @@ public class SprintProposal {
 		System.out.println("Sstored RootCauseId: " + SprintProposalId);
 		logToExtent("Create SprintProposal Response", requestBody, response);
 		captureDbSnapshot(SprintProposalId, "Create New SprintProposal");
-		captureElasticScreenshot(SprintProposalId, "Create New SprintProposal");
+		// captureElasticScreenshot(SprintProposalId, "Create New SprintProposal");
 	}
 	
 	@When("Fetch All SprintProposal Details")
@@ -251,7 +254,7 @@ public class SprintProposal {
 		logToExtent("Update SprintProposal (PUT)", newJson, response);
 		captureDbSnapshot(SprintProposalId, "Update SprintProposal (PUT)");
 		ApiValidators.validatePathParamToResponse(response, "id", SprintProposalId);
-		captureElasticScreenshot(SprintProposalId, "Update SprintProposal (PUT)");
+		// captureElasticScreenshot(SprintProposalId, "Update SprintProposal (PUT)");
 
 	}
 	
@@ -273,7 +276,7 @@ public class SprintProposal {
 		captureDbSnapshot(SprintProposalId, "Update SprintProposal (PATCH)");
 		ApiValidators.validatePathParamToResponse(response, "id", SprintProposalId);
 //		ApiValidators.validateRequestToResponse(newJson, response, IssueTypeId, "comments");
-		captureElasticScreenshot(SprintProposalId, "Update SprintProposal (PATCH)");
+		// captureElasticScreenshot(SprintProposalId, "Update SprintProposal (PATCH)");
 
 	}
 	@When("Delete SprintProposal with ID")
@@ -287,7 +290,7 @@ public class SprintProposal {
 
 		logToExtent("Delete SprintProposal", null, response);
 		captureDbSnapshot(SprintProposalId, "Delete SprintProposal");
-		captureElasticScreenshot(SprintProposalId, "Delete SprintProposal");
+		// captureElasticScreenshot(SprintProposalId, "Delete SprintProposal");
 	}
 	
 	@Given("I have Bulk SprintProposal")
@@ -321,7 +324,7 @@ public class SprintProposal {
 
 		for (Integer id : ScenarioContext.Ids) {
 			captureDbSnapshot(id, "Create Bulk SprintProposal" + ": " + id);
-			captureElasticScreenshot(id, "Create Bulk SprintProposal" + ": " + id);
+			// captureElasticScreenshot(id, "Create Bulk SprintProposal" + ": " + id);
 			ApiDataValidator.validateDbNotNullExcept(id, "SprintProposal", null);
 		}
 	}
@@ -377,7 +380,7 @@ public class SprintProposal {
 
 		for (Integer id : SprintProposalIds) {
 			captureDbSnapshot(id, "Update SprintProposal (PUT)" + ": " + id);
-			captureElasticScreenshot(id, "Update SprintProposal (PUT)" + ": " + id);
+			// captureElasticScreenshot(id, "Update SprintProposal (PUT)" + ": " + id);
 			ApiDataValidator.validateDbNotNullExcept(id, "SprintProposal", null);
 		}
 	}
@@ -409,7 +412,7 @@ public class SprintProposal {
 
 		for (Integer id : SprintProposalIds) {
 			captureDbSnapshot(id, "Delete SprintProposal" + ": " + id);
-			captureElasticScreenshot(id, "Delete SprintProposal" + ": " + id);
+			// captureElasticScreenshot(id, "Delete SprintProposal" + ": " + id);
 		}
 	}
 
@@ -459,7 +462,7 @@ public class SprintProposal {
 
 				// ✅ CALL VOID METHOD (NO BOOLEAN)
 				ApiDataValidator.validateKeysAcrosRequestResponseEsDb(requestJson, responseJson, id, "sprint-proposal",
-						"SprintProposal", false, new String[] { "deleted" },
+						"SprintProposal", true, new String[] { "deleted" },
 						new String[] { "id", "updatedate", "createdate", "eventDate" }, new String[] { "" });
 
 			} catch (Exception e) {
