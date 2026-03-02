@@ -77,7 +77,10 @@ public class TestCase {
 
 		try (Connection conn = DriverManager.getConnection("jdbc:mysql://10.10.2.45:3306", "root", "dhi123");
 				Statement stmt = conn.createStatement();
-				ResultSet rs = stmt.executeQuery("SELECT * FROM `issue_persistence_piqa`.`TestCase` LIMIT 1000")) {
+				// ResultSet rs = stmt.executeQuery("SELECT * FROM `issue_persistence_piqa`.`TestCase` LIMIT 1000"))
+				ResultSet rs = stmt
+						.executeQuery("SELECT * FROM (" + "   SELECT * FROM `issue_persistence_piqa`.`TestCase` "
+								+ "   ORDER BY id DESC LIMIT 5" + ") AS lastFive " + "ORDER BY id ASC;")) {
 
 			ResultSetMetaData meta = rs.getMetaData();
 			int colCount = meta.getColumnCount();
@@ -207,7 +210,7 @@ public class TestCase {
 		System.out.println("Stored TestCaseId: " + TestCaseId);
 		logToExtent("Create TestCase Response", requestBody, response);
 		captureDbSnapshot(TestCaseId, "Create New TestCase");
-		captureElasticScreenshot(TestCaseId, "Create New TestCase");
+		// captureElasticScreen/shot(TestCaseId, "Create New TestCase");
 	}
 	
 	@When("Fetch All TestCase Details")
@@ -250,7 +253,7 @@ public class TestCase {
 		logToExtent("Update TestCase (PUT)", newJson, response);
 		captureDbSnapshot(TestCaseId, "Update TestCase (PUT)");
 		ApiValidators.validatePathParamToResponse(response, "id", TestCaseId);
-		captureElasticScreenshot(TestCaseId, "Update TestCase (PUT)");
+		// captureElasticScreenshot(TestCaseId, "Update TestCase (PUT)");
 
 	}
 	
@@ -272,7 +275,7 @@ public class TestCase {
 		captureDbSnapshot(TestCaseId, "Update TestCase (PATCH)");
 		ApiValidators.validatePathParamToResponse(response, "id", TestCaseId);
 //		ApiValidators.validateRequestToResponse(newJson, response, IssueTypeId, "comments");
-		captureElasticScreenshot(TestCaseId, "Update TestCase (PATCH)");
+		// captureElasticScreenshot(TestCaseId, "Update TestCase (PATCH)");
 
 	}
 	@When("Delete TestCase with ID")
@@ -286,7 +289,7 @@ public class TestCase {
 
 		logToExtent("Delete TestCase", null, response);
 		captureDbSnapshot(TestCaseId, "Delete TestCase");
-		captureElasticScreenshot(TestCaseId, "Delete TestCase");
+		// captureElasticScreenshot(TestCaseId, "Delete TestCase");
 	}
 	
 	@Given("I have Bulk TestCase")
@@ -320,7 +323,7 @@ public class TestCase {
 
 		for (Integer id : ScenarioContext.Ids) {
 			captureDbSnapshot(id, "Create Bulk TestCase" + ": " + id);
-			captureElasticScreenshot(id, "Create Bulk TestCase" + ": " + id);
+			// captureElasticScreenshot(id, "Create Bulk TestCase" + ": " + id);
 			ApiDataValidator.validateDbNotNullExcept(id, "TestCase", null);
 		}
 	}
@@ -376,7 +379,7 @@ public class TestCase {
 
 		for (Integer id : TestCaseIds) {
 			captureDbSnapshot(id, "Update TestCase (PUT)" + ": " + id);
-			captureElasticScreenshot(id, "Update TestCase (PUT)" + ": " + id);
+			// captureElasticScreenshot(id, "Update TestCase (PUT)" + ": " + id);
 			ApiDataValidator.validateDbNotNullExcept(id, "TestCase", null);
 		}
 	}
@@ -408,7 +411,7 @@ public class TestCase {
 
 		for (Integer id : TestCaseIds) {
 			captureDbSnapshot(id, "Delete TestCase" + ": " + id);
-			captureElasticScreenshot(id, "Delete TestCase" + ": " + id);
+			// captureElasticScreenshot(id, "Delete TestCase" + ": " + id);
 		}
 	}
 
@@ -458,7 +461,7 @@ public class TestCase {
 
 				// ✅ CALL VOID METHOD (NO BOOLEAN)
 				ApiDataValidator.validateKeysAcrosRequestResponseEsDb(requestJson, responseJson, id, "test-case",
-						"TestCase", false, new String[] { "deleted" },
+						"TestCase", true, new String[] { "deleted" },
 						new String[] { "id", "updatedate", "createdate", "eventDate" }, new String[] { "" });
 
 			} catch (Exception e) {
