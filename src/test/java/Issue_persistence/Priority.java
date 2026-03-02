@@ -77,7 +77,10 @@ public class Priority {
 
 		try (Connection conn = DriverManager.getConnection("jdbc:mysql://10.10.2.45:3306", "root", "dhi123");
 				Statement stmt = conn.createStatement();
-				ResultSet rs = stmt.executeQuery("SELECT * FROM `issue_persistence_piqa`.`Priority` LIMIT 1000")) {
+				// ResultSet rs = stmt.executeQuery("SELECT * FROM `issue_persistence_piqa`.`Priority` LIMIT 1000"))
+				ResultSet rs = stmt
+						.executeQuery("SELECT * FROM (" + "   SELECT * FROM `issue_persistence_piqa`.`Priority` "
+								+ "   ORDER BY id DESC LIMIT 5" + ") AS lastFive " + "ORDER BY id ASC;")) {
 
 			ResultSetMetaData meta = rs.getMetaData();
 			int colCount = meta.getColumnCount();
@@ -207,7 +210,7 @@ public class Priority {
 		System.out.println("Stored PriorityId: " + PriorityId);
 		logToExtent("Create Priority Response", requestBody, response);
 		captureDbSnapshot(PriorityId, "Create New Priority");
-		captureElasticScreenshot(PriorityId, "Create New Priority");
+		// captureElasticScreenshot(PriorityId, "Create New Priority");
 	}
 	
 	@When("Fetch All Priority Details")
@@ -250,7 +253,7 @@ public class Priority {
 		logToExtent("Update Priority (PUT)", newJson, response);
 		captureDbSnapshot(PriorityId, "Update Priority (PUT)");
 		ApiValidators.validatePathParamToResponse(response, "id", PriorityId);
-		captureElasticScreenshot(PriorityId, "Update Priority (PUT)");
+		// captureElasticScreenshot(PriorityId, "Update Priority (PUT)");
 
 	}
 	
@@ -272,7 +275,7 @@ public class Priority {
 		captureDbSnapshot(PriorityId, "Update Priority (PATCH)");
 		ApiValidators.validatePathParamToResponse(response, "id", PriorityId);
 //		ApiValidators.validateRequestToResponse(newJson, response, IssueTypeId, "comments");
-		captureElasticScreenshot(PriorityId, "Update Priority (PATCH)");
+		// captureElasticScreenshot(PriorityId, "Update Priority (PATCH)");
 
 	}
 	@When("Delete Priority with ID")
@@ -286,7 +289,7 @@ public class Priority {
 
 		logToExtent("Delete Priority", null, response);
 		captureDbSnapshot(PriorityId, "Delete Priority");
-		captureElasticScreenshot(PriorityId, "Delete Priority");
+		// captureElasticScreenshot(PriorityId, "Delete Priority");
 	}
 	
 	@Given("I have Bulk Priority")
@@ -320,7 +323,7 @@ public class Priority {
 
 		for (Integer id : ScenarioContext.Ids) {
 			captureDbSnapshot(id, "Create Bulk Priority" + ": " + id);
-			captureElasticScreenshot(id, "Create Bulk Priority" + ": " + id);
+			// captureElasticScreenshot(id, "Create Bulk Priority" + ": " + id);
 			ApiDataValidator.validateDbNotNullExcept(id, "Priority", null);
 		}
 	}
@@ -376,7 +379,7 @@ public class Priority {
 
 		for (Integer id : PriorityIds) {
 			captureDbSnapshot(id, "Update Priority (PUT)" + ": " + id);
-			captureElasticScreenshot(id, "Update Priority (PUT)" + ": " + id);
+			// captureElasticScreenshot(id, "Update Priority (PUT)" + ": " + id);
 			ApiDataValidator.validateDbNotNullExcept(id, "Priority", null);
 		}
 	}
@@ -408,7 +411,7 @@ public class Priority {
 
 		for (Integer id : PriorityIds) {
 			captureDbSnapshot(id, "Delete Priority" + ": " + id);
-			captureElasticScreenshot(id, "Delete Priority" + ": " + id);
+			// captureElasticScreenshot(id, "Delete Priority" + ": " + id);
 		}
 	}
 
@@ -458,7 +461,7 @@ public class Priority {
 
 				// ✅ CALL VOID METHOD (NO BOOLEAN)
 				ApiDataValidator.validateKeysAcrosRequestResponseEsDb(requestJson, responseJson, id, "priority",
-						"Priority", false, new String[] { "deleted" },
+						"Priority", true, new String[] { "deleted" },
 						new String[] { "id", "updatedate", "createdate", "eventDate" }, new String[] { "" });
 
 			} catch (Exception e) {
