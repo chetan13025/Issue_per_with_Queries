@@ -12,9 +12,9 @@ import utils.ReportUtils;
 @RunWith(Cucumber.class)
 @CucumberOptions(
     features = {
-   		// "src/test/resources/features/users.feature",
-        //    "src/test/resources/features/userproject.feature",
-        //    "src/test/resources/features/userstate.feature",
+   		"src/test/resources/features/users.feature",
+           "src/test/resources/features/userproject.feature",
+           "src/test/resources/features/userstate.feature",
            "src/test/resources/features/issue.feature",
            "src/test/resources/features/issuecode.feature",
    		"src/test/resources/features/issuecollaborator.feature",
@@ -39,21 +39,21 @@ import utils.ReportUtils;
    		"src/test/resources/features/lucyevent.feature",
    		// "src/test/resources/features/version.feature",
    		"src/test/resources/features/module.feature",
-   		// "src/test/resources/features/occurrence.feature",
-   		// "src/test/resources/features/priority.feature",
+   		"src/test/resources/features/occurrence.feature",
+   		"src/test/resources/features/priority.feature",
 //    		20-11
 
-   		// "src/test/resources/features/rootcause.feature",
-   		// "src/test/resources/features/sprintproposal.feature",
-   		// "src/test/resources/features/testcase.feature",
-   		// "src/test/resources/features/unittestresult.feature",
-   		// "src/test/resources/features/worklog.feature",
+   		"src/test/resources/features/rootcause.feature",
+   		"src/test/resources/features/sprintproposal.feature",
+   		"src/test/resources/features/testcase.feature",
+   		"src/test/resources/features/unittestresult.feature",
+   		"src/test/resources/features/worklog.feature",
    		"src/test/resources/features/behavior.feature",
     		// "src/test/resources/features/bulk.feature",
    		"src/test/resources/features/bugtype.feature",
 
     		//21-11
-   		// "src/test/resources/features/issuecomponent.feature",
+   		"src/test/resources/features/issuecomponent.feature",
    		"src/test/resources/features/component.feature",
    		"src/test/resources/features/componentimpactarea.feature",
    		"src/test/resources/features/dependencytype.feature",
