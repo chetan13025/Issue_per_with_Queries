@@ -78,7 +78,10 @@ public class RootCause {
 
 		try (Connection conn = DriverManager.getConnection("jdbc:mysql://10.10.2.45:3306", "root", "dhi123");
 				Statement stmt = conn.createStatement();
-				ResultSet rs = stmt.executeQuery("SELECT * FROM `issue_persistence_piqa`.`RootCause` LIMIT 1000")) {
+				// ResultSet rs = stmt.executeQuery("SELECT * FROM `issue_persistence_piqa`.`RootCause` LIMIT 1000"))
+				ResultSet rs = stmt
+						.executeQuery("SELECT * FROM (" + "   SELECT * FROM `issue_persistence_piqa`.`RootCause` "
+								+ "   ORDER BY id DESC LIMIT 5" + ") AS lastFive " + "ORDER BY id ASC;")) {
 
 			ResultSetMetaData meta = rs.getMetaData();
 			int colCount = meta.getColumnCount();
@@ -208,7 +211,7 @@ public class RootCause {
 		System.out.println("Stored RootCauseId: " + RootCauseId);
 		logToExtent("Create RootCause Response", requestBody, response);
 		captureDbSnapshot(RootCauseId, "Create New RootCause");
-		captureElasticScreenshot(RootCauseId, "Create New RootCause");
+		// captureElasticScreenshot(RootCauseId, "Create New RootCause");
 	}
 	
 	@When("Fetch All RootCause Details")
@@ -251,7 +254,7 @@ public class RootCause {
 		logToExtent("Update RootCause (PUT)", newJson, response);
 		captureDbSnapshot(RootCauseId, "Update RootCause (PUT)");
 		ApiValidators.validatePathParamToResponse(response, "id", RootCauseId);
-		captureElasticScreenshot(RootCauseId, "Update RootCause (PUT)");
+		// captureElasticScreenshot(RootCauseId, "Update RootCause (PUT)");
 
 	}
 	
@@ -273,7 +276,7 @@ public class RootCause {
 		captureDbSnapshot(RootCauseId, "Update RootCause (PATCH)");
 		ApiValidators.validatePathParamToResponse(response, "id", RootCauseId);
 //		ApiValidators.validateRequestToResponse(newJson, response, IssueTypeId, "comments");
-		captureElasticScreenshot(RootCauseId, "Update RootCause (PATCH)");
+		// captureElasticScreenshot(RootCauseId, "Update RootCause (PATCH)");
 
 	}
 	@When("Delete RootCause with ID")
@@ -287,7 +290,7 @@ public class RootCause {
 
 		logToExtent("Delete RootCause", null, response);
 		captureDbSnapshot(RootCauseId, "Delete RootCause");
-		captureElasticScreenshot(RootCauseId, "Delete RootCause");
+		// captureElasticScreenshot(RootCauseId, "Delete RootCause");
 	}
 	
 	@Given("I have Bulk RootCause")
@@ -321,7 +324,7 @@ public class RootCause {
 
 		for (Integer id : ScenarioContext.Ids) {
 			captureDbSnapshot(id, "Create Bulk RootCause" + ": " + id);
-			captureElasticScreenshot(id, "Create Bulk RootCause" + ": " + id);
+			// captureElasticScreenshot(id, "Create Bulk RootCause" + ": " + id);
 			ApiDataValidator.validateDbNotNullExcept(id, "RootCause", null);
 		}
 	}
@@ -377,7 +380,7 @@ public class RootCause {
 
 		for (Integer id : RootCauseIds) {
 			captureDbSnapshot(id, "Update RootCause (PUT)" + ": " + id);
-			captureElasticScreenshot(id, "Update RootCause (PUT)" + ": " + id);
+			// captureElasticScreenshot(id, "Update RootCause (PUT)" + ": " + id);
 			ApiDataValidator.validateDbNotNullExcept(id, "RootCause", null);
 		}
 	}
@@ -409,7 +412,7 @@ public class RootCause {
 
 		for (Integer id : RootCauseIds) {
 			captureDbSnapshot(id, "Delete RootCause" + ": " + id);
-			captureElasticScreenshot(id, "Delete RootCause" + ": " + id);
+			// captureElasticScreenshot(id, "Delete RootCause" + ": " + id);
 		}
 	}
 
@@ -459,7 +462,7 @@ public class RootCause {
 
 				// ✅ CALL VOID METHOD (NO BOOLEAN)
 				ApiDataValidator.validateKeysAcrosRequestResponseEsDb(requestJson, responseJson, id, "root-cause",
-						"RootCause", false, new String[] { "deleted" },
+						"RootCause", true, new String[] { "deleted" },
 						new String[] { "id", "updatedate", "createdate", "eventDate" }, new String[] { "" });
 
 			} catch (Exception e) {
