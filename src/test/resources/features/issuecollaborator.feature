@@ -19,12 +19,12 @@ Then The IssueCollaborator response status code should be 200
 
 Scenario: Updating PUT IssueCollaborator Details with ID
 When Update IssueCollaborator Details
-Then Validate API ES and DB for IssueCollaboratorId after PUT skipping ES true excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"
+Then Validate API ES and DB for IssueCollaboratorId after PUT skipping ES true excludingEverywhere "null" excludeFromRequest "id,deleted",createdate,updatedate excludeFromEs "deleted"
 Then The IssueCollaborator response status code should be 200
 
 Scenario: Updating Patch IssueCollaborator Details with ID
 When Update Patch IssueCollaborator
-Then Validate API ES and DB for IssueCollaboratorId after PATCH skipping ES true excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"
+Then Validate API ES and DB for IssueCollaboratorId after PATCH skipping ES true excludingEverywhere "null" excludeFromRequest "id,deleted,createdate,updatedate" excludeFromEs "deleted"
 Then The IssueCollaborator response status code should be 200
 
 Scenario: Deleting IssueCollaborator Details with ID
