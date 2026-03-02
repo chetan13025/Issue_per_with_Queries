@@ -77,7 +77,10 @@ public class UnitTestResult {
 
 		try (Connection conn = DriverManager.getConnection("jdbc:mysql://10.10.2.45:3306", "root", "dhi123");
 				Statement stmt = conn.createStatement();
-				ResultSet rs = stmt.executeQuery("SELECT * FROM `issue_persistence_piqa`.`UnitTestResult` LIMIT 1000")) {
+				// ResultSet rs = stmt.executeQuery("SELECT * FROM `issue_persistence_piqa`.`UnitTestResult` LIMIT 1000"))
+				ResultSet rs = stmt
+						.executeQuery("SELECT * FROM (" + "   SELECT * FROM `issue_persistence_piqa`.`UnitTestResult` "
+								+ "   ORDER BY id DESC LIMIT 5" + ") AS lastFive " + "ORDER BY id ASC;")) {
 
 			ResultSetMetaData meta = rs.getMetaData();
 			int colCount = meta.getColumnCount();
@@ -207,7 +210,7 @@ public class UnitTestResult {
 		System.out.println("Stored UnitTestResultId: " + UnitTestResultId);
 		logToExtent("Create UnitTestResult Response", requestBody, response);
 		captureDbSnapshot(UnitTestResultId, "Create New UnitTestResult");
-		captureElasticScreenshot(UnitTestResultId, "Create New UnitTestResult");
+		// captureElasticScreenshot(UnitTestResultId, "Create New UnitTestResult");
 	}
 	
 	@When("Fetch All UnitTestResult Details")
@@ -250,7 +253,7 @@ public class UnitTestResult {
 		logToExtent("Update UnitTestResult (PUT)", newJson, response);
 		captureDbSnapshot(UnitTestResultId, "Update UnitTestResult (PUT)");
 		ApiValidators.validatePathParamToResponse(response, "id", UnitTestResultId);
-		captureElasticScreenshot(UnitTestResultId, "Update UnitTestResult (PUT)");
+		// captureElasticScreenshot(UnitTestResultId, "Update UnitTestResult (PUT)");
 
 	}
 	
@@ -272,7 +275,7 @@ public class UnitTestResult {
 		captureDbSnapshot(UnitTestResultId, "Update UnitTestResult (PATCH)");
 		ApiValidators.validatePathParamToResponse(response, "id", UnitTestResultId);
 //		ApiValidators.validateRequestToResponse(newJson, response, IssueTypeId, "comments");
-		captureElasticScreenshot(UnitTestResultId, "Update UnitTestResult (PATCH)");
+		// captureElasticScreenshot(UnitTestResultId, "Update UnitTestResult (PATCH)");
 
 	}
 	@When("Delete UnitTestResult with ID")
@@ -286,7 +289,7 @@ public class UnitTestResult {
 
 		logToExtent("Delete UnitTestResult", null, response);
 		captureDbSnapshot(UnitTestResultId, "Delete UnitTestResult");
-		captureElasticScreenshot(UnitTestResultId, "Delete UnitTestResult");
+		// captureElasticScreenshot(UnitTestResultId, "Delete UnitTestResult");
 	}
 	
 	@Given("I have Bulk UnitTestResult")
@@ -320,7 +323,7 @@ public class UnitTestResult {
 
 		for (Integer id : ScenarioContext.Ids) {
 			captureDbSnapshot(id, "Create Bulk UnitTestResult" + ": " + id);
-			captureElasticScreenshot(id, "Create Bulk UnitTestResult" + ": " + id);
+			// captureElasticScreenshot(id, "Create Bulk UnitTestResult" + ": " + id);
 			ApiDataValidator.validateDbNotNullExcept(id, "UnitTestResult", null);
 		}
 	}
@@ -376,7 +379,7 @@ public class UnitTestResult {
 
 		for (Integer id : UnitTestResultIds) {
 			captureDbSnapshot(id, "Update UnitTestResult (PUT)" + ": " + id);
-			captureElasticScreenshot(id, "Update UnitTestResult (PUT)" + ": " + id);
+			// captureElasticScreenshot(id, "Update UnitTestResult (PUT)" + ": " + id);
 			ApiDataValidator.validateDbNotNullExcept(id, "UnitTestResult", null);
 		}
 	}
@@ -408,7 +411,7 @@ public class UnitTestResult {
 
 		for (Integer id : UnitTestResultIds) {
 			captureDbSnapshot(id, "Delete UnitTestResult" + ": " + id);
-			captureElasticScreenshot(id, "Delete UnitTestResult" + ": " + id);
+			// captureElasticScreenshot(id, "Delete UnitTestResult" + ": " + id);
 		}
 	}
 
@@ -458,7 +461,7 @@ public class UnitTestResult {
 
 				// ✅ CALL VOID METHOD (NO BOOLEAN)
 				ApiDataValidator.validateKeysAcrosRequestResponseEsDb(requestJson, responseJson, id, "unit-test-result",
-						"UnitTestResult", false, new String[] { "deleted" },
+						"UnitTestResult", true, new String[] { "deleted" },
 						new String[] { "id", "updatedate", "createdate", "eventDate" }, new String[] { "" });
 
 			} catch (Exception e) {
