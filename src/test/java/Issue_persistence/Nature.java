@@ -77,7 +77,10 @@ public class Nature {
 
 		try (Connection conn = DriverManager.getConnection("jdbc:mysql://10.10.2.45:3306", "root", "dhi123");
 				Statement stmt = conn.createStatement();
-				ResultSet rs = stmt.executeQuery("SELECT * FROM `issue_persistence_piqa`.`Nature` LIMIT 1000")) {
+				// ResultSet rs = stmt.executeQuery("SELECT * FROM `issue_persistence_piqa`.`Nature` LIMIT 1000"))
+				ResultSet rs = stmt
+						.executeQuery("SELECT * FROM (" + "   SELECT * FROM `issue_persistence_piqa`.`Nature` "
+								+ "   ORDER BY id DESC LIMIT 5" + ") AS lastFive " + "ORDER BY id ASC;")) {
 
 			ResultSetMetaData meta = rs.getMetaData();
 			int colCount = meta.getColumnCount();
@@ -207,7 +210,7 @@ public class Nature {
 		System.out.println("Stored NatureId: " + NatureId);
 		logToExtent("Create Nature Response", requestBody, response);
 		captureDbSnapshot(NatureId, "Create New Nature");
-		captureElasticScreenshot(NatureId, "Create New Nature");
+		// captureElasticScreenshot(NatureId, "Create New Nature");
 	}
 	
 	@When("Fetch All Nature Details")
@@ -249,7 +252,7 @@ public class Nature {
 		logToExtent("Update Nature (PUT)", newJson, response);
 		captureDbSnapshot(NatureId, "Update Nature (PUT)");
 		ApiValidators.validatePathParamToResponse(response, "id", NatureId);
-		captureElasticScreenshot(NatureId, "Update Nature (PUT)");
+		// captureElasticScreenshot(NatureId, "Update Nature (PUT)");
 		
 
 	}
@@ -272,7 +275,7 @@ public class Nature {
 		captureDbSnapshot(NatureId, "Update Nature (PATCH)");
 		ApiValidators.validatePathParamToResponse(response, "id", NatureId);
 //		ApiValidators.validateRequestToResponse(newJson, response, IssueTypeId, "comments");
-		captureElasticScreenshot(NatureId, "Update Nature (PATCH)");
+		// captureElasticScreenshot(NatureId, "Update Nature (PATCH)");
 
 	}
 	@When("Delete Nature with ID")
@@ -286,7 +289,7 @@ public class Nature {
 
 		logToExtent("Delete Nature", null, response);
 		captureDbSnapshot(NatureId, "Delete Nature");
-		captureElasticScreenshot(NatureId, "Delete Nature");
+		// captureElasticScreenshot(NatureId, "Delete Nature");
 	}
 	
 	@Given("I have Bulk Nature")
@@ -320,7 +323,7 @@ public class Nature {
 
 		for (Integer id : ScenarioContext.Ids) {
 			captureDbSnapshot(id, "Create Bulk Nature" + ": " + id);
-			captureElasticScreenshot(id, "Create Bulk Nature" + ": " + id);
+			// captureElasticScreenshot(id, "Create Bulk Nature" + ": " + id);
 			ApiDataValidator.validateDbNotNullExcept(id, "Nature", null);
 		}
 	}
@@ -376,7 +379,7 @@ public class Nature {
 
 		for (Integer id : NatureIds) {
 			captureDbSnapshot(id, "Update Nature (PUT)" + ": " + id);
-			captureElasticScreenshot(id, "Update Nature (PUT)" + ": " + id);
+			// captureElasticScreenshot(id, "Update Nature (PUT)" + ": " + id);
 			ApiDataValidator.validateDbNotNullExcept(id, "Nature", null);
 		}
 	}
@@ -408,7 +411,7 @@ public class Nature {
 
 		for (Integer id : NatureIds) {
 			captureDbSnapshot(id, "Delete Nature" + ": " + id);
-			captureElasticScreenshot(id, "Delete Nature" + ": " + id);
+			// captureElasticScreenshot(id, "Delete Nature" + ": " + id);
 		}
 	}
 
@@ -458,7 +461,7 @@ public class Nature {
 
 				// ✅ CALL VOID METHOD (NO BOOLEAN)
 				ApiDataValidator.validateKeysAcrosRequestResponseEsDb(requestJson, responseJson, id, "nature",
-						"Nature", false, new String[] { "deleted" },
+						"Nature", true, new String[] { "deleted" },
 						new String[] { "id", "updatedate", "createdate", "eventDate" }, new String[] { "" });
 
 			} catch (Exception e) {
