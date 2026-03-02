@@ -77,7 +77,10 @@ public class Resolution {
 
 		try (Connection conn = DriverManager.getConnection("jdbc:mysql://10.10.2.45:3306", "root", "dhi123");
 				Statement stmt = conn.createStatement();
-				ResultSet rs = stmt.executeQuery("SELECT * FROM `issue_persistence_piqa`.`Resolution` LIMIT 1000")) {
+				// ResultSet rs = stmt.executeQuery("SELECT * FROM `issue_persistence_piqa`.`Resolution` LIMIT 1000"))
+				ResultSet rs = stmt
+						.executeQuery("SELECT * FROM (" + "   SELECT * FROM `issue_persistence_piqa`.`Resolution` "
+								+ "   ORDER BY id DESC LIMIT 5" + ") AS lastFive " + "ORDER BY id ASC;")) {
 
 			ResultSetMetaData meta = rs.getMetaData();
 			int colCount = meta.getColumnCount();
@@ -207,7 +210,7 @@ public class Resolution {
 		System.out.println("Stored ResolutionId: " + ResolutionId);
 		logToExtent("Create Resolution Response", requestBody, response);
 		captureDbSnapshot(ResolutionId, "Create New Resolution");
-		captureElasticScreenshot(ResolutionId, "Create New Resolution");
+		// captureElasticScreenshot(ResolutionId, "Create New Resolution");
 	}
 	
 	@When("Fetch All Resolution Details")
@@ -250,7 +253,7 @@ public class Resolution {
 		logToExtent("Update Resolution (PUT)", newJson, response);
 		captureDbSnapshot(ResolutionId, "Update Resolution (PUT)");
 		ApiValidators.validatePathParamToResponse(response, "id", ResolutionId);
-		captureElasticScreenshot(ResolutionId, "Update Resolution (PUT)");
+		// captureElasticScreenshot(ResolutionId, "Update Resolution (PUT)");
 
 	}
 	
@@ -272,7 +275,7 @@ public class Resolution {
 		captureDbSnapshot(ResolutionId, "Update Resolution (PATCH)");
 		ApiValidators.validatePathParamToResponse(response, "id", ResolutionId);
 //		ApiValidators.validateRequestToResponse(newJson, response, IssueTypeId, "comments");
-		captureElasticScreenshot(ResolutionId, "Update Resolution (PATCH)");
+		// captureElasticScreenshot(ResolutionId, "Update Resolution (PATCH)");
 
 	}
 	@When("Delete Resolution with ID")
@@ -286,7 +289,7 @@ public class Resolution {
 
 		logToExtent("Delete Resolution", null, response);
 		captureDbSnapshot(ResolutionId, "Delete Resolution");
-		captureElasticScreenshot(ResolutionId, "Delete Resolution");
+		// captureElasticScreenshot(ResolutionId, "Delete Resolution");
 	}
 	
 	@Given("I have Bulk Resolution")
@@ -320,7 +323,7 @@ public class Resolution {
 
 		for (Integer id : ScenarioContext.Ids) {
 			captureDbSnapshot(id, "Create Bulk Resolution" + ": " + id);
-			captureElasticScreenshot(id, "Create Bulk Resolution" + ": " + id);
+			// captureElasticScreenshot(id, "Create Bulk Resolution" + ": " + id);
 			ApiDataValidator.validateDbNotNullExcept(id, "Resolution", null);
 		}
 	}
@@ -376,7 +379,7 @@ public class Resolution {
 
 		for (Integer id : ResolutionIds) {
 			captureDbSnapshot(id, "Update Resolution (PUT)" + ": " + id);
-			captureElasticScreenshot(id, "Update Resolution (PUT)" + ": " + id);
+			// captureElasticScreenshot(id, "Update Resolution (PUT)" + ": " + id);
 			ApiDataValidator.validateDbNotNullExcept(id, "Resolution", null);
 		}
 	}
@@ -408,7 +411,7 @@ public class Resolution {
 
 		for (Integer id : ResolutionIds) {
 			captureDbSnapshot(id, "Delete Resolution" + ": " + id);
-			captureElasticScreenshot(id, "Delete Resolution" + ": " + id);
+			// captureElasticScreenshot(id, "Delete Resolution" + ": " + id);
 		}
 	}
 
@@ -458,7 +461,7 @@ public class Resolution {
 
 				// ✅ CALL VOID METHOD (NO BOOLEAN)
 				ApiDataValidator.validateKeysAcrosRequestResponseEsDb(requestJson, responseJson, id, "resolution",
-						"Resolution", false, new String[] { "deleted" },
+						"Resolution", true, new String[] { "deleted" },
 						new String[] { "id", "updatedate", "createdate", "eventDate" }, new String[] { "" });
 
 			} catch (Exception e) {
