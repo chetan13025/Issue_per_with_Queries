@@ -77,7 +77,10 @@ public class Occurrence {
 
 		try (Connection conn = DriverManager.getConnection("jdbc:mysql://10.10.2.45:3306", "root", "dhi123");
 				Statement stmt = conn.createStatement();
-				ResultSet rs = stmt.executeQuery("SELECT * FROM `issue_persistence_piqa`.`Occurrence` LIMIT 1000")) {
+				// ResultSet rs = stmt.executeQuery("SELECT * FROM `issue_persistence_piqa`.`Occurrence` LIMIT 1000"))
+				ResultSet rs = stmt
+						.executeQuery("SELECT * FROM (" + "   SELECT * FROM `issue_persistence_piqa`.`Occurrence` "
+								+ "   ORDER BY id DESC LIMIT 5" + ") AS lastFive " + "ORDER BY id ASC;")) {
 
 			ResultSetMetaData meta = rs.getMetaData();
 			int colCount = meta.getColumnCount();
@@ -207,7 +210,7 @@ public class Occurrence {
 		System.out.println("Stored OccurrenceId: " + OccurrenceId);
 		logToExtent("Create Occurrence Response", requestBody, response);
 		captureDbSnapshot(OccurrenceId, "Create New Occurrence");
-		captureElasticScreenshot(OccurrenceId, "Create New Occurrence");
+		// captureElasticScreenshot(OccurrenceId, "Create New Occurrence");
 	}
 	
 	@When("Fetch All Occurrence Details")
@@ -250,7 +253,7 @@ public class Occurrence {
 		logToExtent("Update Occurrence (PUT)", newJson, response);
 		captureDbSnapshot(OccurrenceId, "Update Occurrence (PUT)");
 		ApiValidators.validatePathParamToResponse(response, "id", OccurrenceId);
-		captureElasticScreenshot(OccurrenceId, "Update Occurrence (PUT)");
+		// captureElasticScreenshot(OccurrenceId, "Update Occurrence (PUT)");
 
 	}
 	
@@ -272,7 +275,7 @@ public class Occurrence {
 		captureDbSnapshot(OccurrenceId, "Update Occurrence (PATCH)");
 		ApiValidators.validatePathParamToResponse(response, "id", OccurrenceId);
 //		ApiValidators.validateRequestToResponse(newJson, response, IssueTypeId, "comments");
-		captureElasticScreenshot(OccurrenceId, "Update Occurrence (PATCH)");
+		// captureElasticScreenshot(OccurrenceId, "Update Occurrence (PATCH)");
 
 	}
 	@When("Delete Occurrence with ID")
@@ -286,7 +289,7 @@ public class Occurrence {
 
 		logToExtent("Delete Occurrence", null, response);
 		captureDbSnapshot(OccurrenceId, "Delete Occurrence");
-		captureElasticScreenshot(OccurrenceId, "Delete Occurrence");
+		// captureElasticScreenshot(OccurrenceId, "Delete Occurrence");
 	}
 	
 	@Given("I have Bulk Occurrence")
@@ -320,7 +323,7 @@ public class Occurrence {
 
 		for (Integer id : ScenarioContext.Ids) {
 			captureDbSnapshot(id, "Create Bulk Occurrence" + ": " + id);
-			captureElasticScreenshot(id, "Create Bulk Occurrence" + ": " + id);
+			// captureElasticScreenshot(id, "Create Bulk Occurrence" + ": " + id);
 			ApiDataValidator.validateDbNotNullExcept(id, "Occurrence", null);
 		}
 	}
@@ -376,7 +379,7 @@ public class Occurrence {
 
 		for (Integer id : OccurrenceIds) {
 			captureDbSnapshot(id, "Update Occurrence (PUT)" + ": " + id);
-			captureElasticScreenshot(id, "Update Occurrence (PUT)" + ": " + id);
+			// captureElasticScreenshot(id, "Update Occurrence (PUT)" + ": " + id);
 			ApiDataValidator.validateDbNotNullExcept(id, "Occurrence", null);
 		}
 	}
@@ -408,7 +411,7 @@ public class Occurrence {
 
 		for (Integer id : OccurrenceIds) {
 			captureDbSnapshot(id, "Delete Occurrence" + ": " + id);
-			captureElasticScreenshot(id, "Delete Occurrence" + ": " + id);
+			// captureElasticScreenshot(id, "Delete Occurrence" + ": " + id);
 		}
 	}
 
@@ -458,7 +461,7 @@ public class Occurrence {
 
 				// ✅ CALL VOID METHOD (NO BOOLEAN)
 				ApiDataValidator.validateKeysAcrosRequestResponseEsDb(requestJson, responseJson, id, "occurrence",
-						"Occurrence", false, new String[] { "deleted" },
+						"Occurrence", true, new String[] { "deleted" },
 						new String[] { "id", "updatedate", "createdate", "eventDate" }, new String[] { "" });
 
 			} catch (Exception e) {
