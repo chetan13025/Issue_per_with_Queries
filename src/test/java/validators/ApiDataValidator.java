@@ -8,6 +8,7 @@
 ////
 ////import org.openqa.selenium.*;
 ////import org.openqa.selenium.chrome.ChromeDriver;
+
 ////import org.openqa.selenium.chrome.ChromeOptions;
 ////import io.github.bonigarcia.wdm.WebDriverManager;
 ////
@@ -3707,9 +3708,14 @@ public class ApiDataValidator {
         }
 
         // 🔹 Date/time normalization → epoch millis
+        // Instant inst = tryParseInstant(s);
+        // if (inst != null) {
+        //     return String.valueOf(inst.toEpochMilli());
+        // }
         Instant inst = tryParseInstant(s);
         if (inst != null) {
-            return String.valueOf(inst.toEpochMilli());
+            // 🔥 Ignore milliseconds
+            return String.valueOf(inst.getEpochSecond());
         }
 
         // 🔹 Numeric normalization (e.g. "5.0" == "5")
