@@ -77,7 +77,10 @@ public class Worklog {
 
 		try (Connection conn = DriverManager.getConnection("jdbc:mysql://10.10.2.45:3306", "root", "dhi123");
 				Statement stmt = conn.createStatement();
-				ResultSet rs = stmt.executeQuery("SELECT * FROM `issue_persistence_piqa`.`Worklog` LIMIT 1000")) {
+				// ResultSet rs = stmt.executeQuery("SELECT * FROM `issue_persistence_piqa`.`Worklog` LIMIT 1000"))
+				ResultSet rs = stmt
+						.executeQuery("SELECT * FROM (" + "   SELECT * FROM `issue_persistence_piqa`.`Worklog` "
+								+ "   ORDER BY id DESC LIMIT 5" + ") AS lastFive " + "ORDER BY id ASC;")) {
 
 			ResultSetMetaData meta = rs.getMetaData();
 			int colCount = meta.getColumnCount();
@@ -207,7 +210,7 @@ public class Worklog {
 		System.out.println("Stored WorklogId: " + WorklogId);
 		logToExtent("Create Worklog Response", requestBody, response);
 		captureDbSnapshot(WorklogId, "Create New Worklog");
-		captureElasticScreenshot(WorklogId, "Create New Worklog");
+		// captureElasticScreenshot(WorklogId, "Create New Worklog");
 	}
 	
 	@When("Fetch All Worklog Details")
@@ -250,7 +253,7 @@ public class Worklog {
 		logToExtent("Update Worklog (PUT)", newJson, response);
 		captureDbSnapshot(WorklogId, "Update Worklog (PUT)");
 		ApiValidators.validatePathParamToResponse(response, "id", WorklogId);
-		captureElasticScreenshot(WorklogId, "Update Worklog (PUT)");
+		// captureElasticScreenshot(WorklogId, "Update Worklog (PUT)");
 
 	}
 	
@@ -272,7 +275,7 @@ public class Worklog {
 		captureDbSnapshot(WorklogId, "Update Worklog (PATCH)");
 		ApiValidators.validatePathParamToResponse(response, "id", WorklogId);
 //		ApiValidators.validateRequestToResponse(newJson, response, IssueTypeId, "comments");
-		captureElasticScreenshot(WorklogId, "Update Worklog (PATCH)");
+		// captureElasticScreenshot(WorklogId, "Update Worklog (PATCH)");
 
 	}
 	@When("Delete Worklog with ID")
@@ -286,7 +289,7 @@ public class Worklog {
 
 		logToExtent("Delete Worklog", null, response);
 		captureDbSnapshot(WorklogId, "Delete Worklog");
-		captureElasticScreenshot(WorklogId, "Delete Worklog");
+		// captureElasticScreenshot(WorklogId, "Delete Worklog");
 	}
 	@Given("I have Bulk Worklog")
 	public void i_have_a_bulk_Worklog() {
@@ -319,7 +322,7 @@ public class Worklog {
 
 		for (Integer id : ScenarioContext.Ids) {
 			captureDbSnapshot(id, "Create Bulk Worklog" + ": " + id);
-			captureElasticScreenshot(id, "Create Bulk Worklog" + ": " + id);
+			// captureElasticScreenshot(id, "Create Bulk Worklog" + ": " + id);
 			ApiDataValidator.validateDbNotNullExcept(id, "Worklog", null);
 		}
 	}
@@ -375,7 +378,7 @@ public class Worklog {
 
 		for (Integer id : WorklogIds) {
 			captureDbSnapshot(id, "Update Worklog (PUT)" + ": " + id);
-			captureElasticScreenshot(id, "Update Worklog (PUT)" + ": " + id);
+			// captureElasticScreenshot(id, "Update Worklog (PUT)" + ": " + id);
 			ApiDataValidator.validateDbNotNullExcept(id, "Worklog", null);
 		}
 	}
@@ -407,7 +410,7 @@ public class Worklog {
 
 		for (Integer id : WorklogIds) {
 			captureDbSnapshot(id, "Delete Worklog" + ": " + id);
-			captureElasticScreenshot(id, "Delete Worklog" + ": " + id);
+			// captureElasticScreenshot(id, "Delete Worklog" + ": " + id);
 		}
 	}
 
@@ -457,7 +460,7 @@ public class Worklog {
 
 				// ✅ CALL VOID METHOD (NO BOOLEAN)
 				ApiDataValidator.validateKeysAcrosRequestResponseEsDb(requestJson, responseJson, id, "worklog",
-						"Worklog", false, new String[] { "deleted" },
+						"Worklog", true, new String[] { "deleted" },
 						new String[] { "id", "updatedate", "createdate", "eventDate" }, new String[] { "" });
 
 			} catch (Exception e) {
