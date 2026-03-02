@@ -77,7 +77,10 @@ public class UserStates {
 
 		try (Connection conn = DriverManager.getConnection("jdbc:mysql://10.10.2.45:3306", "root", "dhi123");
 				Statement stmt = conn.createStatement();
-				ResultSet rs = stmt.executeQuery("SELECT * FROM `issue_persistence_piqa`.`UserState` LIMIT 1000")) {
+				// ResultSet rs = stmt.executeQuery("SELECT * FROM `issue_persistence_piqa`.`UserState` LIMIT 1000"))
+				ResultSet rs = stmt
+						.executeQuery("SELECT * FROM (" + "   SELECT * FROM `issue_persistence_piqa`.`UserState` "
+								+ "   ORDER BY id DESC LIMIT 5" + ") AS lastFive " + "ORDER BY id ASC;")) {
 
 			ResultSetMetaData meta = rs.getMetaData();
 			int colCount = meta.getColumnCount();
@@ -209,7 +212,7 @@ public class UserStates {
 		System.out.println("Stored UserStateId: " + UserStateId);
 		logToExtent("Create UserState Response", requestBody, response);
 		captureDbSnapshot(UserStateId, "Create New UserState");
-		captureElasticScreenshot(UserStateId, "Create UserState");
+		// captureElasticScreenshot(UserStateId, "Create UserState");
 	}
 	
 	@When("Fetch All UserState Details")
@@ -250,7 +253,7 @@ public class UserStates {
 		RequestBodyForValidation=newJson;
 		logToExtent("Update UserState (PUT)", newJson, response);
 		captureDbSnapshot(UserStateId, "Update UserState (PUT)");
-		captureElasticScreenshot(UserStateId, "Update UserState (PUT)");
+		// captureElasticScreenshot(UserStateId, "Update UserState (PUT)");
 
 	}
 	
@@ -271,7 +274,7 @@ public class UserStates {
 		RequestBodyForValidation=newJson;
 		logToExtent("Update UserState (PATCH)", newJson, response);
 		captureDbSnapshot(UserStateId, "Update UserState (PATCH)");
-		captureElasticScreenshot(UserStateId, "Update UserState (PATCH)");
+		// captureElasticScreenshot(UserStateId, "Update UserState (PATCH)");
 
 	}
 	
@@ -286,7 +289,7 @@ public class UserStates {
 
 		logToExtent("Delete UserState", null, response);
 		captureDbSnapshot(UserStateId, "Delete UserState");
-		captureElasticScreenshot(UserStateId, "Delete UserState");
+		// captureElasticScreenshot(UserStateId, "Delete UserState");
 	}
 	
 	@Given("I have Bulk UserState")
@@ -320,7 +323,7 @@ public class UserStates {
 
 		for (Integer id : ScenarioContext.Ids) {
 			captureDbSnapshot(id, "Create Bulk UserState" + ": " + id);
-			captureElasticScreenshot(id, "Create Bulk UserState" + ": " + id);
+			// captureElasticScreenshot(id, "Create Bulk UserState" + ": " + id);
 			ApiDataValidator.validateDbNotNullExcept(id, "UserState", null);
 		}
 	}
@@ -376,7 +379,7 @@ public class UserStates {
 
 		for (Integer id : UserStateIds) {
 			captureDbSnapshot(id, "Update UserState (PUT)" + ": " + id);
-			captureElasticScreenshot(id, "Update UserState (PUT)" + ": " + id);
+			// captureElasticScreenshot(id, "Update UserState (PUT)" + ": " + id);
 			ApiDataValidator.validateDbNotNullExcept(id, "UserState", null);
 		}
 	}
@@ -408,7 +411,7 @@ public class UserStates {
 
 		for (Integer id : UserStateIds) {
 			captureDbSnapshot(id, "Delete UserState" + ": " + id);
-			captureElasticScreenshot(id, "Delete UserState" + ": " + id);
+			// captureElasticScreenshot(id, "Delete UserState" + ": " + id);
 		}
 	}
 
@@ -458,7 +461,7 @@ public class UserStates {
 
 				// ✅ CALL VOID METHOD (NO BOOLEAN)
 				ApiDataValidator.validateKeysAcrosRequestResponseEsDb(requestJson, responseJson, id, "user-state",
-						"UserState", false, new String[] { "deleted" },
+						"UserState", true, new String[] { "deleted" },
 						new String[] { "id", "updatedate", "createdate", "eventDate" }, new String[] { "" });
 
 			} catch (Exception e) {
