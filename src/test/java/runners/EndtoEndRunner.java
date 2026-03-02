@@ -51,6 +51,8 @@ import utils.ReportUtils;
    		"src/test/resources/features/behavior.feature",
     		// "src/test/resources/features/bulk.feature",
    		"src/test/resources/features/bugtype.feature",
+		   "src/test/resources/features/nature.feature",
+		   "src/test/resources/features/resolution.feature",
 
     		//21-11
    		"src/test/resources/features/issuecomponent.feature",
