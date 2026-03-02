@@ -2,7 +2,7 @@
 
 Feature: Behavior API testing
 
-Scenario: To verify that Creating new Behavior
+Scenario: To verify that after POST new Behavior should create
 Given I have a Behavior
 When Create New Behavior
 Then The Behavior response should contain "id"
@@ -31,6 +31,15 @@ Scenario: To verify that after Delete request data should get removed from Dateb
 When Delete Behavior with ID
 Then The Behavior response status code should be 204
 
+@Negative_for_Behavior
+Scenario: To verify that GET with ID Fetched Correct Data which record already deleted
+When Fetch Behavior Details with ID
+Then The Behavior response status code should be 200
+
+@Negative_for_Behavior
+Scenario: To verify that after Delete request data should get removed from Datebase which is already deleted
+When Delete Behavior with ID
+Then The Behavior response status code should be 204
 
 
 
