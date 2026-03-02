@@ -76,7 +76,10 @@ public class UserProject {
 
 		try (Connection conn = DriverManager.getConnection("jdbc:mysql://10.10.2.45:3306", "root", "dhi123");
 				Statement stmt = conn.createStatement();
-				ResultSet rs = stmt.executeQuery("SELECT * FROM `issue_persistence_piqa`.`UserProject` LIMIT 1000")) {
+				// ResultSet rs = stmt.executeQuery("SELECT * FROM `issue_persistence_piqa`.`UserProject` LIMIT 1000"))
+				ResultSet rs = stmt
+						.executeQuery("SELECT * FROM (" + "   SELECT * FROM `issue_persistence_piqa`.`UserProject` "
+								+ "   ORDER BY id DESC LIMIT 5" + ") AS lastFive " + "ORDER BY id ASC;")) {
 
 			ResultSetMetaData meta = rs.getMetaData();
 			int colCount = meta.getColumnCount();
@@ -207,7 +210,7 @@ public class UserProject {
 		System.out.println("Stored UserProject: " + UserProjectId);
 		logToExtent("Create UserProject Response", requestBody, response);
 		captureDbSnapshot(UserProjectId, "Create New User");
-		captureElasticScreenshot(UserProjectId, "Create UserProject");
+		// captureElasticScreenshot(UserProjectId, "Create UserProject");
 	}
 	
 	@When("Fetch All UserProject Details")
@@ -248,7 +251,7 @@ public class UserProject {
 		RequestBodyForValidation=newJson;
 		logToExtent("Update UserProject (PUT)", newJson, response);
 		captureDbSnapshot(UserProjectId, "Update UserProject (PUT)");
-		captureElasticScreenshot(UserProjectId, "Update UserProject (PUT)");
+		// captureElasticScreenshot(UserProjectId, "Update UserProject (PUT)");
 
 	}
 	
@@ -269,7 +272,7 @@ public class UserProject {
 		RequestBodyForValidation=newJson;
 		logToExtent("Update UserProject (PATCH)", newJson, response);
 		captureDbSnapshot(UserProjectId, "Update UserProject (PATCH)");
-		captureElasticScreenshot(UserProjectId, "Update UserProject (PATCH)");
+		// captureElasticScreenshot(UserProjectId, "Update UserProject (PATCH)");
 
 	}
 	
@@ -284,7 +287,7 @@ public class UserProject {
 
 		logToExtent("Delete UserProject", null, response);
 		captureDbSnapshot(UserProjectId, "Delete UserProject");
-		captureElasticScreenshot(UserProjectId, "Delete UserProject");
+		// captureElasticScreenshot(UserProjectId, "Delete UserProject");
 	}
 	
 	@Given("I have Bulk UserProject")
@@ -318,7 +321,7 @@ public class UserProject {
 
 		for (Integer id : ScenarioContext.Ids) {
 			captureDbSnapshot(id, "Create Bulk UserProject" + ": " + id);
-			captureElasticScreenshot(id, "Create Bulk UserProject" + ": " + id);
+			// captureElasticScreenshot(id, "Create Bulk UserProject" + ": " + id);
 			ApiDataValidator.validateDbNotNullExcept(id, "UserProject", null);
 		}
 	}
@@ -374,7 +377,7 @@ public class UserProject {
 
 		for (Integer id : UserProjectIds) {
 			captureDbSnapshot(id, "Update UserProject (PUT)" + ": " + id);
-			captureElasticScreenshot(id, "Update UserProject (PUT)" + ": " + id);
+			// captureElasticScreenshot(id, "Update UserProject (PUT)" + ": " + id);
 			ApiDataValidator.validateDbNotNullExcept(id, "UserProject", null);
 		}
 	}
@@ -406,7 +409,7 @@ public class UserProject {
 
 		for (Integer id : UserProjectIds) {
 			captureDbSnapshot(id, "Delete UserProject" + ": " + id);
-			captureElasticScreenshot(id, "Delete UserProject" + ": " + id);
+			// captureElasticScreenshot(id, "Delete UserProject" + ": " + id);
 		}
 	}
 
@@ -456,7 +459,7 @@ public class UserProject {
 
 				// ✅ CALL VOID METHOD (NO BOOLEAN)
 				ApiDataValidator.validateKeysAcrosRequestResponseEsDb(requestJson, responseJson, id, "user-project",
-						"UserProject", false, new String[] { "deleted" },
+						"UserProject", true, new String[] { "deleted" },
 						new String[] { "id", "updatedate", "createdate", "eventDate" }, new String[] { "" });
 
 			} catch (Exception e) {
