@@ -76,10 +76,12 @@ public class IssueLinked {
 
 		try (Connection conn = DriverManager.getConnection("jdbc:mysql://10.10.2.45:3306", "root", "dhi123");
 				Statement stmt = conn.createStatement();
+
 				// ResultSet rs = stmt.executeQuery("SELECT * FROM `issue_persistence_piqa`.`IssueLinked` LIMIT 1000"))
 				ResultSet rs = stmt
 						.executeQuery("SELECT * FROM (" + "   SELECT * FROM `issue_persistence_piqa`.`IssueLinked` "
 								+ "   ORDER BY id DESC LIMIT 5" + ") AS lastFive " + "ORDER BY id ASC;")) {
+
 
 			ResultSetMetaData meta = rs.getMetaData();
 			int colCount = meta.getColumnCount();
@@ -210,7 +212,11 @@ public class IssueLinked {
 		System.out.println("Stored IssueLinkedId: " + IssueLinkedId);
 		logToExtent("Create IssueLinked Response", requestBody, response);
 		captureDbSnapshot(IssueLinkedId, "Create New IssueLinked");
+
 		// captureElasticScreenshot(IssueLinkedId, "Create IssueLinked");
+
+//		captureElasticScreenshot(IssueLinkedId, "Create IssueLinked");
+
 	}
 
 	@When("Fetch All IssueLinked Details")
@@ -251,7 +257,11 @@ public class IssueLinked {
 		RequestBodyForValidation=newJson;
 		logToExtent("Update IssueLinked (PUT)", newJson, response);
 		captureDbSnapshot(IssueLinkedId, "Update IssueLinked (PUT)");
+
 		// captureElasticScreenshot(IssueLinkedId, "Update IssueLinked (PUT)");
+
+//		captureElasticScreenshot(IssueLinkedId, "Update IssueLinked (PUT)");
+
 
 	}
 
@@ -272,7 +282,11 @@ public class IssueLinked {
 		RequestBodyForValidation=newJson;
 		logToExtent("Update IssueLinked (PATCH)", newJson, response);
 		captureDbSnapshot(IssueLinkedId, "Update IssueLinked (PATCH)");
+
 		// captureElasticScreenshot(IssueLinkedId, "Update IssueLinked (PATCH)");
+
+//		captureElasticScreenshot(IssueLinkedId, "Update IssueLinked (PATCH)");
+
 
 	}
 
@@ -287,7 +301,11 @@ public class IssueLinked {
 
 		logToExtent("Delete IssueLinked", null, response);
 		captureDbSnapshot(IssueLinkedId, "Delete IssueLinked");
+
 		// captureElasticScreenshot(IssueLinkedId, "Delete IssueLinked");
+
+//		captureElasticScreenshot(IssueLinkedId, "Delete IssueLinked");
+
 	}
 	
 	@Given("I have Bulk IssueLinked")
@@ -321,7 +339,11 @@ public class IssueLinked {
 
 		for (Integer id : ScenarioContext.Ids) {
 			captureDbSnapshot(id,  "Create Bulk IssueLinked"+": "+id);
+
 			// captureElasticScreenshot(id,  "Create Bulk IssueLinked"+": "+id);
+
+//			captureElasticScreenshot(id,  "Create Bulk IssueLinked"+": "+id);
+
 			ApiDataValidator.validateDbNotNullExcept(id, "IssueLinked", null);
 		}
 	}
@@ -386,7 +408,11 @@ public class IssueLinked {
 
 	    for (Integer id : IssueLinkedIds) {
 	    	captureDbSnapshot(id, "Update IssueLinked (PUT)"+": "+id);
+
 			// captureElasticScreenshot(id, "Update IssueLinked (PUT)"+": "+id);
+
+//			captureElasticScreenshot(id, "Update IssueLinked (PUT)"+": "+id);
+
 			ApiDataValidator.validateDbNotNullExcept(id, "IssueLinked", null);
 	    }
 	}
@@ -434,7 +460,11 @@ public class IssueLinked {
 
 	    for (Integer id : IssueLinkedIds) {
 	    	captureDbSnapshot(id, "Delete IssueLinked"+": "+id);
+
 			// captureElasticScreenshot(id, "Delete IssueLinked"+": "+id);
+
+//			captureElasticScreenshot(id, "Delete IssueLinked"+": "+id);
+
 	    }
 	}
 		

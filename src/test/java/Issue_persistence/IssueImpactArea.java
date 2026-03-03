@@ -37,7 +37,7 @@ import utils.ConfigReader;
 import validators.ApiDataValidator;
 
 public class IssueImpactArea {
-	
+
 	public static int IssueImpactAreaId;
 	private Response response;
 	private String requestBody;
@@ -50,6 +50,7 @@ public class IssueImpactArea {
 	private static String IssueImpactAreaBulk_endpoint = ConfigReader.getProperty("issueimpactarebulk_endpoint");
 	private static String IssueImpactAreaBulkUpdate_endpoint = ConfigReader.getProperty("issueimpactarebulku_endpoint");
 	private static String IssueImpactAreaBulkDelete_endpoint = ConfigReader.getProperty("issueimpactarebulkd_endpoint");
+
 	private void logToExtent(String action, String reqBody, Response resp) {
 		ExtentTest current = ExtentCucumberListener.getCurrentScenario();
 		if (current == null)
@@ -76,7 +77,9 @@ public class IssueImpactArea {
 
 		try (Connection conn = DriverManager.getConnection("jdbc:mysql://10.10.2.45:3306", "root", "dhi123");
 				Statement stmt = conn.createStatement();
-				// ResultSet rs = stmt.executeQuery("SELECT * FROM `issue_persistence_piqa`.`IssueImpactArea` LIMIT 1000"))
+
+				// ResultSet rs = stmt.executeQuery("SELECT * FROM
+				// `issue_persistence_piqa`.`IssueImpactArea` LIMIT 1000"))
 				ResultSet rs = stmt
 						.executeQuery("SELECT * FROM (" + "   SELECT * FROM `issue_persistence_piqa`.`IssueImpactArea` "
 								+ "   ORDER BY id DESC LIMIT 5" + ") AS lastFive " + "ORDER BY id ASC;")) {
@@ -132,14 +135,14 @@ public class IssueImpactArea {
 //			driver = new ChromeDriver();
 //			driver.manage().window().maximize();
 			ChromeOptions options = new ChromeOptions();
-	        options.addArguments("--headless=new");   // modern headless
-	        options.addArguments("--window-size=1920,1080");
-	        options.addArguments("--disable-gpu");
-	        options.addArguments("--no-sandbox");
-	        options.addArguments("--disable-dev-shm-usage");
+			options.addArguments("--headless=new"); // modern headless
+			options.addArguments("--window-size=1920,1080");
+			options.addArguments("--disable-gpu");
+			options.addArguments("--no-sandbox");
+			options.addArguments("--disable-dev-shm-usage");
 
-	        // ✅ USE options here
-	        driver = new ChromeDriver(options);
+			// ✅ USE options here
+			driver = new ChromeDriver(options);
 
 			// Open Elasticsearch _search URL
 			String url = "http://10.10.2.45:9200/piqa_issue-persistence_issue-impact-area_index/_search?pretty&size=2000";
@@ -211,6 +214,9 @@ public class IssueImpactArea {
 		logToExtent("Create IssueImpactArea Response", requestBody, response);
 		captureDbSnapshot(IssueImpactAreaId, "Create New IssueImpactArea");
 		// captureElasticScreenshot(IssueImpactAreaId, "Create IssueImpactArea");
+
+//		captureElasticScreenshot(IssueImpactAreaId, "Create IssueImpactArea");
+
 	}
 
 	@When("Fetch All IssueImpactArea Details")
@@ -227,8 +233,8 @@ public class IssueImpactArea {
 	@When("Fetch IssueImpactArea Details with ID")
 	public void Fetch_issueimpactarea_Details_with_ID() {
 		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
-				.header("Author", author).pathParam("id", IssueImpactAreaId).when().get(baseUrl + IssueImpactArea_endpoint + "/{id}").then()
-				.extract().response();
+				.header("Author", author).pathParam("id", IssueImpactAreaId).when()
+				.get(baseUrl + IssueImpactArea_endpoint + "/{id}").then().extract().response();
 
 		System.out.println("Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
@@ -251,7 +257,11 @@ public class IssueImpactArea {
 		RequestBodyForValidation=newJson;
 		logToExtent("Update IssueImpactArea (PUT)", newJson, response);
 		captureDbSnapshot(IssueImpactAreaId, "Update IssueImpactArea (PUT)");
+
 		// captureElasticScreenshot(IssueImpactAreaId, "Update IssueImpactArea (PUT)");
+
+//		captureElasticScreenshot(IssueImpactAreaId, "Update IssueImpactArea (PUT)");
+
 
 	}
 
@@ -272,7 +282,11 @@ public class IssueImpactArea {
 		RequestBodyForValidation=newJson;
 		logToExtent("Update IssueImpactArea (PATCH)", newJson, response);
 		captureDbSnapshot(IssueImpactAreaId, "Update IssueImpactArea (PATCH)");
+
 		// captureElasticScreenshot(IssueImpactAreaId, "Update IssueImpactArea (PATCH)");
+
+//		captureElasticScreenshot(IssueImpactAreaId, "Update IssueImpactArea (PATCH)");
+
 
 	}
 
@@ -287,9 +301,13 @@ public class IssueImpactArea {
 
 		logToExtent("Delete IssueImpactArea", null, response);
 		captureDbSnapshot(IssueImpactAreaId, "Delete IssueImpactArea");
+
 		// captureElasticScreenshot(IssueImpactAreaId, "Delete IssueImpactArea");
+
+//		captureElasticScreenshot(IssueImpactAreaId, "Delete IssueImpactArea");
+
 	}
-	
+
 	@Given("I have Bulk IssueImpactArea")
 	public void i_have_a_bulk_IssueImpactArea() {
 		requestBody = DataCreate.generateIssueImpactAreaBulkJson();
@@ -321,7 +339,11 @@ public class IssueImpactArea {
 
 		for (Integer id : ScenarioContext.Ids) {
 			captureDbSnapshot(id,  "Create Bulk IssueImpactArea"+": "+id);
+
 			// captureElasticScreenshot(id,  "Create Bulk IssueImpactArea"+": "+id);
+
+//			captureElasticScreenshot(id,  "Create Bulk IssueImpactArea"+": "+id);
+
 			ApiDataValidator.validateDbNotNullExcept(id, "IssueImpactArea", null);
 		}
 	}
@@ -386,12 +408,15 @@ public class IssueImpactArea {
 
 	    for (Integer id : IssueImpactAreaIds) {
 	    	captureDbSnapshot(id, "Update IssueImpactArea (PUT)"+": "+id);
+
 			// captureElasticScreenshot(id, "Update IssueImpactArea (PUT)"+": "+id);
+
+//			captureElasticScreenshot(id, "Update IssueImpactArea (PUT)"+": "+id);
+
 			ApiDataValidator.validateDbNotNullExcept(id, "IssueImpactArea", null);
 	    }
 	}
 
-	
 	@When("Delete Bulk IssueImpactArea")
 	public void Delete_bulk_IssueImpactArea() throws Exception {
 
@@ -434,97 +459,83 @@ public class IssueImpactArea {
 
 	    for (Integer id : IssueImpactAreaIds) {
 	    	captureDbSnapshot(id, "Delete IssueImpactArea"+": "+id);
+
 			// captureElasticScreenshot(id, "Delete IssueImpactArea"+": "+id);
+
+//			captureElasticScreenshot(id, "Delete IssueImpactArea"+": "+id);
+
 	    }
 	}
-		
+
 	@Then("Validate Bulk IssueImpactArea Request Response ES DB")
 	public void validate_bulk_IssueImpactArea_request_response_es_db() throws Exception {
 
-	    ObjectMapper mapper = new ObjectMapper();
+		ObjectMapper mapper = new ObjectMapper();
 
-	    int totalIds = 0;
-	    int failedIds = 0;
+		int totalIds = 0;
+		int failedIds = 0;
 
-	    ExtentTest parent = ExtentCucumberListener.getCurrentScenario();
+		ExtentTest parent = ExtentCucumberListener.getCurrentScenario();
 
-	    // -------- Parse request bulk --------
-	    Map<String, Object> reqRoot =
-	            mapper.readValue(
-	                    ScenarioContext.RequestBodyForValidation,
-	                    new TypeReference<Map<String, Object>>() {}
-	            );
+		// -------- Parse request bulk --------
+		Map<String, Object> reqRoot = mapper.readValue(ScenarioContext.RequestBodyForValidation,
+				new TypeReference<Map<String, Object>>() {
+				});
 
-	    List<Map<String, Object>> requestBulk =
-	            (List<Map<String, Object>>) reqRoot.get("bulk");
+		List<Map<String, Object>> requestBulk = (List<Map<String, Object>>) reqRoot.get("bulk");
 
-	    // -------- Parse response DATA --------
-	    List<Map<String, Object>> responseData =
-	            response.jsonPath().getList("DATA");
+		// -------- Parse response DATA --------
+		List<Map<String, Object>> responseData = response.jsonPath().getList("DATA");
 
-	    if (requestBulk == null || responseData == null) {
-	        parent.fail("❌ Request bulk or response DATA is null");
-	        throw new AssertionError("Invalid bulk data");
-	    }
+		if (requestBulk == null || responseData == null) {
+			parent.fail("❌ Request bulk or response DATA is null");
+			throw new AssertionError("Invalid bulk data");
+		}
 
-	    parent.info("🔍 Bulk validation started | Request size="
-	            + requestBulk.size() + " | Response size=" + responseData.size());
+		parent.info("🔍 Bulk validation started | Request size=" + requestBulk.size() + " | Response size="
+				+ responseData.size());
 
-	    // -------- LOOP OVER ALL IDS (DO NOT STOP) --------
-	    for (int i = 0; i < responseData.size(); i++) {
+		// -------- LOOP OVER ALL IDS (DO NOT STOP) --------
+		for (int i = 0; i < responseData.size(); i++) {
 
-	        totalIds++;
+			totalIds++;
 
-	        try {
-	            Map<String, Object> respObj = responseData.get(i);
-	            Map<String, Object> matchingReq = requestBulk.get(i);
+			try {
+				Map<String, Object> respObj = responseData.get(i);
+				Map<String, Object> matchingReq = requestBulk.get(i);
 
-	            int id = Integer.parseInt(respObj.get("id").toString());
+				int id = Integer.parseInt(respObj.get("id").toString());
 
 //	            parent.info("🔎 Validation Started (ID: " + id + ")");
 
-	            String requestJson  = mapper.writeValueAsString(matchingReq);
-	            String responseJson = mapper.writeValueAsString(respObj);
+				String requestJson = mapper.writeValueAsString(matchingReq);
+				String responseJson = mapper.writeValueAsString(respObj);
 
-	            // ✅ CALL VOID METHOD (NO BOOLEAN)
-	            ApiDataValidator.validateKeysAcrosRequestResponseEsDb(
-	                    requestJson,
-	                    responseJson,
-	                    id,
-	                    "issue-impact-area",
-	                    "IssueImpactArea",
-	                    true,
-	                    new String[]{
-	                            "deleted"
-	                    },
-	                    new String[]{"id","updatedate","createdate"},
-	                    new String[]{""}
-	            );
+				// ✅ CALL VOID METHOD (NO BOOLEAN)
+				ApiDataValidator.validateKeysAcrosRequestResponseEsDb(requestJson, responseJson, id,
+						"issue-impact-area", "IssueImpactArea", true, new String[] { "deleted" },
+						new String[] { "id", "updatedate", "createdate" }, new String[] { "" });
 
-	        } catch (Exception e) {
-	            failedIds++;
-	            parent.info("⚠️ Validation exception for one ID: " + e.getMessage());
-	        }
-	    }
+			} catch (Exception e) {
+				failedIds++;
+				parent.info("⚠️ Validation exception for one ID: " + e.getMessage());
+			}
+		}
 
-	    // -------- BULK SUMMARY --------
-	    String bannerColor = (failedIds == 0) ? "#1e8e3e" : "#d93025";
-	    String statusWord  = (failedIds == 0) ? "PASSED ✓" : "FAILED ✗";
+		// -------- BULK SUMMARY --------
+		String bannerColor = (failedIds == 0) ? "#1e8e3e" : "#d93025";
+		String statusWord = (failedIds == 0) ? "PASSED ✓" : "FAILED ✗";
 
-	    String summaryHtml =
-	            "<div style='padding:12px;border-left:6px solid " + bannerColor + ";'>" +
-	            "<b>Bulk Component Validation " + statusWord + "</b><br>" +
-	            "Total IDs: " + totalIds +
-	            " | Passed: " + (totalIds - failedIds) +
-	            " | Failed: " + failedIds +
-	            "</div>";
+		String summaryHtml = "<div style='padding:12px;border-left:6px solid " + bannerColor + ";'>"
+				+ "<b>Bulk Component Validation " + statusWord + "</b><br>" + "Total IDs: " + totalIds + " | Passed: "
+				+ (totalIds - failedIds) + " | Failed: " + failedIds + "</div>";
 
-	    if (failedIds > 0) {
-	        parent.fail(summaryHtml);
-	        throw new AssertionError("Bulk validation failed. See Extent report.");
-	    } else {
-	        parent.pass(summaryHtml);
-	    }
+		if (failedIds > 0) {
+			parent.fail(summaryHtml);
+			throw new AssertionError("Bulk validation failed. See Extent report.");
+		} else {
+			parent.pass(summaryHtml);
+		}
 	}
 
 	@Then("The IssueImpactArea response status code should be {int}")
@@ -538,6 +549,7 @@ public class IssueImpactArea {
 		assertTrue("Response does not contain key: " + key, response.getBody().asString().contains(key));
 
 	}
+
 	@Then("Validate API ES and DB for IsueImpactAreaId after {word} skipping ES {word} excludingEverywhere {string} excludeFromRequest {string} excludeFromEs {string}")
 	public void validate_api_es_db_for_IsueImpactAreaId_dynamic(String method, String skipEsToken,
 			String excludeEverywhereCsv, String excludeReqCsv, String excludeEsCsv) throws Exception {
@@ -560,8 +572,8 @@ public class IssueImpactArea {
 
 		ExtentTest current = ExtentCucumberListener.getCurrentScenario();
 		if (current != null) {
-			current.info("🧪 Cross-layer validation for IssueImpactAreaId=" + IssueImpactAreaId + " after " + method.toUpperCase()
-					+ " | skipEs=" + skipEs);
+			current.info("🧪 Cross-layer validation for IssueImpactAreaId=" + IssueImpactAreaId + " after "
+					+ method.toUpperCase() + " | skipEs=" + skipEs);
 			current.info("ExcludeEverywhere=" + excludeEverywhereCsv + " | RequestOnly=" + excludeReqCsv + " | EsOnly="
 					+ excludeEsCsv);
 		}

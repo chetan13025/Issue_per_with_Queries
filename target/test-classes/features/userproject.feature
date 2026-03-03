@@ -1,37 +1,47 @@
-@UserProject
-
 Feature: UserProject API testing
 
-Scenario: Creating New User Project
-Given I have a UserProject
-When Create New UserProject
-Then The UserProject response should contain "id"
-Then Validate API ES and DB for UserProjectId after POST skipping ES false excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"
-And The UserProject response status code should be 201
+  @UserProject
+  Scenario: To verify that after POST new UserProject should create
+    Given I have a UserProject
+    When Create New UserProject
+    Then The UserProject response should contain "id"
+    Then Validate API ES and DB for UserProjectId after POST skipping ES true excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"
+    And The UserProject response status code should be 201
 
-Scenario: Fetching All UserProject 
-When Fetch All UserProject Details
-Then The UserProject response status code should be 200
+  @UserProject
+  Scenario: To verify that GET request fetched All data
+    When Fetch All UserProject Details
+    Then The UserProject response status code should be 200
 
-Scenario: Fetching UserProject Details with ID
-When Fetch UserProject Details with ID
-Then The UserProject response status code should be 200
+  @UserProject
+  Scenario: To verify that GET with ID fetched correct data
+    When Fetch UserProject Details with ID
+    Then The UserProject response status code should be 200
 
-Scenario: Updating PUT UserProject Details with ID
-When Update UserProject Details
-Then Validate API ES and DB for UserProjectId after PUT skipping ES false excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"
-Then The UserProject response status code should be 200
+  @UserProject
+  Scenario: To verify that after PUT request data should get update in DataBase
+    When Update UserProject Details
+    Then Validate API ES and DB for UserProjectId after PUT skipping ES true excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"
+    Then The UserProject response status code should be 200
 
-Scenario: Updating Patch UserProject Details with ID
-When Update Patch UserProject
-Then Validate API ES and DB for UserProjectId after PATCH skipping ES false excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"
-Then The UserProject response status code should be 200
+  @UserProject
+  Scenario: To verify that after Patch request data should get update in DataBase
+    When Update Patch UserProject
+    Then Validate API ES and DB for UserProjectId after PATCH skipping ES true excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"
+    Then The UserProject response status code should be 200
 
-Scenario: Deleting UserProject Details with ID
-When Delete UserProject with ID
-Then The UserProject response status code should be 204
+  @UserProject
+  Scenario: To verify that after Delete request data should get removed from DataBase
+    When Delete UserProject with ID
+    Then The UserProject response status code should be 204
 
+  @Negative_Scenarioes_for_UserProject_entity
+  Scenario: To verify that GET with ID fetched correct data (Which is already deleted)
+    When Fetch UserProject Details with ID
+    Then The UserProject response status code should be 200
 
-
-
-
+  @Negative_Scenarioes_for_UserProject_entity
+  Scenario: To verify that after PUT request data should get update in DataBase (Which is already deleted)
+    When Update UserProject Details
+    Then Validate API ES and DB for UserProjectId after PUT skipping ES true excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"
+    Then The UserProject response status code should be 200

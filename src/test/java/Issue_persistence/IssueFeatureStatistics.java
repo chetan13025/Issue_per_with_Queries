@@ -80,6 +80,7 @@ public class IssueFeatureStatistics {
 					ResultSet rs = stmt.executeQuery("SELECT * FROM (" + "   SELECT * FROM `issue_persistence_piqa`.`IssueFeatureStatistics` "
 								+ "   ORDER BY id DESC LIMIT 5" + ") AS lastFive " + "ORDER BY id ASC;")) {
 
+
 			ResultSetMetaData meta = rs.getMetaData();
 			int colCount = meta.getColumnCount();
 

@@ -77,7 +77,7 @@ public class IssueCollaborator {
 				Statement stmt = conn.createStatement();
 //				ResultSet rs = stmt.executeQuery("SELECT * FROM `issue_persistence_piqa`.`IssueCollaborator` LIMIT 1000"))
 				ResultSet rs = stmt
-						.executeQuery("SELECT * FROM (" + "   SELECT * FROM `issue_persistence_piqa`.`IssueCode` "
+						.executeQuery("SELECT * FROM (" + "   SELECT * FROM `issue_persistence_piqa`.`IssueCollaborator` "
 								+ "   ORDER BY id DESC LIMIT 5" + ") AS lastFive " + "ORDER BY id ASC;")){
 
 			ResultSetMetaData meta = rs.getMetaData();

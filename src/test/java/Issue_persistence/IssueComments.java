@@ -49,6 +49,7 @@ public class IssueComments {
 	private static String IssueCommentsBulk_endpoint = ConfigReader.getProperty("issuecommentsbulk_endpoint");
 	private static String IssueCommentsBulkUpdate_endpoint = ConfigReader.getProperty("issuecommentsbulku_endpoint");
 	private static String IssueCommentsBulkDelete_endpoint = ConfigReader.getProperty("issuecommentsbulkd_endpoint");
+
 	private void logToExtent(String action, String reqBody, Response resp) {
 		ExtentTest current = ExtentCucumberListener.getCurrentScenario();
 		if (current == null)
@@ -75,7 +76,8 @@ public class IssueComments {
 
 		try (Connection conn = DriverManager.getConnection("jdbc:mysql://10.10.2.45:3306", "root", "dhi123");
 				Statement stmt = conn.createStatement();
-				// ResultSet rs = stmt.executeQuery("SELECT * FROM `issue_persistence_piqa`.`IssueComments` LIMIT 1000"))
+				// ResultSet rs = stmt.executeQuery("SELECT * FROM
+				// `issue_persistence_piqa`.`IssueComments` LIMIT 1000"))
 				ResultSet rs = stmt
 						.executeQuery("SELECT * FROM (" + "   SELECT * FROM `issue_persistence_piqa`.`IssueComments` "
 								+ "   ORDER BY id DESC LIMIT 5" + ") AS lastFive " + "ORDER BY id ASC;")) {
@@ -131,14 +133,14 @@ public class IssueComments {
 //			driver = new ChromeDriver();
 //			driver.manage().window().maximize();
 			ChromeOptions options = new ChromeOptions();
-	        options.addArguments("--headless=new");   // modern headless
-	        options.addArguments("--window-size=1920,1080");
-	        options.addArguments("--disable-gpu");
-	        options.addArguments("--no-sandbox");
-	        options.addArguments("--disable-dev-shm-usage");
+			options.addArguments("--headless=new"); // modern headless
+			options.addArguments("--window-size=1920,1080");
+			options.addArguments("--disable-gpu");
+			options.addArguments("--no-sandbox");
+			options.addArguments("--disable-dev-shm-usage");
 
-	        // ✅ USE options here
-	        driver = new ChromeDriver(options);
+			// ✅ USE options here
+			driver = new ChromeDriver(options);
 
 			// Open Elasticsearch _search URL
 			String url = "http://10.10.2.45:9200/piqa_issue-persistence_issue-comments_index/_search?pretty&size=2000";
@@ -189,6 +191,7 @@ public class IssueComments {
 			}
 		}
 	}
+
 	@Given("I have a IssueComment")
 	public void i_have_a_issuecomments() {
 		requestBody = DataCreate.generateIssueCommentsJson();
@@ -198,19 +201,21 @@ public class IssueComments {
 	@When("Create New IssueComment")
 	public void Create_new_issuecomments() {
 		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
-				.header("Author", author).body(requestBody).when().post(baseUrl + IssueComments_endpoint).then().extract()
-				.response();
+				.header("Author", author).body(requestBody).when().post(baseUrl + IssueComments_endpoint).then()
+				.extract().response();
 
 		System.out.println("Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
 		IssueCommentsId = response.jsonPath().getInt("id");
-		RequestBodyForValidation=requestBody;
+		RequestBodyForValidation = requestBody;
 		System.out.println("Stored UserId: " + IssueCommentsId);
 		logToExtent("Create IssueComments Response", requestBody, response);
 		captureDbSnapshot(IssueCommentsId, "Create IssueComments User");
+
 		// captureElasticScreenshot(IssueCommentsId, "Create IssueComments");
+//		captureElasticScreenshot(IssueCommentsId, "Create IssueComments");
 	}
-	
+
 	@When("Fetch All IssueComments Details")
 	public void Fetch_All_issuecomments_Details() {
 		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
@@ -225,8 +230,8 @@ public class IssueComments {
 	@When("Fetch IssueComment Details with ID")
 	public void Fetch_issuecomments_Details_with_ID() {
 		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
-				.header("Author", author).pathParam("id", IssueCommentsId).when().get(baseUrl + IssueComments_endpoint + "/{id}").then()
-				.extract().response();
+				.header("Author", author).pathParam("id", IssueCommentsId).when()
+				.get(baseUrl + IssueComments_endpoint + "/{id}").then().extract().response();
 
 		System.out.println("Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
@@ -246,11 +251,11 @@ public class IssueComments {
 
 		System.out.println("PUT Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
-		RequestBodyForValidation=newJson;
+		RequestBodyForValidation = newJson;
 		logToExtent("Update User (PUT)", newJson, response);
 		captureDbSnapshot(IssueCommentsId, "Update IssueComments (PUT)");
 		// captureElasticScreenshot(IssueCommentsId, "Update IssueComments (PUT)");
-
+//		captureElasticScreenshot(IssueCommentsId, "Update IssueComments (PUT)");
 	}
 
 	@When("Update Patch IssueComment")
@@ -267,18 +272,20 @@ public class IssueComments {
 		System.out.println("PATCH Request Body:\n" + newJson);
 		System.out.println("PATCH Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
-		RequestBodyForValidation=newJson;
+		RequestBodyForValidation = newJson;
 		logToExtent("Update User (PATCH)", newJson, response);
 		captureDbSnapshot(IssueCommentsId, "Update User (PATCH)");
 		// captureElasticScreenshot(IssueCommentsId, "Update User (PATCH)");
+
+//		captureElasticScreenshot(IssueCommentsId, "Update User (PATCH)");
 
 	}
 
 	@When("Delete IssueComment with ID")
 	public void delete_issuecomment_with_ID() {
 		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
-				.header("Author", author).pathParam("id", IssueCommentsId).when().delete(baseUrl + IssueComments_endpoint + "/{id}")
-				.then().extract().response();
+				.header("Author", author).pathParam("id", IssueCommentsId).when()
+				.delete(baseUrl + IssueComments_endpoint + "/{id}").then().extract().response();
 
 		System.out.println("Delete Response Body:\n" + response.getBody().asString());
 		System.out.println("Delete Status Code: " + response.getStatusCode());
@@ -286,8 +293,9 @@ public class IssueComments {
 		logToExtent("Delete IssueComment", null, response);
 		captureDbSnapshot(IssueCommentsId, "Delete IssueComment");
 		// captureElasticScreenshot(IssueCommentsId, "Delete IssueComment");
+//		captureElasticScreenshot(IssueCommentsId, "Delete IssueComment");
 	}
-	
+
 	@Given("I have Bulk IssueComment")
 	public void i_have_a_bulk_IssueComment() {
 		requestBody = DataCreate.generateIssueCommentBulkJson();
@@ -318,8 +326,10 @@ public class IssueComments {
 		logToExtent("Create IssueComment Response", requestBody, response);
 
 		for (Integer id : ScenarioContext.Ids) {
-			captureDbSnapshot(id,  "Create Bulk IssueComment"+": "+id);
-			// captureElasticScreenshot(id,  "Create Bulk IssueComment"+": "+id);
+			captureDbSnapshot(id, "Create Bulk IssueComment" + ": " + id);
+			// captureElasticScreenshot(id, "Create Bulk IssueComment"+": "+id);
+
+//			captureElasticScreenshot(id,  "Create Bulk IssueComment"+": "+id);
 			ApiDataValidator.validateDbNotNullExcept(id, "IssueComments", null);
 		}
 	}
@@ -385,11 +395,11 @@ public class IssueComments {
 	    for (Integer id : IssueCommentsIds) {
 	    	captureDbSnapshot(id, "Update IssueComment (PUT)"+": "+id);
 			// captureElasticScreenshot(id, "Update IssueComment (PUT)"+": "+id);
+//			captureElasticScreenshot(id, "Update IssueComment (PUT)"+": "+id);
 			ApiDataValidator.validateDbNotNullExcept(id, "IssueComments", null);
 	    }
 	}
 
-	
 	@When("Delete Bulk IssueComment")
 	public void Delete_bulk_IssueComment() throws Exception {
 
@@ -433,96 +443,79 @@ public class IssueComments {
 	    for (Integer id : IssueCommentsIds) {
 	    	captureDbSnapshot(id, "Delete IssueComment"+": "+id);
 			// captureElasticScreenshot(id, "Delete IssueComment"+": "+id);
+//			captureElasticScreenshot(id, "Delete IssueComment"+": "+id);
 	    }
 	}
-		
+
 	@Then("Validate Bulk IssueComment Request Response ES DB")
 	public void validate_bulk_IssueComment_request_response_es_db() throws Exception {
 
-	    ObjectMapper mapper = new ObjectMapper();
+		ObjectMapper mapper = new ObjectMapper();
 
-	    int totalIds = 0;
-	    int failedIds = 0;
+		int totalIds = 0;
+		int failedIds = 0;
 
-	    ExtentTest parent = ExtentCucumberListener.getCurrentScenario();
+		ExtentTest parent = ExtentCucumberListener.getCurrentScenario();
 
-	    // -------- Parse request bulk --------
-	    Map<String, Object> reqRoot =
-	            mapper.readValue(
-	                    ScenarioContext.RequestBodyForValidation,
-	                    new TypeReference<Map<String, Object>>() {}
-	            );
+		// -------- Parse request bulk --------
+		Map<String, Object> reqRoot = mapper.readValue(ScenarioContext.RequestBodyForValidation,
+				new TypeReference<Map<String, Object>>() {
+				});
 
-	    List<Map<String, Object>> requestBulk =
-	            (List<Map<String, Object>>) reqRoot.get("bulk");
+		List<Map<String, Object>> requestBulk = (List<Map<String, Object>>) reqRoot.get("bulk");
 
-	    // -------- Parse response DATA --------
-	    List<Map<String, Object>> responseData =
-	            response.jsonPath().getList("DATA");
+		// -------- Parse response DATA --------
+		List<Map<String, Object>> responseData = response.jsonPath().getList("DATA");
 
-	    if (requestBulk == null || responseData == null) {
-	        parent.fail("❌ Request bulk or response DATA is null");
-	        throw new AssertionError("Invalid bulk data");
-	    }
+		if (requestBulk == null || responseData == null) {
+			parent.fail("❌ Request bulk or response DATA is null");
+			throw new AssertionError("Invalid bulk data");
+		}
 
-	    parent.info("🔍 Bulk validation started | Request size="
-	            + requestBulk.size() + " | Response size=" + responseData.size());
+		parent.info("🔍 Bulk validation started | Request size=" + requestBulk.size() + " | Response size="
+				+ responseData.size());
 
-	    // -------- LOOP OVER ALL IDS (DO NOT STOP) --------
-	    for (int i = 0; i < responseData.size(); i++) {
+		// -------- LOOP OVER ALL IDS (DO NOT STOP) --------
+		for (int i = 0; i < responseData.size(); i++) {
 
-	        totalIds++;
+			totalIds++;
 
-	        try {
-	            Map<String, Object> respObj = responseData.get(i);
-	            Map<String, Object> matchingReq = requestBulk.get(i);
+			try {
+				Map<String, Object> respObj = responseData.get(i);
+				Map<String, Object> matchingReq = requestBulk.get(i);
 
-	            int id = Integer.parseInt(respObj.get("id").toString());
+				int id = Integer.parseInt(respObj.get("id").toString());
 
 //	            parent.info("🔎 Validation Started (ID: " + id + ")");
 
-	            String requestJson  = mapper.writeValueAsString(matchingReq);
-	            String responseJson = mapper.writeValueAsString(respObj);
+				String requestJson = mapper.writeValueAsString(matchingReq);
+				String responseJson = mapper.writeValueAsString(respObj);
 
-	            // ✅ CALL VOID METHOD (NO BOOLEAN)
-	            ApiDataValidator.validateKeysAcrosRequestResponseEsDb(
-	                    requestJson,
-	                    responseJson,
-	                    id,
-	                    "issue-comments",
-	                    "IssueComments",
-	                    true,
-	                    new String[]{
-	                            "deleted"
-	                    },
-	                    new String[]{"id","updatedate","createdate"},
-	                    new String[]{""}
-	            );
+				// ✅ CALL VOID METHOD (NO BOOLEAN)
+				ApiDataValidator.validateKeysAcrosRequestResponseEsDb(requestJson, responseJson, id, "issue-comments",
+						"IssueComments", true, new String[] { "deleted" },
+						new String[] { "id", "updatedate", "createdate" }, new String[] { "" });
 
-	        } catch (Exception e) {
-	            failedIds++;
-	            parent.info("⚠️ Validation exception for one ID: " + e.getMessage());
-	        }
-	    }
+			} catch (Exception e) {
+				failedIds++;
+				parent.info("⚠️ Validation exception for one ID: " + e.getMessage());
+			}
+		}
 
-	    // -------- BULK SUMMARY --------
-	    String bannerColor = (failedIds == 0) ? "#1e8e3e" : "#d93025";
-	    String statusWord  = (failedIds == 0) ? "PASSED ✓" : "FAILED ✗";
+		// -------- BULK SUMMARY --------
+		String bannerColor = (failedIds == 0) ? "#1e8e3e" : "#d93025";
+		String statusWord = (failedIds == 0) ? "PASSED ✓" : "FAILED ✗";
 
-	    String summaryHtml =
-	            "<div style='padding:12px;border-left:6px solid " + bannerColor + ";'>" +
-	            "<b>Bulk Component Validation " + statusWord + "</b><br>" +
-	            "Total IDs: " + totalIds +
-	            " | Passed: " + (totalIds - failedIds) +
-	            " | Failed: " + failedIds +
-	            "</div>";
+		String summaryHtml = "<div style='padding:12px;border-left:6px solid " + bannerColor + ";'>"
+				+ "<b>Bulk Component Validation " + statusWord + "</b><br>" + "Total IDs: " + totalIds + " | Passed: "
+				+ (totalIds - failedIds) + " | Failed: " + failedIds + "</div>";
 
-	    if (failedIds > 0) {
-	        parent.fail(summaryHtml);
-	        throw new AssertionError("Bulk validation failed. See Extent report.");
-	    } else {
-	        parent.pass(summaryHtml);
-	    }
+		if (failedIds > 0) {
+			parent.fail(summaryHtml);
+			throw new AssertionError("Bulk validation failed. See Extent report.");
+		} else {
+			parent.pass(summaryHtml);
+		}
 	}
 
 	@Then("The IssueComment response status code should be {int}")
@@ -536,7 +529,7 @@ public class IssueComments {
 		assertTrue("Response does not contain key: " + key, response.getBody().asString().contains(key));
 
 	}
-	
+
 	@Then("Validate API ES and DB for IssueCommentsId after {word} skipping ES {word} excludingEverywhere {string} excludeFromRequest {string} excludeFromEs {string}")
 	public void validate_api_es_db_for_IssueCommentsId_dynamic(String method, String skipEsToken,
 			String excludeEverywhereCsv, String excludeReqCsv, String excludeEsCsv) throws Exception {
@@ -559,8 +552,8 @@ public class IssueComments {
 
 		ExtentTest current = ExtentCucumberListener.getCurrentScenario();
 		if (current != null) {
-			current.info("🧪 Cross-layer validation for IssueCommentsId=" + IssueCommentsId + " after " + method.toUpperCase()
-					+ " | skipEs=" + skipEs);
+			current.info("🧪 Cross-layer validation for IssueCommentsId=" + IssueCommentsId + " after "
+					+ method.toUpperCase() + " | skipEs=" + skipEs);
 			current.info("ExcludeEverywhere=" + excludeEverywhereCsv + " | RequestOnly=" + excludeReqCsv + " | EsOnly="
 					+ excludeEsCsv);
 		}
@@ -584,5 +577,4 @@ public class IssueComments {
 		return Arrays.stream(csv.split(",")).map(String::trim).filter(s -> !s.isEmpty()).toArray(String[]::new);
 	}
 
-	
 }

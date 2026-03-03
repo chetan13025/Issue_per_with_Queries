@@ -78,6 +78,10 @@ public class BugType {
 		try (Connection conn = DriverManager.getConnection("jdbc:mysql://10.10.2.45:3306", "root", "dhi123");
 				Statement stmt = conn.createStatement();
 				// ResultSet rs = stmt.executeQuery("SELECT * FROM `issue_persistence_piqa`.`BugType` LIMIT 1000"))
+
+				// ResultSet rs = stmt.executeQuery("SELECT * FROM `issue_persistence_piqa`.`BugType` LIMIT 1000"))
+
+//				ResultSet rs = stmt.executeQuery("SELECT * FROM `issue_persistence_piqa`.`BugType` LIMIT 1000"))
 				ResultSet rs = stmt
 						.executeQuery("SELECT * FROM (" + "   SELECT * FROM `issue_persistence_piqa`.`BugType` "
 								+ "   ORDER BY id DESC LIMIT 5" + ") AS lastFive " + "ORDER BY id ASC;")){

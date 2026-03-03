@@ -37,7 +37,7 @@ import utils.ConfigReader;
 import validators.ApiDataValidator;
 
 public class IssueGroup {
-	
+
 	public static int IssueGroupId;
 	private Response response;
 	private String requestBody;
@@ -50,7 +50,7 @@ public class IssueGroup {
 	private static String IssueGroupBulk_endpoint = ConfigReader.getProperty("issuegroupbulk_endpoint");
 	private static String IssueGroupBulkUpdate_endpoint = ConfigReader.getProperty("issuegroupbulku_endpoint");
 	private static String IssueGroupBulkDelete_endpoint = ConfigReader.getProperty("issuegroupbulkd_endpoint");
-	
+
 	private void logToExtent(String action, String reqBody, Response resp) {
 		ExtentTest current = ExtentCucumberListener.getCurrentScenario();
 		if (current == null)
@@ -77,7 +77,9 @@ public class IssueGroup {
 
 		try (Connection conn = DriverManager.getConnection("jdbc:mysql://10.10.2.45:3306", "root", "dhi123");
 				Statement stmt = conn.createStatement();
-				// ResultSet rs = stmt.executeQuery("SELECT * FROM `issue_persistence_piqa`.`IssueGroup` LIMIT 1000"))
+
+				// ResultSet rs = stmt.executeQuery("SELECT * FROM
+				// `issue_persistence_piqa`.`IssueGroup` LIMIT 1000"))
 				ResultSet rs = stmt
 						.executeQuery("SELECT * FROM (" + "   SELECT * FROM `issue_persistence_piqa`.`IssueGroup` "
 								+ "   ORDER BY id DESC LIMIT 5" + ") AS lastFive " + "ORDER BY id ASC;")) {
@@ -133,14 +135,14 @@ public class IssueGroup {
 //			driver = new ChromeDriver();
 //			driver.manage().window().maximize();
 			ChromeOptions options = new ChromeOptions();
-	        options.addArguments("--headless=new");   // modern headless
-	        options.addArguments("--window-size=1920,1080");
-	        options.addArguments("--disable-gpu");
-	        options.addArguments("--no-sandbox");
-	        options.addArguments("--disable-dev-shm-usage");
+			options.addArguments("--headless=new"); // modern headless
+			options.addArguments("--window-size=1920,1080");
+			options.addArguments("--disable-gpu");
+			options.addArguments("--no-sandbox");
+			options.addArguments("--disable-dev-shm-usage");
 
-	        // ✅ USE options here
-	        driver = new ChromeDriver(options);
+			// ✅ USE options here
+			driver = new ChromeDriver(options);
 
 			// Open Elasticsearch _search URL
 			String url = "http://10.10.2.45:9200/piqa_issue-persistence_issue-group_index/_search?pretty&size=2000";
@@ -191,6 +193,7 @@ public class IssueGroup {
 			}
 		}
 	}
+
 	@Given("I have a IssueGroup")
 	public void i_have_a_issuegroup() {
 		requestBody = DataCreate.generateIssueGroupJson();
@@ -206,13 +209,14 @@ public class IssueGroup {
 		System.out.println("Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
 		IssueGroupId = response.jsonPath().getInt("id");
-		RequestBodyForValidation=requestBody;
+		RequestBodyForValidation = requestBody;
 		System.out.println("Stored UserId: " + IssueGroupId);
 		logToExtent("Create IssueGroup Response", requestBody, response);
 		captureDbSnapshot(IssueGroupId, "Create New IssueGroup");
 		// captureElasticScreenshot(IssueGroupId, "Create New IssueGroup");
+//		captureElasticScreenshot(IssueGroupId, "Create New IssueGroup");
 	}
-	
+
 	@When("Fetch All IssueGroups Details")
 	public void Fetch_All_issuegroups_Details() {
 		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
@@ -223,18 +227,18 @@ public class IssueGroup {
 
 		logToExtent("Fetch All IssueGroups Response", requestBody, response);
 	}
-	
+
 	@When("Fetch IssueGroup Details with ID")
 	public void Fetch_issuegroup_Details_with_ID() {
 		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
-				.header("Author", author).pathParam("id", IssueGroupId).when().get(baseUrl + IssueGroup_endpoint + "/{id}").then()
-				.extract().response();
+				.header("Author", author).pathParam("id", IssueGroupId).when()
+				.get(baseUrl + IssueGroup_endpoint + "/{id}").then().extract().response();
 
 		System.out.println("Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
 		logToExtent("Fetch IssueGroup by ID", null, response);
 	}
-	
+
 	@When("Update IssueGroup Details")
 	public void Update_issuegroup_details() {
 		if (IssueGroupId == 0)
@@ -248,13 +252,14 @@ public class IssueGroup {
 
 		System.out.println("PUT Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
-		RequestBodyForValidation=newJson;
+		RequestBodyForValidation = newJson;
 		logToExtent("Update IssueGroup (PUT)", newJson, response);
 		captureDbSnapshot(IssueGroupId, "Update IssueGroup (PUT)");
 		// captureElasticScreenshot(IssueGroupId, "Update IssueGroup (PUT)");
+//		captureElasticScreenshot(IssueGroupId, "Update IssueGroup (PUT)");
 
 	}
-	
+
 	@When("Update Patch Issuegroup")
 	public void Update_Patch_issuegroup() {
 		if (IssueGroupId == 0)
@@ -269,26 +274,32 @@ public class IssueGroup {
 		System.out.println("PATCH Request Body:\n" + newJson);
 		System.out.println("PATCH Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
-		RequestBodyForValidation=newJson;
+		RequestBodyForValidation = newJson;
 		logToExtent("Update IssueGroup (PATCH)", newJson, response);
 		captureDbSnapshot(IssueGroupId, "Update IssueGroup (PATCH)");
 		// captureElasticScreenshot(IssueGroupId, "Update IssueGroup (PATCH)");
+//		captureElasticScreenshot(IssueGroupId, "Update IssueGroup (PATCH)");
 
 	}
+
 	@When("Delete IssueGroup with ID")
 	public void delete_issuegroup_with_ID() {
 		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
-				.header("Author", author).pathParam("id", IssueGroupId).when().delete(baseUrl + IssueGroup_endpoint + "/{id}")
-				.then().extract().response();
+				.header("Author", author).pathParam("id", IssueGroupId).when()
+				.delete(baseUrl + IssueGroup_endpoint + "/{id}").then().extract().response();
 
 		System.out.println("Delete Response Body:\n" + response.getBody().asString());
 		System.out.println("Delete Status Code: " + response.getStatusCode());
 
 		logToExtent("Delete IssueGroup", null, response);
 		captureDbSnapshot(IssueGroupId, "Delete IssueGroup");
+
 		// captureElasticScreenshot(IssueGroupId, "Delete IssueGroup");
+
+//		captureElasticScreenshot(IssueGroupId, "Delete IssueGroup");
+
 	}
-	
+
 	@Given("I have Bulk IssueGroup")
 	public void i_have_a_bulk_IssueGroup() {
 		requestBody = DataCreate.generateIssueGroupBulkJson();
@@ -319,8 +330,12 @@ public class IssueGroup {
 		logToExtent("Create IssueGroup Response", requestBody, response);
 
 		for (Integer id : ScenarioContext.Ids) {
-			captureDbSnapshot(id,  "Create Bulk IssueGroup"+": "+id);
-			// captureElasticScreenshot(id,  "Create Bulk IssueGroup"+": "+id);
+			captureDbSnapshot(id, "Create Bulk IssueGroup" + ": " + id);
+
+			// captureElasticScreenshot(id, "Create Bulk IssueGroup"+": "+id);
+
+//			captureElasticScreenshot(id,  "Create Bulk IssueGroup"+": "+id);
+
 			ApiDataValidator.validateDbNotNullExcept(id, "IssueGroup", null);
 		}
 	}
@@ -351,181 +366,142 @@ public class IssueGroup {
 
 		IssueGroupIds = ScenarioContext.Ids;
 
-	    if (IssueGroupIds == null || IssueGroupIds.isEmpty()) {
-	        throw new IllegalStateException(
-	                "No IssueGroupIds found. Make sure CREATE scenario ran before UPDATE."
-	        );
-	    }
+		if (IssueGroupIds == null || IssueGroupIds.isEmpty()) {
+			throw new IllegalStateException("No IssueGroupIds found. Make sure CREATE scenario ran before UPDATE.");
+		}
 
-	    // 1️⃣ Generate bulk JSON
-	    String newJson = DataCreate.generateIssueGroupBulkJson();
+		// 1️⃣ Generate bulk JSON
+		String newJson = DataCreate.generateIssueGroupBulkJson();
 
-	    // 2️⃣ Inject stored IDs
-	    newJson = injectIssueGroupIdsIntoBulk(newJson, IssueGroupIds);
+		// 2️⃣ Inject stored IDs
+		newJson = injectIssueGroupIdsIntoBulk(newJson, IssueGroupIds);
 
-	    // 3️⃣ Send PUT request
-	    response = given()
-	            .header("Content-Type", "application/json")
-	            .header("X-TENANT-ID", tenantId)
-	            .header("Author", author)
-	            .body(newJson)
-	            .when()
-	            .put(baseUrl + IssueGroupBulkUpdate_endpoint)
-	            .then()
-	            .extract()
-	            .response();
+		// 3️⃣ Send PUT request
+		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
+				.header("Author", author).body(newJson).when().put(baseUrl + IssueGroupBulkUpdate_endpoint).then()
+				.extract().response();
 
-	    System.out.println("PUT Request Body:\n" + newJson);
-	    System.out.println("PUT Response Body:\n" + response.getBody().asString());
-	    System.out.println("Status Code: " + response.getStatusCode());
+		System.out.println("PUT Request Body:\n" + newJson);
+		System.out.println("PUT Response Body:\n" + response.getBody().asString());
+		System.out.println("Status Code: " + response.getStatusCode());
 
-	    ScenarioContext.RequestBodyForValidation = newJson;
+		ScenarioContext.RequestBodyForValidation = newJson;
 
-	    logToExtent("Update IssueGroup (PUT)", newJson, response);
+		logToExtent("Update IssueGroup (PUT)", newJson, response);
 
-	    for (Integer id : IssueGroupIds) {
-	    	captureDbSnapshot(id, "Update IssueGroup (PUT)"+": "+id);
+		for (Integer id : IssueGroupIds) {
+			captureDbSnapshot(id, "Update IssueGroup (PUT)" + ": " + id);
+
 			// captureElasticScreenshot(id, "Update IssueGroup (PUT)"+": "+id);
+
+//			captureElasticScreenshot(id, "Update IssueGroup (PUT)"+": "+id);
+
 			ApiDataValidator.validateDbNotNullExcept(id, "IssueGroup", null);
-	    }
+		}
 	}
 
-	
 	@When("Delete Bulk IssueGroup")
 	public void Delete_bulk_IssueGroup() throws Exception {
 
 		IssueGroupIds = ScenarioContext.Ids;
 
-	    if (IssueGroupIds == null || IssueGroupIds.isEmpty()) {
-	        throw new IllegalStateException(
-	                "No IssueGroupIds found. Run CREATE scenario first."
-	        );
-	    }
+		if (IssueGroupIds == null || IssueGroupIds.isEmpty()) {
+			throw new IllegalStateException("No IssueGroupIds found. Run CREATE scenario first.");
+		}
 
-	    // ✅ Build request JSON directly
-	    String updateRequestBody = new ObjectMapper()
-	            .writeValueAsString(Map.of(
-	                    "trace", true,
-	                    "skipErrors", true,
-	                    "updateExisting", true,
-	                    "bulk", IssueGroupIds,
-	                    "skipSofDeleteValidation", false
-	            ));
+		// ✅ Build request JSON directly
+		String updateRequestBody = new ObjectMapper().writeValueAsString(Map.of("trace", true, "skipErrors", true,
+				"updateExisting", true, "bulk", IssueGroupIds, "skipSofDeleteValidation", false));
 
-	    response = given()
-	            .header("Content-Type", "application/json")
-	            .header("X-TENANT-ID", tenantId)
-	            .header("Author", author)
-	            .body(updateRequestBody)
-	            .when()
-	            .delete(baseUrl + IssueGroupBulkDelete_endpoint)
-	            .then()
-	            .extract()
-	            .response();
+		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
+				.header("Author", author).body(updateRequestBody).when().delete(baseUrl + IssueGroupBulkDelete_endpoint)
+				.then().extract().response();
 
-	    System.out.println("Delete Request Body:\n" + updateRequestBody);
-	    System.out.println("Delete Response Body:\n" + response.getBody().asString());
-	    System.out.println("Status Code: " + response.getStatusCode());
+		System.out.println("Delete Request Body:\n" + updateRequestBody);
+		System.out.println("Delete Response Body:\n" + response.getBody().asString());
+		System.out.println("Status Code: " + response.getStatusCode());
 
-	    ScenarioContext.RequestBodyForValidation = updateRequestBody;
+		ScenarioContext.RequestBodyForValidation = updateRequestBody;
 
-	    logToExtent(" IssueGroup (Delete)", updateRequestBody, response);
+		logToExtent(" IssueGroup (Delete)", updateRequestBody, response);
 
-	    for (Integer id : IssueGroupIds) {
-	    	captureDbSnapshot(id, "Delete IssueGroup"+": "+id);
-			captureElasticScreenshot(id, "Delete IssueGroup"+": "+id);
-	    }
+		for (Integer id : IssueGroupIds) {
+			captureDbSnapshot(id, "Delete IssueGroup" + ": " + id);
+//			captureElasticScreenshot(id, "Delete IssueGroup"+": "+id);
+		}
 	}
-		
+
 	@Then("Validate Bulk IssueGroup Request Response ES DB")
 	public void validate_bulk_IssueGroup_request_response_es_db() throws Exception {
 
-	    ObjectMapper mapper = new ObjectMapper();
+		ObjectMapper mapper = new ObjectMapper();
 
-	    int totalIds = 0;
-	    int failedIds = 0;
+		int totalIds = 0;
+		int failedIds = 0;
 
-	    ExtentTest parent = ExtentCucumberListener.getCurrentScenario();
+		ExtentTest parent = ExtentCucumberListener.getCurrentScenario();
 
-	    // -------- Parse request bulk --------
-	    Map<String, Object> reqRoot =
-	            mapper.readValue(
-	                    ScenarioContext.RequestBodyForValidation,
-	                    new TypeReference<Map<String, Object>>() {}
-	            );
+		// -------- Parse request bulk --------
+		Map<String, Object> reqRoot = mapper.readValue(ScenarioContext.RequestBodyForValidation,
+				new TypeReference<Map<String, Object>>() {
+				});
 
-	    List<Map<String, Object>> requestBulk =
-	            (List<Map<String, Object>>) reqRoot.get("bulk");
+		List<Map<String, Object>> requestBulk = (List<Map<String, Object>>) reqRoot.get("bulk");
 
-	    // -------- Parse response DATA --------
-	    List<Map<String, Object>> responseData =
-	            response.jsonPath().getList("DATA");
+		// -------- Parse response DATA --------
+		List<Map<String, Object>> responseData = response.jsonPath().getList("DATA");
 
-	    if (requestBulk == null || responseData == null) {
-	        parent.fail("❌ Request bulk or response DATA is null");
-	        throw new AssertionError("Invalid bulk data");
-	    }
+		if (requestBulk == null || responseData == null) {
+			parent.fail("❌ Request bulk or response DATA is null");
+			throw new AssertionError("Invalid bulk data");
+		}
 
-	    parent.info("🔍 Bulk validation started | Request size="
-	            + requestBulk.size() + " | Response size=" + responseData.size());
+		parent.info("🔍 Bulk validation started | Request size=" + requestBulk.size() + " | Response size="
+				+ responseData.size());
 
-	    // -------- LOOP OVER ALL IDS (DO NOT STOP) --------
-	    for (int i = 0; i < responseData.size(); i++) {
+		// -------- LOOP OVER ALL IDS (DO NOT STOP) --------
+		for (int i = 0; i < responseData.size(); i++) {
 
-	        totalIds++;
+			totalIds++;
 
-	        try {
-	            Map<String, Object> respObj = responseData.get(i);
-	            Map<String, Object> matchingReq = requestBulk.get(i);
+			try {
+				Map<String, Object> respObj = responseData.get(i);
+				Map<String, Object> matchingReq = requestBulk.get(i);
 
-	            int id = Integer.parseInt(respObj.get("id").toString());
+				int id = Integer.parseInt(respObj.get("id").toString());
 
 //	            parent.info("🔎 Validation Started (ID: " + id + ")");
 
-	            String requestJson  = mapper.writeValueAsString(matchingReq);
-	            String responseJson = mapper.writeValueAsString(respObj);
+				String requestJson = mapper.writeValueAsString(matchingReq);
+				String responseJson = mapper.writeValueAsString(respObj);
 
-	            // ✅ CALL VOID METHOD (NO BOOLEAN)
-	            ApiDataValidator.validateKeysAcrosRequestResponseEsDb(
-	                    requestJson,
-	                    responseJson,
-	                    id,
-	                    "issue-group",
-	                    "IssueGroup",
-	                    true,
-	                    new String[]{
-	                            "deleted"
-	                    },
-	                    new String[]{"id","updatedate","createdate"},
-	                    new String[]{""}
-	            );
+				// ✅ CALL VOID METHOD (NO BOOLEAN)
+				ApiDataValidator.validateKeysAcrosRequestResponseEsDb(requestJson, responseJson, id, "issue-group",
+						"IssueGroup", true, new String[] { "deleted" },
+						new String[] { "id", "updatedate", "createdate" }, new String[] { "" });
 
-	        } catch (Exception e) {
-	            failedIds++;
-	            parent.info("⚠️ Validation exception for one ID: " + e.getMessage());
-	        }
-	    }
+			} catch (Exception e) {
+				failedIds++;
+				parent.info("⚠️ Validation exception for one ID: " + e.getMessage());
+			}
+		}
 
-	    // -------- BULK SUMMARY --------
-	    String bannerColor = (failedIds == 0) ? "#1e8e3e" : "#d93025";
-	    String statusWord  = (failedIds == 0) ? "PASSED ✓" : "FAILED ✗";
+		// -------- BULK SUMMARY --------
+		String bannerColor = (failedIds == 0) ? "#1e8e3e" : "#d93025";
+		String statusWord = (failedIds == 0) ? "PASSED ✓" : "FAILED ✗";
 
-	    String summaryHtml =
-	            "<div style='padding:12px;border-left:6px solid " + bannerColor + ";'>" +
-	            "<b>Bulk Component Validation " + statusWord + "</b><br>" +
-	            "Total IDs: " + totalIds +
-	            " | Passed: " + (totalIds - failedIds) +
-	            " | Failed: " + failedIds +
-	            "</div>";
+		String summaryHtml = "<div style='padding:12px;border-left:6px solid " + bannerColor + ";'>"
+				+ "<b>Bulk Component Validation " + statusWord + "</b><br>" + "Total IDs: " + totalIds + " | Passed: "
+				+ (totalIds - failedIds) + " | Failed: " + failedIds + "</div>";
 
-	    if (failedIds > 0) {
-	        parent.fail(summaryHtml);
-	        throw new AssertionError("Bulk validation failed. See Extent report.");
-	    } else {
-	        parent.pass(summaryHtml);
-	    }
+		if (failedIds > 0) {
+			parent.fail(summaryHtml);
+			throw new AssertionError("Bulk validation failed. See Extent report.");
+		} else {
+			parent.pass(summaryHtml);
+		}
 	}
-	
+
 	@Then("The IssueGroup response status code should be {int}")
 	public void the_issuegroup_response_status_code_should_be(Integer statusCode) {
 		assertEquals(statusCode.intValue(), response.getStatusCode());
@@ -537,7 +513,7 @@ public class IssueGroup {
 		assertTrue("Response does not contain key: " + key, response.getBody().asString().contains(key));
 
 	}
-	
+
 	@Then("Validate API ES and DB for IssueGroupId after {word} skipping ES {word} excludingEverywhere {string} excludeFromRequest {string} excludeFromEs {string}")
 	public void validate_api_es_db_for_IssueGroupId_dynamic(String method, String skipEsToken,
 			String excludeEverywhereCsv, String excludeReqCsv, String excludeEsCsv) throws Exception {
@@ -584,8 +560,5 @@ public class IssueGroup {
 		}
 		return Arrays.stream(csv.split(",")).map(String::trim).filter(s -> !s.isEmpty()).toArray(String[]::new);
 	}
-
-	
-	
 
 }

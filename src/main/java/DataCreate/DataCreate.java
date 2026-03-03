@@ -147,8 +147,7 @@ public class DataCreate {
 				+ esc.apply(createUserName) + "\",\n" + "  \"fixVersions\": \""
 				+ esc.apply("v" + faker.number().numberBetween(1, 9) + ".0.0") + "\",\n" + "  \"reporterName\": \""
 				+ esc.apply(reporterName) + "\",\n" + "  \"productName\": \"" + esc.apply(productName) + "\",\n"
-				+ "  \"priorityId\": " + priorityId + ",\n" + "  \"moduleCustomLabel\": \""
-				+ esc.apply(moduleCustomLabel) + "\",\n" + "  \"sprintLabel\": \"" + esc.apply(sprintLabel) + "\",\n"
+				+ "  \"priorityId\": " + priorityId + ",\n" +  "  \"sprintLabel\": \"" + esc.apply(sprintLabel) + "\",\n"
 				+ "  \"devCompletedDate\": \"" + esc.apply(devCompletedDate) + "\",\n" + "  \"fixedAtSprintId\": "
 				+ fixedAtSprintId + ",\n" + "  \"bugTypeLabel\": \"" + esc.apply(bugTypeLabel) + "\",\n"
 				+ "  \"storyPoints\": " + storyPoints + ",\n" + "  \"priorityLabel\": \"" + esc.apply(priorityLabel)
@@ -172,7 +171,7 @@ public class DataCreate {
 				+ "  \"devAssignedDate\": \"" + esc.apply(devAssignedDate) + "\",\n" + "  \"environmentId\": "
 				+ environmentId + ",\n" + "  \"reporterDate\": \"" + esc.apply(reporterDate) + "\",\n"
 				+ "  \"isReproducedStep\": " + isReproducedStep + ",\n" + "  \"devAssignedId\": \""
-				+ esc.apply(devAssignedId) + "\",\n" + "  \"moduleCustomId\": " + moduleCustomId + ",\n"
+				+ esc.apply(devAssignedId) + "\",\n" 
 				+ "  \"devAssignedLabel\": \"" + esc.apply(devAssignedLabel) + "\",\n" + "  \"defaultAttachmentId\": "
 				+ defaultAttachmentId + ",\n" + "  \"qaAssignedLabel\": \"" + esc.apply(qaAssignedLabel) + "\",\n"
 				+ "  \"issueStatusId\": " + issueStatusId + ",\n" + "  \"boardColumnId\": " + boardColumnId + ",\n"
@@ -1785,6 +1784,6 @@ public class DataCreate {
 //		System.out.println(generateIssueCodeBulkJson());
 //		System.out.println(generateIssueComponentBulkJson());
 //		System.out.println(generateIssueFeatureCatalogBulkJson());
-		System.out.println(generateIssueLinkedJson());
+		System.out.println(generateIssueJson());
 	}
 }

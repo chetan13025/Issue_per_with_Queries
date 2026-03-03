@@ -1,4 +1,648 @@
 -------------------------------------------------------------------------------
 Test set: runners.EndtoEndRunner
 -------------------------------------------------------------------------------
-Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 43.04 s -- in runners.EndtoEndRunner
+Tests run: 344, Failures: 86, Errors: 0, Skipped: 0, Time elapsed: 1050 s <<< FAILURE! -- in runners.EndtoEndRunner
+Behavior API testing.To verify that GET with ID Fetched Correct Data (Which is  already deleted) -- Time elapsed: 0.610 s <<< FAILURE!
+java.lang.AssertionError: Unable to read value from response for key: id
+	at validators.ApiValidators.validatePathParamToResponse(ApiValidators.java:1337)
+	at Issue_persistence.Behavior.Fetch_behavior_Details_with_ID(Behavior.java:256)
+	at ✽.Fetch Behavior Details with ID(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/behavior.feature:40)
+
+Behavior API testing.To verify that after PUT request data should get update in Database (Which is already deleted) -- Time elapsed: 2.901 s <<< FAILURE!
+java.lang.AssertionError: Unable to read value from response for key: id
+	at validators.ApiValidators.validatePathParamToResponse(ApiValidators.java:1337)
+	at Issue_persistence.Behavior.Update_behavior_details(Behavior.java:275)
+	at ✽.Update Behavior Details(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/behavior.feature:45)
+
+BugType API testing.To verify that GET with ID fetched correct data (Which is already deleted) -- Time elapsed: 0.601 s <<< FAILURE!
+java.lang.AssertionError: Unable to read value from response for key: id
+	at validators.ApiValidators.validatePathParamToResponse(ApiValidators.java:1337)
+	at Issue_persistence.BugType.Fetch_bugtype_Details_with_ID(BugType.java:240)
+	at ✽.Fetch BugType Details with ID(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/bugtype.feature:40)
+
+BugType API testing.To verify that after PUT request data should get update in DataBase (Which is already deleted) -- Time elapsed: 2.876 s <<< FAILURE!
+java.lang.AssertionError: Unable to read value from response for key: id
+	at validators.ApiValidators.validatePathParamToResponse(ApiValidators.java:1337)
+	at Issue_persistence.BugType.Update_bugtype_details(BugType.java:259)
+	at ✽.Update BugType Details(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/bugtype.feature:45)
+
+Component API testing.To verify that GET with ID fetched Correct data (Which is  already deleted) -- Time elapsed: 0.635 s <<< FAILURE!
+java.lang.AssertionError: Unable to read value from response for key: id
+	at validators.ApiValidators.validatePathParamToResponse(ApiValidators.java:1337)
+	at Issue_persistence.Component.Fetch_component_Details_with_ID(Component.java:240)
+	at ✽.Fetch Component Details with ID(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/component.feature:40)
+
+Component API testing.To verify that after PUT request  data should get update in DataBase (Which is  already deleted) -- Time elapsed: 2.968 s <<< FAILURE!
+java.lang.AssertionError: Unable to read value from response for key: id
+	at validators.ApiValidators.validatePathParamToResponse(ApiValidators.java:1337)
+	at Issue_persistence.Component.Update_component_details(Component.java:259)
+	at ✽.Update Component Details(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/component.feature:45)
+
+ComponentimpactArea API testing.To verify that Get with ID Fetched Correct data (Which is  already deleted) -- Time elapsed: 0.637 s <<< FAILURE!
+java.lang.AssertionError: Unable to read value from response for key: id
+	at validators.ApiValidators.validatePathParamToResponse(ApiValidators.java:1337)
+	at Issue_persistence.ComponentsImpactArea.Fetch_componentimpactarea_Details_with_ID(ComponentsImpactArea.java:235)
+	at ✽.Fetch ComponentImpactArea Details with ID(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/componentimpactarea.feature:40)
+
+ComponentimpactArea API testing.To verify that after PUT request data should get update in DataBase (Which is  already deleted) -- Time elapsed: 2.925 s <<< FAILURE!
+java.lang.AssertionError: Unable to read value from response for key: id
+	at validators.ApiValidators.validatePathParamToResponse(ApiValidators.java:1337)
+	at Issue_persistence.ComponentsImpactArea.Update_componentimpactarea_details(ComponentsImpactArea.java:254)
+	at ✽.Update ComponentImpactArea Details(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/componentimpactarea.feature:45)
+
+DependencyType API testing.To verify that GET with ID request fetched Correct data (Which is  already deleted) -- Time elapsed: 0.608 s <<< FAILURE!
+java.lang.AssertionError: Unable to read value from response for key: id
+	at validators.ApiValidators.validatePathParamToResponse(ApiValidators.java:1337)
+	at Issue_persistence.DependencyType.Fetch_dependencytype_Details_with_ID(DependencyType.java:236)
+	at ✽.Fetch DependencyType Details with ID(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/dependencytype.feature:40)
+
+DependencyType API testing.To verify that after PUT request data should get update in DataBase (Which is  already deleted) -- Time elapsed: 2.935 s <<< FAILURE!
+java.lang.AssertionError: Unable to read value from response for key: id
+	at validators.ApiValidators.validatePathParamToResponse(ApiValidators.java:1337)
+	at Issue_persistence.DependencyType.Update_dependencytype_details(DependencyType.java:255)
+	at ✽.Update DependencyType Details(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/dependencytype.feature:45)
+
+Environment API testing.To verify that GET with ID request fetched Correct data (Which is  already deleted) -- Time elapsed: 0.648 s <<< FAILURE!
+java.lang.AssertionError: Unable to read value from response for key: id
+	at validators.ApiValidators.validatePathParamToResponse(ApiValidators.java:1337)
+	at Issue_persistence.Environment.Fetch_environment_Details_with_ID(Environment.java:236)
+	at ✽.Fetch Environment Details with ID(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/environment.feature:40)
+
+Environment API testing.To verify that after PUT request data should get update in DataBase (Which is  already deleted) -- Time elapsed: 2.954 s <<< FAILURE!
+java.lang.AssertionError: Unable to read value from response for key: id
+	at validators.ApiValidators.validatePathParamToResponse(ApiValidators.java:1337)
+	at Issue_persistence.Environment.Update_environment_details(Environment.java:255)
+	at ✽.Update Environment Details(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/environment.feature:45)
+
+ImpactArea API testing.To verify that GET with ID fetched Correct data (Which is  already deleted) -- Time elapsed: 0.612 s <<< FAILURE!
+java.lang.AssertionError: Unable to read value from response for key: id
+	at validators.ApiValidators.validatePathParamToResponse(ApiValidators.java:1337)
+	at Issue_persistence.ImpactArea.Fetch_impactarea_Details_with_ID(ImpactArea.java:237)
+	at ✽.Fetch ImpactArea Details with ID(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/impactarea.feature:40)
+
+ImpactArea API testing.To verify that after PUT request data should get update in Database (Which is  already deleted) -- Time elapsed: 2.863 s <<< FAILURE!
+java.lang.AssertionError: Unable to read value from response for key: id
+	at validators.ApiValidators.validatePathParamToResponse(ApiValidators.java:1337)
+	at Issue_persistence.ImpactArea.Update_impactarea_details(ImpactArea.java:256)
+	at ✽.Update ImpactArea Details(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/impactarea.feature:45)
+
+Issue API testing.To verify that GET with ID fetched Correct data (Which is  already deleted) -- Time elapsed: 0.595 s <<< FAILURE!
+java.lang.AssertionError: expected:<200> but was:<404>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:647)
+	at org.junit.Assert.assertEquals(Assert.java:633)
+	at Issue_persistence.Issue.the_issue_response_status_code_should_be(Issue.java:530)
+	at ✽.The Issue response status code should be 200(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issue.feature:41)
+
+Issue API testing.To verify that after PUT request data should get update in Database (Which is  already deleted) -- Time elapsed: 2.884 s <<< FAILURE!
+java.lang.AssertionError: expected:<200> but was:<404>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:647)
+	at org.junit.Assert.assertEquals(Assert.java:633)
+	at Issue_persistence.Issue.the_issue_response_status_code_should_be(Issue.java:530)
+	at ✽.The Issue response status code should be 200(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issue.feature:46)
+
+IssueCode API testing.To verify that GET with ID fetched Correct data (Which is  already deleted) -- Time elapsed: 0.596 s <<< FAILURE!
+java.lang.AssertionError: expected:<200> but was:<404>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:647)
+	at org.junit.Assert.assertEquals(Assert.java:633)
+	at Issue_persistence.IssueCode.the_issuecode_response_status_code_should_be(IssueCode.java:532)
+	at ✽.The IssueCode response status code should be 200(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issuecode.feature:41)
+
+IssueCode API testing.To verify that after PUT request data should get update in Database (Which is  already deleted) -- Time elapsed: 2.889 s <<< FAILURE!
+java.lang.AssertionError: expected:<200> but was:<404>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:647)
+	at org.junit.Assert.assertEquals(Assert.java:633)
+	at Issue_persistence.IssueCode.the_issuecode_response_status_code_should_be(IssueCode.java:532)
+	at ✽.The IssueCode response status code should be 200(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issuecode.feature:46)
+
+IssueCollaborator API testing.To verify that GET with ID fetched Correct data (Which is  already deleted) -- Time elapsed: 0.630 s <<< FAILURE!
+java.lang.AssertionError: expected:<200> but was:<404>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:647)
+	at org.junit.Assert.assertEquals(Assert.java:633)
+	at Issue_persistence.IssueCollaborator.the_issuecollaborator_response_status_code_should_be(IssueCollaborator.java:530)
+	at ✽.The IssueCollaborator response status code should be 200(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issuecollaborator.feature:41)
+
+IssueCollaborator API testing.To verify that after PUT request data should get update in Database (Which is  already deleted) -- Time elapsed: 3.523 s <<< FAILURE!
+java.lang.AssertionError: expected:<200> but was:<404>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:647)
+	at org.junit.Assert.assertEquals(Assert.java:633)
+	at Issue_persistence.IssueCollaborator.the_issuecollaborator_response_status_code_should_be(IssueCollaborator.java:530)
+	at ✽.The IssueCollaborator response status code should be 200(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issuecollaborator.feature:46)
+
+IssueComments API testing.To verify that GET with ID fetched Correct data (Which is  already deleted) -- Time elapsed: 0.604 s <<< FAILURE!
+java.lang.AssertionError: expected:<200> but was:<404>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:647)
+	at org.junit.Assert.assertEquals(Assert.java:633)
+	at Issue_persistence.IssueComments.the_issuecomment_response_status_code_should_be(IssueComments.java:523)
+	at ✽.The IssueComment response status code should be 200(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issuecomment.feature:41)
+
+IssueComments API testing.To verify that after PUT request data should get update in Database (Which is  already deleted) -- Time elapsed: 13.90 s <<< FAILURE!
+java.lang.AssertionError: ❌ Key validation failed. Check Extent report.
+	at validators.ApiDataValidator.validateKeysAcrosRequestResponseEsDb(ApiDataValidator.java:3536)
+	at validators.ApiDataValidator.validateKeysAcrosRequestResponseEsDb(ApiDataValidator.java:3340)
+	at Issue_persistence.IssueComments.validate_api_es_db_for_IssueCommentsId_dynamic(IssueComments.java:562)
+	at ✽.Validate API ES and DB for IssueCommentsId after PUT skipping ES false excludingEverywhere "null" excludeFromRequest "id,deleted,createdate" excludeFromEs "deleted"(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issuecomment.feature:46)
+
+IssueComponent API testing.To verify that GET with ID fetched Corect data (Which is  already deleted) -- Time elapsed: 0.602 s <<< FAILURE!
+java.lang.AssertionError: expected:<200> but was:<404>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:647)
+	at org.junit.Assert.assertEquals(Assert.java:633)
+	at Issue_persistence.IssueComponent.the_issuecomponent_response_status_code_should_be(IssueComponent.java:528)
+	at ✽.The IssueComponent response status code should be 200(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issuecomponent.feature:41)
+
+IssueComponent API testing.To verify that after PUT request data should get update in DataBase (Which is  already deleted) -- Time elapsed: 2.967 s <<< FAILURE!
+java.lang.AssertionError: expected:<200> but was:<404>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:647)
+	at org.junit.Assert.assertEquals(Assert.java:633)
+	at Issue_persistence.IssueComponent.the_issuecomponent_response_status_code_should_be(IssueComponent.java:528)
+	at ✽.The IssueComponent response status code should be 200(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issuecomponent.feature:46)
+
+IssueFeatureCatalog API testing.To verify that GET with ID fetched Correct data (Which is  already deleted) -- Time elapsed: 0.605 s <<< FAILURE!
+java.lang.AssertionError: expected:<200> but was:<404>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:647)
+	at org.junit.Assert.assertEquals(Assert.java:633)
+	at Issue_persistence.IssueFeatureCatalog.the_issuefeaturecatalog_response_status_code_should_be(IssueFeatureCatalog.java:531)
+	at ✽.The IssueFeatureCatalog response status code should be 200(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issuefeaturecatalog.feature:41)
+
+IssueFeatureCatalog API testing.To verify that after PUT request data should get update in Database (Which is  already deleted) -- Time elapsed: 2.924 s <<< FAILURE!
+java.lang.AssertionError: expected:<200> but was:<404>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:647)
+	at org.junit.Assert.assertEquals(Assert.java:633)
+	at Issue_persistence.IssueFeatureCatalog.the_issuefeaturecatalog_response_status_code_should_be(IssueFeatureCatalog.java:531)
+	at ✽.The IssueFeatureCatalog response status code should be 200(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issuefeaturecatalog.feature:46)
+
+IssueFeatureGroup API testing.To verify that GET with ID fetched Correct data (Which is  already deleted) -- Time elapsed: 0.598 s <<< FAILURE!
+java.lang.AssertionError: expected:<200> but was:<404>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:647)
+	at org.junit.Assert.assertEquals(Assert.java:633)
+	at Issue_persistence.IssueFeatureGroup.the_issuefeaturegroup_response_status_code_should_be(IssueFeatureGroup.java:535)
+	at ✽.The IssueFeatureGroup response status code should be 200(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issuefeaturegroup.feature:41)
+
+IssueFeatureGroup API testing.To verify that after PUT request data should get update in Database (Which is  already deleted) -- Time elapsed: 2.877 s <<< FAILURE!
+java.lang.AssertionError: expected:<200> but was:<404>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:647)
+	at org.junit.Assert.assertEquals(Assert.java:633)
+	at Issue_persistence.IssueFeatureGroup.the_issuefeaturegroup_response_status_code_should_be(IssueFeatureGroup.java:535)
+	at ✽.The IssueFeatureGroup response status code should be 200(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issuefeaturegroup.feature:46)
+
+IssueFeatureStatistics API testing.To verify that GET with ID fetched Correct data (Which is  already deleted) -- Time elapsed: 1.139 s <<< FAILURE!
+java.lang.AssertionError: expected:<200> but was:<404>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:647)
+	at org.junit.Assert.assertEquals(Assert.java:633)
+	at Issue_persistence.IssueFeatureStatistics.the_issuefeaturestatistics_response_status_code_should_be(IssueFeatureStatistics.java:534)
+	at ✽.The IssueFeatureStatistics response status code should be 200(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issuefeaturestatistics.feature:41)
+
+IssueFeatureStatistics API testing.To verify that after PUT request data should get update in Database (Which is  already deleted) -- Time elapsed: 2.892 s <<< FAILURE!
+java.lang.AssertionError: expected:<200> but was:<404>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:647)
+	at org.junit.Assert.assertEquals(Assert.java:633)
+	at Issue_persistence.IssueFeatureStatistics.the_issuefeaturestatistics_response_status_code_should_be(IssueFeatureStatistics.java:534)
+	at ✽.The IssueFeatureStatistics response status code should be 200(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issuefeaturestatistics.feature:46)
+
+IssueGroup API testing.To verify that GET with ID fetched Correct data #2 -- Time elapsed: 0.600 s <<< FAILURE!
+java.lang.AssertionError: expected:<200> but was:<404>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:647)
+	at org.junit.Assert.assertEquals(Assert.java:633)
+	at Issue_persistence.IssueGroup.the_issuegroup_response_status_code_should_be(IssueGroup.java:507)
+	at ✽.The IssueGroup response status code should be 200(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issuegroup.feature:41)
+
+IssueGroup API testing.To verify that after PUT request data should get update in Database #2 -- Time elapsed: 3.091 s <<< FAILURE!
+java.lang.AssertionError: expected:<200> but was:<404>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:647)
+	at org.junit.Assert.assertEquals(Assert.java:633)
+	at Issue_persistence.IssueGroup.the_issuegroup_response_status_code_should_be(IssueGroup.java:507)
+	at ✽.The IssueGroup response status code should be 200(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issuegroup.feature:46)
+
+IssueImpactArea API testing.To verify that GET with ID fetched Correct data (Which is  already deleted) -- Time elapsed: 0.591 s <<< FAILURE!
+java.lang.AssertionError: expected:<200> but was:<404>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:647)
+	at org.junit.Assert.assertEquals(Assert.java:633)
+	at Issue_persistence.IssueImpactArea.the_issueimpactarea_response_status_code_should_be(IssueImpactArea.java:543)
+	at ✽.The IssueImpactArea response status code should be 200(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issueimpactarea.feature:41)
+
+IssueImpactArea API testing.To verify that after PUT request data should get update in Database (Which is  already deleted) -- Time elapsed: 3.004 s <<< FAILURE!
+java.lang.AssertionError: expected:<200> but was:<404>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:647)
+	at org.junit.Assert.assertEquals(Assert.java:633)
+	at Issue_persistence.IssueImpactArea.the_issueimpactarea_response_status_code_should_be(IssueImpactArea.java:543)
+	at ✽.The IssueImpactArea response status code should be 200(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issueimpactarea.feature:46)
+
+IssueLinked API testing.To verify that GET with ID fetched Correct data (Which is  already deleted) -- Time elapsed: 0.680 s <<< FAILURE!
+java.lang.AssertionError: expected:<200> but was:<404>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:647)
+	at org.junit.Assert.assertEquals(Assert.java:633)
+	at Issue_persistence.IssueLinked.the_issueimpactarea_response_status_code_should_be(IssueLinked.java:562)
+	at ✽.The IssueLinked response status code should be 200(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issuelinked.feature:41)
+
+IssueLinked API testing.To verify that after PUT request data should get update in Database (Which is  already deleted) -- Time elapsed: 3.003 s <<< FAILURE!
+java.lang.AssertionError: expected:<200> but was:<404>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:647)
+	at org.junit.Assert.assertEquals(Assert.java:633)
+	at Issue_persistence.IssueLinked.the_issueimpactarea_response_status_code_should_be(IssueLinked.java:562)
+	at ✽.The IssueLinked response status code should be 200(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issuelinked.feature:46)
+
+IssueLog API testing.To verify that GET with ID fetched Correct data (Which is  already deleted) -- Time elapsed: 0.591 s <<< FAILURE!
+java.lang.AssertionError: expected:<200> but was:<404>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:647)
+	at org.junit.Assert.assertEquals(Assert.java:633)
+	at Issue_persistence.IssueLog.the_issuelog_response_status_code_should_be(IssueLog.java:512)
+	at ✽.The IssueLog response status code should be 200(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issuelog.feature:41)
+
+IssueLog API testing.To verify that after PUT request data should get update in Database (Which is  already deleted) -- Time elapsed: 2.889 s <<< FAILURE!
+java.lang.AssertionError: expected:<200> but was:<404>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:647)
+	at org.junit.Assert.assertEquals(Assert.java:633)
+	at Issue_persistence.IssueLog.the_issuelog_response_status_code_should_be(IssueLog.java:512)
+	at ✽.The IssueLog response status code should be 200(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issuelog.feature:46)
+
+IssueMilestone API testing.To verify that GET with ID fetched Correct data (Which is  already deleted) -- Time elapsed: 0.599 s <<< FAILURE!
+java.lang.AssertionError: expected:<200> but was:<404>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:647)
+	at org.junit.Assert.assertEquals(Assert.java:633)
+	at Issue_persistence.IssueMilestone.the_issueMilestone_response_status_code_should_be(IssueMilestone.java:531)
+	at ✽.The IssueMilestone response status code should be 200(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issuemilestone.feature:41)
+
+IssueMilestone API testing.To verify that after PUT request data should get update in Database (Which is  already deleted) -- Time elapsed: 2.923 s <<< FAILURE!
+java.lang.AssertionError: expected:<200> but was:<404>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:647)
+	at org.junit.Assert.assertEquals(Assert.java:633)
+	at Issue_persistence.IssueMilestone.the_issueMilestone_response_status_code_should_be(IssueMilestone.java:531)
+	at ✽.The IssueMilestone response status code should be 200(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issuemilestone.feature:46)
+
+IssueRootCause API testing.To verify that GET with ID fetched Correct data (Which is  already deleted) -- Time elapsed: 0.596 s <<< FAILURE!
+java.lang.AssertionError: expected:<200> but was:<404>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:647)
+	at org.junit.Assert.assertEquals(Assert.java:633)
+	at Issue_persistence.IssueRootCause.the_issuerootcause_response_status_code_should_be(IssueRootCause.java:532)
+	at ✽.The IssueRootCause response status code should be 200(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issuerootcause.feature:41)
+
+IssueRootCause API testing.To verify that after PUT request data should get update in Database (Which is  already deleted) -- Time elapsed: 2.893 s <<< FAILURE!
+java.lang.AssertionError: Unable to read value from response for key: id
+	at validators.ApiValidators.validatePathParamToResponse(ApiValidators.java:1337)
+	at Issue_persistence.IssueRootCause.Update_issuerootcause_details(IssueRootCause.java:253)
+	at ✽.Update IssueRootCause Details(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issuerootcause.feature:45)
+
+IssueSprint API testing.To verify that GET with ID Fetched Correct Data (Which is  already deleted) -- Time elapsed: 0.645 s <<< FAILURE!
+java.lang.AssertionError: expected:<200> but was:<404>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:647)
+	at org.junit.Assert.assertEquals(Assert.java:633)
+	at Issue_persistence.IssueSprint.the_issuesprint_response_status_code_should_be(IssueSprint.java:532)
+	at ✽.The IssueSprint response status code should be 200(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issuesprint.feature:41)
+
+IssueSprint API testing.To verify that in PUT data is updating in DataBase (Which is  already deleted) -- Time elapsed: 2.987 s <<< FAILURE!
+java.lang.AssertionError: Unable to read value from response for key: id
+	at validators.ApiValidators.validatePathParamToResponse(ApiValidators.java:1337)
+	at Issue_persistence.IssueSprint.Update_issuesprint_details(IssueSprint.java:254)
+	at ✽.Update IssueSprint Details(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issuesprint.feature:45)
+
+IssueStatus API testing.To verify that GET with ID fetched correct Data (Which is  already deleted) -- Time elapsed: 0.602 s <<< FAILURE!
+java.lang.AssertionError: expected:<200> but was:<404>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:647)
+	at org.junit.Assert.assertEquals(Assert.java:633)
+	at Issue_persistence.IssueStatus.the_issuestatus_response_status_code_should_be(IssueStatus.java:535)
+	at ✽.The IssueStatus response status code should be 200(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issuestatus.feature:40)
+
+IssueStatus API testing.To verify that in PUT request data should get update in DataBase (Which is  already deleted) -- Time elapsed: 2.935 s <<< FAILURE!
+java.lang.AssertionError: Unable to read value from response for key: id
+	at validators.ApiValidators.validatePathParamToResponse(ApiValidators.java:1337)
+	at Issue_persistence.IssueStatus.Update_issuestatus_details(IssueStatus.java:256)
+	at ✽.Update IssueStatus Details(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issuestatus.feature:44)
+
+IssueStatusGraph API testing.To verify that GET with ID fetched Correct data (Which is  already deleted) -- Time elapsed: 0.594 s <<< FAILURE!
+java.lang.AssertionError: expected:<200> but was:<404>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:647)
+	at org.junit.Assert.assertEquals(Assert.java:633)
+	at Issue_persistence.IssueSatusGraph.the_issuestatusgraph_response_status_code_should_be(IssueSatusGraph.java:533)
+	at ✽.The IssueStatusGraph response status code should be 200(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issuestatusgraph.feature:41)
+
+IssueStatusGraph API testing.To verify that in PUT data should get Update in DateBase (Which is  already deleted) -- Time elapsed: 3.055 s <<< FAILURE!
+java.lang.AssertionError: Unable to read value from response for key: id
+	at validators.ApiValidators.validatePathParamToResponse(ApiValidators.java:1337)
+	at Issue_persistence.IssueSatusGraph.Update_issuestatusgarph_details(IssueSatusGraph.java:254)
+	at ✽.Update IssueStatusGraph Details(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issuestatusgraph.feature:45)
+
+IssueStep API testing.To verify that GET with ID fetched correct data (Which is already deleted) -- Time elapsed: 0.600 s <<< FAILURE!
+java.lang.AssertionError: expected:<200> but was:<404>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:647)
+	at org.junit.Assert.assertEquals(Assert.java:633)
+	at Issue_persistence.IssueStep.the_issuestep_response_status_code_should_be(IssueStep.java:533)
+	at ✽.The IssueStep response status code should be 200(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issuestep.feature:41)
+
+IssueStep API testing.To verify that in PUT request Data is get update in DataBase (Which is already deleted) -- Time elapsed: 3.014 s <<< FAILURE!
+java.lang.AssertionError: Unable to read value from response for key: id
+	at validators.ApiValidators.validatePathParamToResponse(ApiValidators.java:1337)
+	at Issue_persistence.IssueStep.Update_issuestep_details(IssueStep.java:254)
+	at ✽.Update IssueStep Details(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issuestep.feature:45)
+
+IssueTestCase API testing.To verify that GET with ID fetched correct data (Which is  already deleted) -- Time elapsed: 0.617 s <<< FAILURE!
+java.lang.AssertionError: expected:<200> but was:<404>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:647)
+	at org.junit.Assert.assertEquals(Assert.java:633)
+	at Issue_persistence.IssueTestCase.the_issuetestcase_response_status_code_should_be(IssueTestCase.java:532)
+	at ✽.The IssueTestCase response status code should be 200(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issuetestcase.feature:41)
+
+IssueTestCase API testing.To verify that in PUT request Data is geting update in DataBase (Which is  already deleted) -- Time elapsed: 3.021 s <<< FAILURE!
+java.lang.AssertionError: Unable to read value from response for key: id
+	at validators.ApiValidators.validatePathParamToResponse(ApiValidators.java:1337)
+	at Issue_persistence.IssueTestCase.Update_issuetestcase_details(IssueTestCase.java:254)
+	at ✽.Update IssueTestCase Details(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issuetestcase.feature:45)
+
+IssueType API testing.To verify that GET with ID fetched correct Data (Which is  already deleted) -- Time elapsed: 0.626 s <<< FAILURE!
+java.lang.AssertionError: expected:<200> but was:<404>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:647)
+	at org.junit.Assert.assertEquals(Assert.java:633)
+	at Issue_persistence.IssueType.the_issuetype_response_status_code_should_be(IssueType.java:492)
+	at ✽.The IssueType response status code should be 200(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issuetype.feature:41)
+
+IssueType API testing.To verify that in PUT request data isgetting update in DataBase (Which is  already deleted) -- Time elapsed: 2.886 s <<< FAILURE!
+java.lang.AssertionError: Unable to read value from response for key: id
+	at validators.ApiValidators.validatePathParamToResponse(ApiValidators.java:1337)
+	at Issue_persistence.IssueType.Update_issuetype_details(IssueType.java:255)
+	at ✽.Update IssueType Details(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issuetype.feature:45)
+
+IssueVersion API testing.To Verify that GET with ID Fetched Correct Data (Which is already deleted) -- Time elapsed: 0.594 s <<< FAILURE!
+java.lang.AssertionError: expected:<200> but was:<404>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:647)
+	at org.junit.Assert.assertEquals(Assert.java:633)
+	at Issue_persistence.IssueVersion.the_issueversion_response_status_code_should_be(IssueVersion.java:490)
+	at ✽.The IssueVersion response status code should be 200(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issueversion.feature:41)
+
+IssueVersion API testing.To Verify that after PUT request Data should get update in DataBase (Which is already deleted) -- Time elapsed: 2.959 s <<< FAILURE!
+java.lang.AssertionError: Unable to read value from response for key: id
+	at validators.ApiValidators.validatePathParamToResponse(ApiValidators.java:1337)
+	at Issue_persistence.IssueVersion.Update_issueversion_details(IssueVersion.java:254)
+	at ✽.Update IssueVersion Details(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issueversion.feature:45)
+
+IssueVote API testing.To verify that GET with ID Fetched Correct Data (Which is already deleted) -- Time elapsed: 0.603 s <<< FAILURE!
+java.lang.AssertionError: expected:<200> but was:<404>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:647)
+	at org.junit.Assert.assertEquals(Assert.java:633)
+	at Issue_persistence.IssueVote.the_issuevote_response_status_code_should_be(IssueVote.java:491)
+	at ✽.The IssueVote response status code should be 200(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issuevote.feature:41)
+
+IssueVote API testing.To verify that after PUT request Data should get update in Data Base (Which is already deleted) -- Time elapsed: 2.947 s <<< FAILURE!
+java.lang.AssertionError: Unable to read value from response for key: id
+	at validators.ApiValidators.validatePathParamToResponse(ApiValidators.java:1337)
+	at Issue_persistence.IssueVote.Update_issuevote_details(IssueVote.java:255)
+	at ✽.Update IssueVote Details(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/issuevote.feature:45)
+
+LucyEvent API testing.To verify that GET with ID Fetched Correct data (Which is already deleted) -- Time elapsed: 0.595 s <<< FAILURE!
+java.lang.AssertionError: expected:<200> but was:<404>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:647)
+	at org.junit.Assert.assertEquals(Assert.java:633)
+	at Issue_persistence.LucyEvent.the_lucyevent_response_status_code_should_be(LucyEvent.java:490)
+	at ✽.The LucyEvent response status code should be 200(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/lucyevent.feature:41)
+
+LucyEvent API testing.TO verify that after PUT request Data should get update in DataBase (Which is already deleted) -- Time elapsed: 3.494 s <<< FAILURE!
+java.lang.AssertionError: Unable to read value from response for key: id
+	at validators.ApiValidators.validatePathParamToResponse(ApiValidators.java:1337)
+	at Issue_persistence.LucyEvent.Update_lucyevent_details(LucyEvent.java:254)
+	at ✽.Update LucyEvent Details(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/lucyevent.feature:45)
+
+Module API testing.To verify that GET with ID Fetched Correct data (Which is already deleted) -- Time elapsed: 0.644 s <<< FAILURE!
+java.lang.AssertionError: expected:<200> but was:<404>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:647)
+	at org.junit.Assert.assertEquals(Assert.java:633)
+	at Issue_persistence.Module.the_module_response_status_code_should_be(Module.java:489)
+	at ✽.The Module response status code should be 200(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/module.feature:41)
+
+Module API testing.To verify that after PUT request data should get update in DataBase (Which is already deleted) -- Time elapsed: 2.927 s <<< FAILURE!
+java.lang.AssertionError: Unable to read value from response for key: id
+	at validators.ApiValidators.validatePathParamToResponse(ApiValidators.java:1337)
+	at Issue_persistence.Module.Update_module_details(Module.java:254)
+	at ✽.Update Module Details(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/module.feature:45)
+
+Nature API testing.To verify that GET with ID Fetched Correct data (Which is already deleted) -- Time elapsed: 0.604 s <<< FAILURE!
+java.lang.AssertionError: expected:<200> but was:<404>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:647)
+	at org.junit.Assert.assertEquals(Assert.java:633)
+	at Issue_persistence.Nature.the_nature_response_status_code_should_be(Nature.java:491)
+	at ✽.The Nature response status code should be 200(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/nature.feature:41)
+
+Nature API testing.To verify that after PUT request data should get update in DataBase (Which is already deleted) -- Time elapsed: 2.894 s <<< FAILURE!
+java.lang.AssertionError: Unable to read value from response for key: id
+	at validators.ApiValidators.validatePathParamToResponse(ApiValidators.java:1337)
+	at Issue_persistence.Nature.Update_nature_details(Nature.java:254)
+	at ✽.Update Nature Details(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/nature.feature:45)
+
+Occurrence API testing.To verify that GET with ID Fetched Correct data (Which is already deleted) -- Time elapsed: 0.606 s <<< FAILURE!
+java.lang.AssertionError: Unable to read value from response for key: id
+	at validators.ApiValidators.validatePathParamToResponse(ApiValidators.java:1337)
+	at Issue_persistence.Occurrence.Fetch_occurrence_Details_with_ID(Occurrence.java:236)
+	at ✽.Fetch Occurrence Details with ID(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/occurrence.feature:40)
+
+Occurrence API testing.To verify that after PUT request data should get update in DataBase (Which is already deleted) -- Time elapsed: 2.975 s <<< FAILURE!
+java.lang.AssertionError: Unable to read value from response for key: id
+	at validators.ApiValidators.validatePathParamToResponse(ApiValidators.java:1337)
+	at Issue_persistence.Occurrence.Update_occurrence_details(Occurrence.java:255)
+	at ✽.Update Occurrence Details(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/occurrence.feature:45)
+
+Priority API testing.To verify that GET with ID fetched Correct data (Which is already deleted) -- Time elapsed: 0.619 s <<< FAILURE!
+java.lang.AssertionError: Unable to read value from response for key: id
+	at validators.ApiValidators.validatePathParamToResponse(ApiValidators.java:1337)
+	at Issue_persistence.Priority.Fetch_priority_Details_with_ID(Priority.java:236)
+	at ✽.Fetch Priority Details with ID(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/priority.feature:40)
+
+Priority API testing.To verify that after PUT data should get update in DataBase (Which is already deleted) -- Time elapsed: 2.901 s <<< FAILURE!
+java.lang.AssertionError: Unable to read value from response for key: id
+	at validators.ApiValidators.validatePathParamToResponse(ApiValidators.java:1337)
+	at Issue_persistence.Priority.Update_priority_details(Priority.java:255)
+	at ✽.Update Priority Details(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/priority.feature:45)
+
+Resolution API testing.To verify that GET with ID fetched Correct data (Which is already deleted) -- Time elapsed: 0.607 s <<< FAILURE!
+java.lang.AssertionError: Unable to read value from response for key: id
+	at validators.ApiValidators.validatePathParamToResponse(ApiValidators.java:1337)
+	at Issue_persistence.Resolution.Fetch_resolution_Details_with_ID(Resolution.java:236)
+	at ✽.Fetch Resolution Details with ID(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/resolution.feature:40)
+
+Resolution API testing.To verify that after PUT request data should get update in DataBase (Which is already deleted) -- Time elapsed: 2.894 s <<< FAILURE!
+java.lang.AssertionError: Unable to read value from response for key: id
+	at validators.ApiValidators.validatePathParamToResponse(ApiValidators.java:1337)
+	at Issue_persistence.Resolution.Update_resolution_details(Resolution.java:255)
+	at ✽.Update Resolution Details(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/resolution.feature:45)
+
+RootCause API testing.To verify that GET with ID Fetched Correct data (Which is already deleted) -- Time elapsed: 0.587 s <<< FAILURE!
+java.lang.AssertionError: Unable to read value from response for key: id
+	at validators.ApiValidators.validatePathParamToResponse(ApiValidators.java:1337)
+	at Issue_persistence.RootCause.Fetch_rootcause_Details_with_ID(RootCause.java:237)
+	at ✽.Fetch RootCause Details with ID(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/rootcause.feature:40)
+
+RootCause API testing.To verify that after PUT request data should get update in DataBase (Which is already deleted) -- Time elapsed: 2.905 s <<< FAILURE!
+java.lang.AssertionError: Unable to read value from response for key: id
+	at validators.ApiValidators.validatePathParamToResponse(ApiValidators.java:1337)
+	at Issue_persistence.RootCause.Update_rootcause_details(RootCause.java:256)
+	at ✽.Update RootCause Details(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/rootcause.feature:45)
+
+SprintProposal API testing.To verify that GET with ID Fetched Correct data (Which is already deleted) -- Time elapsed: 0.669 s <<< FAILURE!
+java.lang.AssertionError: Unable to read value from response for key: id
+	at validators.ApiValidators.validatePathParamToResponse(ApiValidators.java:1337)
+	at Issue_persistence.SprintProposal.Fetch_sprintproposal_Details_with_ID(SprintProposal.java:237)
+	at ✽.Fetch SprintProposal Details with ID(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/sprintproposal.feature:40)
+
+SprintProposal API testing.To verify that after PUT request data should get update in DataBase (Which is already deleted) -- Time elapsed: 2.888 s <<< FAILURE!
+java.lang.AssertionError: Unable to read value from response for key: id
+	at validators.ApiValidators.validatePathParamToResponse(ApiValidators.java:1337)
+	at Issue_persistence.SprintProposal.Update_sprintproposal_details(SprintProposal.java:256)
+	at ✽.Update SprintProposal Details(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/sprintproposal.feature:45)
+
+TestCase API testing.To verify GET with ID fetched Correct Data (Which is already deleted) -- Time elapsed: 0.600 s <<< FAILURE!
+java.lang.AssertionError: Unable to read value from response for key: id
+	at validators.ApiValidators.validatePathParamToResponse(ApiValidators.java:1337)
+	at Issue_persistence.TestCase.Fetch_testcase_Details_with_ID(TestCase.java:236)
+	at ✽.Fetch TestCase Details with ID(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/testcase.feature:41)
+
+TestCase API testing.To verify that after PUT request data should get update in Database (Which is already deleted) -- Time elapsed: 2.951 s <<< FAILURE!
+java.lang.AssertionError: Unable to read value from response for key: id
+	at validators.ApiValidators.validatePathParamToResponse(ApiValidators.java:1337)
+	at Issue_persistence.TestCase.Update_testcase_details(TestCase.java:255)
+	at ✽.Update TestCase Details(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/testcase.feature:47)
+
+UnitTestResult API testing.To verify that GET with ID fetch Correct data (Which is already deleted) -- Time elapsed: 0.598 s <<< FAILURE!
+java.lang.AssertionError: Unable to read value from response for key: id
+	at validators.ApiValidators.validatePathParamToResponse(ApiValidators.java:1337)
+	at Issue_persistence.UnitTestResult.Fetch_unittestresult_Details_with_ID(UnitTestResult.java:236)
+	at ✽.Fetch UnitTestResult Details with ID(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/unittestresult.feature:40)
+
+UnitTestResult API testing.To verify that after PUT request data should get update in DataBase (Which is already deleted) -- Time elapsed: 2.898 s <<< FAILURE!
+java.lang.AssertionError: Unable to read value from response for key: id
+	at validators.ApiValidators.validatePathParamToResponse(ApiValidators.java:1337)
+	at Issue_persistence.UnitTestResult.Update_unittestresult_details(UnitTestResult.java:255)
+	at ✽.Update UnitTestResult Details(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/unittestresult.feature:45)
+
+UserProject API testing.To verify that GET with ID fetched correct data (Which is already deleted) -- Time elapsed: 0.692 s <<< FAILURE!
+java.lang.AssertionError: expected:<200> but was:<404>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:647)
+	at org.junit.Assert.assertEquals(Assert.java:633)
+	at Issue_persistence.UserProject.the_user_response_status_code_should_be(UserProject.java:489)
+	at ✽.The UserProject response status code should be 200(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/userproject.feature:41)
+
+UserProject API testing.To verify that after PUT request data should get update in DataBase (Which is already deleted) -- Time elapsed: 9.493 s <<< FAILURE!
+java.lang.AssertionError: ❌ Key validation failed. Check Extent report.
+	at validators.ApiDataValidator.validateKeysAcrosRequestResponseEsDb(ApiDataValidator.java:3536)
+	at validators.ApiDataValidator.validateKeysAcrosRequestResponseEsDb(ApiDataValidator.java:3340)
+	at Issue_persistence.UserProject.validate_api_es_db_for_UserProjectId_dynamic(UserProject.java:529)
+	at ✽.Validate API ES and DB for UserProjectId after PUT skipping ES true excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/userproject.feature:46)
+
+User API testing.To verify that GET with ID fetched correct data (Which is already deleted) -- Time elapsed: 0.607 s <<< FAILURE!
+java.lang.AssertionError: expected:<200> but was:<404>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:647)
+	at org.junit.Assert.assertEquals(Assert.java:633)
+	at Issue_persistence.Users.the_user_response_status_code_should_be(Users.java:493)
+	at ✽.The User response status code should be 200(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/users.feature:41)
+
+User API testing.To verify that after PUT request data should get update in DataBase (Which is already deleted) -- Time elapsed: 2.886 s <<< FAILURE!
+java.lang.AssertionError: expected:<200> but was:<404>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:647)
+	at org.junit.Assert.assertEquals(Assert.java:633)
+	at Issue_persistence.Users.the_user_response_status_code_should_be(Users.java:493)
+	at ✽.The User response status code should be 200(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/users.feature:46)
+
+UserState API testing.To verify that GET with ID fetched correct data (Which is already deleted) -- Time elapsed: 0.600 s <<< FAILURE!
+java.lang.AssertionError: expected:<200> but was:<404>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:647)
+	at org.junit.Assert.assertEquals(Assert.java:633)
+	at Issue_persistence.UserStates.the_userstate_response_status_code_should_be(UserStates.java:491)
+	at ✽.The UserState response status code should be 200(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/userstate.feature:41)
+
+UserState API testing.To verify that after PUT request data should get update in DataBase (Which is already deleted) -- Time elapsed: 2.885 s <<< FAILURE!
+java.lang.AssertionError: expected:<200> but was:<404>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:647)
+	at org.junit.Assert.assertEquals(Assert.java:633)
+	at Issue_persistence.UserStates.the_userstate_response_status_code_should_be(UserStates.java:491)
+	at ✽.The UserState response status code should be 200(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/userstate.feature:46)
+
+Worklog API testing.To verify that GET with ID Fetched Correct Data (Which is already deleted) -- Time elapsed: 0.631 s <<< FAILURE!
+java.lang.AssertionError: Unable to read value from response for key: id
+	at validators.ApiValidators.validatePathParamToResponse(ApiValidators.java:1337)
+	at Issue_persistence.Worklog.Fetch_worklog_Details_with_ID(Worklog.java:236)
+	at ✽.Fetch Worklog Details with ID(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/worklog.feature:40)
+
+Worklog API testing.To verify that after PUT request data should get update in DataBase (Which is already deleted) -- Time elapsed: 2.946 s <<< FAILURE!
+java.lang.AssertionError: Unable to read value from response for key: id
+	at validators.ApiValidators.validatePathParamToResponse(ApiValidators.java:1337)
+	at Issue_persistence.Worklog.Update_worklog_details(Worklog.java:255)
+	at ✽.Update Worklog Details(file:///C:/Users/cpatil/eclipse-workspace/Issue_persistence/src/test/resources/features/worklog.feature:45)
+

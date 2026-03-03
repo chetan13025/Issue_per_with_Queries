@@ -84,6 +84,8 @@ public class Behavior {
 		try (Connection conn = DriverManager.getConnection("jdbc:mysql://10.10.2.45:3306", "root", "dhi123");
 				Statement stmt = conn.createStatement();
 				// ResultSet rs = stmt.executeQuery("SELECT * FROM `issue_persistence_piqa`.`Behavior` LIMIT 1000"))
+				// ResultSet rs = stmt.executeQuery("SELECT * FROM `issue_persistence_piqa`.`Behavior` LIMIT 1000"))
+
 				ResultSet rs = stmt
 						.executeQuery("SELECT * FROM (" + "   SELECT * FROM `issue_persistence_piqa`.`Behavior` "
 								+ "   ORDER BY id DESC LIMIT 5" + ") AS lastFive " + "ORDER BY id ASC;")) {
@@ -367,6 +369,7 @@ public class Behavior {
 
 			// captureElasticScreenshot(id, "Create Bulk Behavior" + ": " + id);
 
+			captureElasticScreenshot(id, "Create Bulk Behavior" + ": " + id);
 			ApiDataValidator.validateDbNotNullExcept(id, "Behavior", null);
 		}
 	}
@@ -452,6 +455,12 @@ public class Behavior {
 
 		logToExtent("Update Behavior (Delete)", updateRequestBody, response);
 
+
+	    for (Integer id : behaviorIds) {
+	        captureDbSnapshot(id, "Delete Bulk Behavior");
+	        // captureElasticScreenshot(id, "Delete Bulk Behavior");
+	        
+	    }
 
 		for (Integer id : behaviorIds) {
 			captureDbSnapshot(id, "Delete Bulk Behavior");
