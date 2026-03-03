@@ -35,7 +35,7 @@ Feature: IssueTestCase API testing
     When Delete IssueTestCase with ID
     Then The IssueTestCase response status code should be 204
 
-  @Negative_Scenarios_for_Behavior_entity
+  @Negative_Scenarios_for_IssueTestCase_entity
   Scenario: To verify that GET with ID fetched correct data (Which is  already deleted)
     When Fetch IssueTestCase Details with ID
     Then The IssueTestCase response status code should be 200
