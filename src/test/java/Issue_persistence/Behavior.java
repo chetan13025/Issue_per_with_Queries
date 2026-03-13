@@ -218,7 +218,11 @@ public class Behavior {
 		RequestBodyForValidation = requestBody;
 		System.out.println("Stored BehaviorId: " + BehaviorId);
 		logToExtent("Create Behavior Response", requestBody, response);
-		captureDbSnapshot(BehaviorId, "Create New Behavior");
+		
+//		captureDbSnapshot(BehaviorId, "Create New Behavior");
+		if (response.getStatusCode()==201) {
+			captureDbSnapshot(BehaviorId, "Create New Behavior");
+		}
 		// captureElasticScreenshot(BehaviorId, "Create New Behavior");
 //		ApiValidator.validateRequestKeysWithSeparateScreenshotColumns(
 //		         response,
@@ -271,7 +275,10 @@ public class Behavior {
 		System.out.println("Status Code: " + response.getStatusCode());
 		RequestBodyForValidation = newJson;
 		logToExtent("Update Behavior (PUT)", newJson, response);
-		captureDbSnapshot(BehaviorId, "Update Behavior (PUT)");
+//		captureDbSnapshot(BehaviorId, "Update Behavior (PUT)");
+		if (response.getStatusCode()==200) {
+			captureDbSnapshot(BehaviorId, "Update Behavior (PUT)");
+		}
 		ApiValidators.validatePathParamToResponse(response, "id", BehaviorId);
 		// captureElasticScreenshot(BehaviorId, "Update Behavior (PUT)");
 //		ApiValidator.validateRequestKeysWithSeparateScreenshotColumns(
@@ -302,7 +309,10 @@ public class Behavior {
 		System.out.println("Status Code: " + response.getStatusCode());
 		RequestBodyForValidation = newJson;
 		logToExtent("Update Behavior (PATCH)", newJson, response);
-		captureDbSnapshot(BehaviorId, "Update Behavior (PATCH)");
+//		captureDbSnapshot(BehaviorId, "Update Behavior (PATCH)");
+		if (response.getStatusCode()==200) {
+			captureDbSnapshot(BehaviorId, "Update Behavior (PATCH)");
+		}
 		ApiValidators.validatePathParamToResponse(response, "id", BehaviorId);
 //		ApiValidators.validateRequestToResponse(newJson, response, IssueTypeId, "comments");
 		// captureElasticScreenshot(BehaviorId, "Update Behavior (PATCH)");
@@ -329,7 +339,10 @@ public class Behavior {
 		System.out.println("Delete Status Code: " + response.getStatusCode());
 
 		logToExtent("Delete Behavior", null, response);
-		captureDbSnapshot(BehaviorId, "Delete Behavior");
+//		captureDbSnapshot(BehaviorId, "Delete Behavior");
+		if (response.getStatusCode()==204) {
+			captureDbSnapshot(BehaviorId, "Delete Behavior");
+		}
 		// captureElasticScreenshot(BehaviorId, "Delete Behavior");
 	}
 

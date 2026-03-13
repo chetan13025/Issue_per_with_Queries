@@ -213,7 +213,10 @@ public class BugType {
 		RequestBodyForValidation=requestBody;
 		System.out.println("Stored BugTypeId: " + BugTypeId);
 		logToExtent("Create BugType Response", requestBody, response);
-		captureDbSnapshot(BugTypeId, "Create New BugType");
+//		captureDbSnapshot(BugTypeId, "Create New BugType");
+		if (response.getStatusCode()==201) {
+			captureDbSnapshot(BugTypeId, "Create New BugType");
+		}
 		// captureElasticScreenshot(BugTypeId, "Create New BugType");
 	}
 	
@@ -255,7 +258,10 @@ public class BugType {
 		System.out.println("Status Code: " + response.getStatusCode());
 		RequestBodyForValidation = newJson;
 		logToExtent("Update BugType (PUT)", newJson, response);
-		captureDbSnapshot(BugTypeId, "Update BugType (PUT)");
+//		captureDbSnapshot(BugTypeId, "Update BugType (PUT)");
+		if (response.getStatusCode()==200) {
+			captureDbSnapshot(BugTypeId, "Update BugType (PUT)");
+		}
 		ApiValidators.validatePathParamToResponse(response, "id", BugTypeId);
 		// captureElasticScreenshot(BugTypeId, "Update BugType (PUT)");
 
@@ -276,7 +282,10 @@ public class BugType {
 		System.out.println("Status Code: " + response.getStatusCode());
 		RequestBodyForValidation = newJson;
 		logToExtent("Update BugType (PATCH)", newJson, response);
-		captureDbSnapshot(BugTypeId, "Update BugType (PATCH)");
+//		captureDbSnapshot(BugTypeId, "Update BugType (PATCH)");
+		if (response.getStatusCode()==200) {
+			captureDbSnapshot(BugTypeId, "Update BugType (PATCH)");
+		}
 		ApiValidators.validatePathParamToResponse(response, "id", BugTypeId);
 //		ApiValidators.validateRequestToResponse(newJson, response, IssueTypeId, "comments");
 		// captureElasticScreenshot(BugTypeId, "Update BugType (PATCH)");
