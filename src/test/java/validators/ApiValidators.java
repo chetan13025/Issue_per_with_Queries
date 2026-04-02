@@ -2471,409 +2471,652 @@ public class ApiValidators {
 //	ApiValidators.validateKeysAcrossResponseEsDb(response, null, issueId,
 //		    "issue-steps", "Issue", null, null, true, false);
 
+	private static Optional<Map.Entry<String, Object>> findEntryCaseInsensitive(Map<String, Object> flat, String key) {
+		if (flat == null || key == null)
+			return Optional.empty();
+		String target = key.toLowerCase();
+		// exact
+		for (Map.Entry<String, Object> e : flat.entrySet())
+			if (e.getKey() != null && e.getKey().equalsIgnoreCase(target))
+				return Optional.of(e);
+		// array / index forms
+		for (Map.Entry<String, Object> e : flat.entrySet()) {
+			String ek = e.getKey();
+			if (ek == null)
+				continue;
+			String lower = ek.toLowerCase();
+			if (lower.equals(target + "[]") || lower.startsWith(target + "["))
+				return Optional.of(e);
+		}
+		// underscore -> camel fallback
+		String alt = underscoreToCamel(target);
+		for (Map.Entry<String, Object> e : flat.entrySet())
+			if (e.getKey() != null && e.getKey().equalsIgnoreCase(alt))
+				return Optional.of(e);
+		return Optional.empty();
+	}
 
-    private static Optional<Map.Entry<String,Object>> findEntryCaseInsensitive(Map<String,Object> flat, String key) {
-        if (flat == null || key == null) return Optional.empty();
-        String target = key.toLowerCase();
-        // exact
-        for (Map.Entry<String,Object> e : flat.entrySet()) if (e.getKey() != null && e.getKey().equalsIgnoreCase(target)) return Optional.of(e);
-        // array / index forms
-        for (Map.Entry<String,Object> e : flat.entrySet()) {
-            String ek = e.getKey(); if (ek == null) continue;
-            String lower = ek.toLowerCase();
-            if (lower.equals(target + "[]") || lower.startsWith(target + "[")) return Optional.of(e);
-        }
-        // underscore -> camel fallback
-        String alt = underscoreToCamel(target);
-        for (Map.Entry<String,Object> e : flat.entrySet()) if (e.getKey() != null && e.getKey().equalsIgnoreCase(alt)) return Optional.of(e);
-        return Optional.empty();
-    }
+	// ======================================================================
+	// Public API: validate + screenshot (single call)
+	// ======================================================================
+	public static void validateRequestKeysNullsAndMismatchesWithScreenshots(Response response, String requestJson,
+			int recordId, String esIndexName, String dbTableName, boolean requireEsPresence,
+			long timestampToleranceMs) {
+		ExtentTest t = log();
+		if (t != null)
+			t.info("🔎 Cross-layer validation (screenshots) started for id=" + recordId);
 
-    
+		// flatten request & response
+		Map<String, Object> reqMap = safeJsonToMap(requestJson);
+		Map<String, Object> reqFlat = new LinkedHashMap<>();
+		flattenJson(reqMap, "", reqFlat);
+		includeArrayKeysExplicitly(requestJson, reqFlat.keySet());
 
-    
+		Map<String, Object> respMap = safeJsonToMap(response == null ? null : response.getBody().asString());
+		Map<String, Object> respFlat = new LinkedHashMap<>();
+		flattenJson(respMap, "", respFlat);
+		includeArrayKeysExplicitly(response == null ? null : response.getBody().asString(), respFlat.keySet());
 
-    // ======================================================================
-    // Public API: validate + screenshot (single call)
-    // ======================================================================
-    public static void validateRequestKeysNullsAndMismatchesWithScreenshots(
-            Response response,
-            String requestJson,
-            int recordId,
-            String esIndexName,
-            String dbTableName,
-            boolean requireEsPresence,
-            long timestampToleranceMs
-    ) {
-        ExtentTest t = log();
-        if (t != null) t.info("🔎 Cross-layer validation (screenshots) started for id=" + recordId);
+		// fetch ES
+		Map<String, Object> esSource = Collections.emptyMap();
+		try {
+			String esUrl = String.format(
+					"http://10.10.2.45:9200/piqa_issue-persistence_%s_index/_search?q=id:%d&size=1", esIndexName,
+					recordId);
+			Response esResp = io.restassured.RestAssured.given().get(esUrl).then().extract().response();
+			List<Map<String, Object>> hits = esResp.jsonPath().getList("hits.hits");
+			if (hits != null && !hits.isEmpty()) {
+				Object _src = hits.get(0).get("_source");
+				if (_src instanceof Map)
+					esSource = (Map<String, Object>) _src;
+			} else if (requireEsPresence && t != null) {
+				t.warning("⚠️ ES returned no hits for id=" + recordId + " (requireEsPresence=true)");
+			}
+		} catch (Exception ex) {
+			if (t != null)
+				t.warning("⚠️ ES fetch failed: " + ex.getMessage());
+		}
+		Map<String, Object> esFlat = new LinkedHashMap<>();
+		flattenJson(esSource, "", esFlat);
+		includeArrayKeysExplicitly(esSource == null ? null : esSource.toString(), esFlat.keySet());
 
-        // flatten request & response
-        Map<String,Object> reqMap = safeJsonToMap(requestJson);
-        Map<String,Object> reqFlat = new LinkedHashMap<>();
-        flattenJson(reqMap, "", reqFlat);
-        includeArrayKeysExplicitly(requestJson, reqFlat.keySet());
+		// fetch DB raw row: preserve raw SQL column order & exact names
+		LinkedHashMap<String, Object> dbRawRowOrdered = new LinkedHashMap<>();
+		Map<String, Object> dbLogicalFlat = new LinkedHashMap<>();
+		try (Connection conn = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASS);
+				PreparedStatement ps = conn.prepareStatement("SELECT * FROM `" + DEFAULT_SCHEMA + "`.`"
+						+ requireSafeIdentifier(dbTableName) + "` WHERE id = ? LIMIT 1")) {
+			ps.setInt(1, recordId);
+			try (ResultSet rs = ps.executeQuery()) {
+				if (rs.next()) {
+					ResultSetMetaData meta = rs.getMetaData();
+					for (int i = 1; i <= meta.getColumnCount(); i++) {
+						String col = meta.getColumnName(i);
+						Object val = rs.getObject(i);
+						dbRawRowOrdered.put(col, val);
+						dbLogicalFlat.put(col.toLowerCase(), val);
+						dbLogicalFlat.put(underscoreToCamel(col).toLowerCase(), val);
+					}
+				} else if (t != null) {
+					t.warning("⚠️ No DB row found for id=" + recordId + " (table=" + dbTableName + ")");
+				}
+			}
+		} catch (Exception ex) {
+			if (t != null)
+				t.warning("⚠️ DB fetch failed: " + ex.getMessage());
+		}
 
-        Map<String,Object> respMap = safeJsonToMap(response == null ? null : response.getBody().asString());
-        Map<String,Object> respFlat = new LinkedHashMap<>();
-        flattenJson(respMap, "", respFlat);
-        includeArrayKeysExplicitly(response == null ? null : response.getBody().asString(), respFlat.keySet());
+		includeArrayKeysExplicitly(esSource == null ? null : esSource.toString(), esFlat.keySet());
 
-        // fetch ES
-        Map<String,Object> esSource = Collections.emptyMap();
-        try {
-            String esUrl = String.format("http://10.10.2.45:9200/piqa_issue-persistence_%s_index/_search?q=id:%d&size=1",
-                    esIndexName, recordId);
-            Response esResp = io.restassured.RestAssured.given().get(esUrl).then().extract().response();
-            List<Map<String,Object>> hits = esResp.jsonPath().getList("hits.hits");
-            if (hits != null && !hits.isEmpty()) {
-                Object _src = hits.get(0).get("_source");
-                if (_src instanceof Map) esSource = (Map<String,Object>) _src;
-            } else if (requireEsPresence && t != null) {
-                t.warning("⚠️ ES returned no hits for id=" + recordId + " (requireEsPresence=true)");
-            }
-        } catch (Exception ex) {
-            if (t != null) t.warning("⚠️ ES fetch failed: " + ex.getMessage());
-        }
-        Map<String,Object> esFlat = new LinkedHashMap<>();
-        flattenJson(esSource, "", esFlat);
-        includeArrayKeysExplicitly(esSource == null ? null : esSource.toString(), esFlat.keySet());
+		// build union of keys: include raw DB column names as well as request/resp/es
+		// keys
+		Set<String> keysToCheck = new LinkedHashSet<>();
+		for (String k : reqFlat.keySet())
+			keysToCheck.add(k);
+		for (String k : respFlat.keySet())
+			keysToCheck.add(k);
+		for (String k : esFlat.keySet())
+			keysToCheck.add(k);
+		for (String col : dbRawRowOrdered.keySet())
+			keysToCheck.add(col);
 
-        // fetch DB raw row: preserve raw SQL column order & exact names
-        LinkedHashMap<String,Object> dbRawRowOrdered = new LinkedHashMap<>();
-        Map<String,Object> dbLogicalFlat = new LinkedHashMap<>();
-        try (Connection conn = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASS);
-             PreparedStatement ps = conn.prepareStatement(
-                     "SELECT * FROM `" + DEFAULT_SCHEMA + "`.`" + requireSafeIdentifier(dbTableName) + "` WHERE id = ? LIMIT 1")) {
-            ps.setInt(1, recordId);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    ResultSetMetaData meta = rs.getMetaData();
-                    for (int i = 1; i <= meta.getColumnCount(); i++) {
-                        String col = meta.getColumnName(i);
-                        Object val = rs.getObject(i);
-                        dbRawRowOrdered.put(col, val);
-                        dbLogicalFlat.put(col.toLowerCase(), val);
-                        dbLogicalFlat.put(underscoreToCamel(col).toLowerCase(), val);
-                    }
-                } else if (t != null) {
-                    t.warning("⚠️ No DB row found for id=" + recordId + " (table=" + dbTableName + ")");
-                }
-            }
-        } catch (Exception ex) {
-            if (t != null) t.warning("⚠️ DB fetch failed: " + ex.getMessage());
-        }
+		Map<String, Object> reqFlatLower = reqFlat.entrySet().stream().collect(
+				Collectors.toMap(e -> e.getKey().toLowerCase(), Map.Entry::getValue, (a, b) -> a, LinkedHashMap::new));
+		Map<String, Object> respFlatLower = respFlat.entrySet().stream().collect(
+				Collectors.toMap(e -> e.getKey().toLowerCase(), Map.Entry::getValue, (a, b) -> a, LinkedHashMap::new));
+		Map<String, Object> esFlatLower = esFlat.entrySet().stream().collect(
+				Collectors.toMap(e -> e.getKey().toLowerCase(), Map.Entry::getValue, (a, b) -> a, LinkedHashMap::new));
+		Map<String, Object> dbLogicalLower = dbLogicalFlat.entrySet().stream().collect(
+				Collectors.toMap(e -> e.getKey().toLowerCase(), Map.Entry::getValue, (a, b) -> a, LinkedHashMap::new));
 
-        includeArrayKeysExplicitly(esSource == null ? null : esSource.toString(), esFlat.keySet());
+		class KRes {
+			String key;
+			String req;
+			String resp;
+			String es;
+			String db;
+			String status;
+			String css;
+		}
+		List<KRes> results = new ArrayList<>();
+		Set<String> failingKeys = new LinkedHashSet<>();
+		Set<String> capturedKeys = new HashSet<>();
 
-        // build union of keys: include raw DB column names as well as request/resp/es keys
-        Set<String> keysToCheck = new LinkedHashSet<>();
-        for (String k : reqFlat.keySet()) keysToCheck.add(k);
-        for (String k : respFlat.keySet()) keysToCheck.add(k);
-        for (String k : esFlat.keySet()) keysToCheck.add(k);
-        for (String col : dbRawRowOrdered.keySet()) keysToCheck.add(col);
+		for (String rawKey : keysToCheck) {
+			String keyDisplay = rawKey;
+			String keyNorm = rawKey.toLowerCase();
 
-        Map<String,Object> reqFlatLower = reqFlat.entrySet().stream().collect(Collectors.toMap(e -> e.getKey().toLowerCase(), Map.Entry::getValue, (a,b)->a, LinkedHashMap::new));
-        Map<String,Object> respFlatLower = respFlat.entrySet().stream().collect(Collectors.toMap(e -> e.getKey().toLowerCase(), Map.Entry::getValue, (a,b)->a, LinkedHashMap::new));
-        Map<String,Object> esFlatLower = esFlat.entrySet().stream().collect(Collectors.toMap(e -> e.getKey().toLowerCase(), Map.Entry::getValue, (a,b)->a, LinkedHashMap::new));
-        Map<String,Object> dbLogicalLower = dbLogicalFlat.entrySet().stream().collect(Collectors.toMap(e -> e.getKey().toLowerCase(), Map.Entry::getValue, (a,b)->a, LinkedHashMap::new));
+			Object reqVal = reqFlatLower.getOrDefault(keyNorm, null);
+			Object respVal = respFlatLower.getOrDefault(keyNorm, null);
+			Object esVal = esFlatLower.getOrDefault(keyNorm, null);
+			Object dbVal = null;
 
-        class KRes { String key; String req; String resp; String es; String db; String status; String css; }
-        List<KRes> results = new ArrayList<>();
-        Set<String> failingKeys = new LinkedHashSet<>();
-        Set<String> capturedKeys = new HashSet<>();
+			Optional<Map.Entry<String, Object>> rawDbEntry = dbRawRowOrdered.entrySet().stream()
+					.filter(e -> e.getKey() != null && e.getKey().equalsIgnoreCase(rawKey)).findFirst();
+			if (rawDbEntry.isPresent()) {
+				dbVal = rawDbEntry.get().getValue();
+				keyDisplay = rawDbEntry.get().getKey();
+			} else {
+				dbVal = dbLogicalLower.getOrDefault(keyNorm, null);
+			}
 
-        for (String rawKey : keysToCheck) {
-            String keyDisplay = rawKey;
-            String keyNorm = rawKey.toLowerCase();
+			String qStr = toScalarString(reqVal);
+			String rStr = toScalarString(respVal);
+			String eStr = toScalarString(esVal);
+			String dStr = toScalarString(dbVal);
 
-            Object reqVal = reqFlatLower.getOrDefault(keyNorm, null);
-            Object respVal = respFlatLower.getOrDefault(keyNorm, null);
-            Object esVal = esFlatLower.getOrDefault(keyNorm, null);
-            Object dbVal = null;
+			KRes kres = new KRes();
+			kres.key = keyDisplay;
+			kres.req = safe(qStr);
+			kres.resp = safe(rStr);
+			kres.es = safe(eStr);
+			kres.db = safe(dStr);
+			kres.status = "PASS";
+			kres.css = "pass";
 
-            Optional<Map.Entry<String,Object>> rawDbEntry = dbRawRowOrdered.entrySet().stream()
-                    .filter(e -> e.getKey() != null && e.getKey().equalsIgnoreCase(rawKey))
-                    .findFirst();
-            if (rawDbEntry.isPresent()) {
-                dbVal = rawDbEntry.get().getValue();
-                keyDisplay = rawDbEntry.get().getKey();
-            } else {
-                dbVal = dbLogicalLower.getOrDefault(keyNorm, null);
-            }
+			boolean missing = false;
+			boolean mismatch = false;
 
-            String qStr = toScalarString(reqVal);
-            String rStr = toScalarString(respVal);
-            String eStr = toScalarString(esVal);
-            String dStr = toScalarString(dbVal);
+			if (rStr == null) {
+				missing = true;
+				kres.status = "MISSING";
+				kres.css = "fail";
+			}
+			if (dStr == null) {
+				missing = true;
+				kres.status = "NULL_IN_DB";
+				kres.css = "fail";
+			}
+			if (requireEsPresence && (eStr == null)) {
+				missing = true;
+				kres.status = "NULL_IN_ES";
+				kres.css = "warn";
+			}
 
-            KRes kres = new KRes();
-            kres.key = keyDisplay;
-            kres.req = safe(qStr);
-            kres.resp = safe(rStr);
-            kres.es = safe(eStr);
-            kres.db = safe(dStr);
-            kres.status = "PASS";
-            kres.css = "pass";
+			if (!missing && qStr != null) {
+				Instant iq = parseInstantOrNull(qStr);
+				Instant ir = parseInstantOrNull(rStr);
+				Instant ie = parseInstantOrNull(eStr);
+				Instant idb = parseInstantOrNull(dStr);
+				if (iq != null && ir != null && idb != null && (!requireEsPresence || ie != null)) {
+					boolean ok = instantEqualWithin(iq, ir, timestampToleranceMs)
+							&& instantEqualWithin(iq, idb, timestampToleranceMs)
+							&& (!requireEsPresence || instantEqualWithin(iq, ie, timestampToleranceMs));
+					if (!ok) {
+						mismatch = true;
+						kres.status = "TIME_MISMATCH";
+						kres.css = "fail";
+					}
+				} else {
+					boolean allMatch = qStr.trim().equalsIgnoreCase(rStr.trim())
+							&& qStr.trim().equalsIgnoreCase(dStr.trim())
+							&& (!requireEsPresence || qStr.trim().equalsIgnoreCase(eStr == null ? "" : eStr.trim()));
+					if (!allMatch) {
+						mismatch = true;
+						kres.status = "VALUE_MISMATCH";
+						kres.css = "fail";
+					}
+				}
+			} else if (!missing && qStr == null) {
+				Instant ir = parseInstantOrNull(rStr);
+				Instant idb = parseInstantOrNull(dStr);
+				Instant ie = parseInstantOrNull(eStr);
+				if (ir != null && idb != null && (!requireEsPresence || ie != null)) {
+					boolean ok = instantEqualWithin(ir, idb, timestampToleranceMs)
+							&& (!requireEsPresence || instantEqualWithin(ir, ie, timestampToleranceMs));
+					if (!ok) {
+						mismatch = true;
+						kres.status = "TIME_MISMATCH";
+						kres.css = "fail";
+					}
+				} else {
+					boolean respDb = rStr.trim().equalsIgnoreCase(dStr.trim());
+					boolean respEs = !requireEsPresence
+							|| rStr.trim().equalsIgnoreCase(eStr == null ? "" : eStr.trim());
+					if (!respDb || !respEs) {
+						mismatch = true;
+						kres.status = "VALUE_MISMATCH";
+						kres.css = "fail";
+					}
+				}
+			}
 
-            boolean missing = false;
-            boolean mismatch = false;
+			if (missing || mismatch) {
+				failingKeys.add(keyDisplay);
+				if (!capturedKeys.contains(keyDisplay)) {
+					capturedKeys.add(keyDisplay);
+					try {
+						captureLayerScreenshotsForKeyStrictJsonMatch(keyDisplay, requestJson, response, esSource,
+								dbRawRowOrdered, t);
+					} catch (Exception ex) {
+						if (t != null)
+							t.warning("⚠️ capture failed for " + keyDisplay + ": " + ex.getMessage());
+					}
+				}
+			} else {
+				if (t != null)
+					t.pass("✅ Key matched: " + keyDisplay + " -> resp=" + safe(rStr) + " | db=" + safe(dStr));
+			}
 
-            if (rStr == null) { missing = true; kres.status = "MISSING"; kres.css = "fail"; }
-            if (dStr == null) { missing = true; kres.status = "NULL_IN_DB"; kres.css = "fail"; }
-            if (requireEsPresence && (eStr == null)) { missing = true; kres.status = "NULL_IN_ES"; kres.css = "warn"; }
+			results.add(kres);
+		}
 
-            if (!missing && qStr != null) {
-                Instant iq = parseInstantOrNull(qStr);
-                Instant ir = parseInstantOrNull(rStr);
-                Instant ie = parseInstantOrNull(eStr);
-                Instant idb = parseInstantOrNull(dStr);
-                if (iq != null && ir != null && idb != null && (!requireEsPresence || ie != null)) {
-                    boolean ok = instantEqualWithin(iq, ir, timestampToleranceMs) &&
-                                 instantEqualWithin(iq, idb, timestampToleranceMs) &&
-                                 (!requireEsPresence || instantEqualWithin(iq, ie, timestampToleranceMs));
-                    if (!ok) { mismatch = true; kres.status = "TIME_MISMATCH"; kres.css = "fail"; }
-                } else {
-                    boolean allMatch = qStr.trim().equalsIgnoreCase(rStr.trim())
-                            && qStr.trim().equalsIgnoreCase(dStr.trim())
-                            && (!requireEsPresence || qStr.trim().equalsIgnoreCase(eStr == null ? "" : eStr.trim()));
-                    if (!allMatch) { mismatch = true; kres.status = "VALUE_MISMATCH"; kres.css = "fail"; }
-                }
-            } else if (!missing && qStr == null) {
-                Instant ir = parseInstantOrNull(rStr);
-                Instant idb = parseInstantOrNull(dStr);
-                Instant ie = parseInstantOrNull(eStr);
-                if (ir != null && idb != null && (!requireEsPresence || ie != null)) {
-                    boolean ok = instantEqualWithin(ir, idb, timestampToleranceMs)
-                            && (!requireEsPresence || instantEqualWithin(ir, ie, timestampToleranceMs));
-                    if (!ok) { mismatch = true; kres.status = "TIME_MISMATCH"; kres.css = "fail"; }
-                } else {
-                    boolean respDb = rStr.trim().equalsIgnoreCase(dStr.trim());
-                    boolean respEs = !requireEsPresence || rStr.trim().equalsIgnoreCase(eStr == null ? "" : eStr.trim());
-                    if (!respDb || !respEs) { mismatch = true; kres.status = "VALUE_MISMATCH"; kres.css = "fail"; }
-                }
-            }
+		String summaryHtml = buildCrossLayerSummaryHtml(results);
+		if (t != null) {
+			t.info("📊 Cross-layer summary:");
+			t.info(summaryHtml);
+		}
 
-            if (missing || mismatch) {
-                failingKeys.add(keyDisplay);
-                if (!capturedKeys.contains(keyDisplay)) {
-                    capturedKeys.add(keyDisplay);
-                    try {
-                        captureLayerScreenshotsForKeyStrictJsonMatch(keyDisplay, requestJson, response, esSource, dbRawRowOrdered, t);
-                    } catch (Exception ex) {
-                        if (t != null) t.warning("⚠️ capture failed for " + keyDisplay + ": " + ex.getMessage());
-                    }
-                }
-            } else {
-                if (t != null) t.pass("✅ Key matched: " + keyDisplay + " -> resp=" + safe(rStr) + " | db=" + safe(dStr));
-            }
+		if (!failingKeys.isEmpty()) {
+			if (t != null)
+				t.fail("❌ Cross-layer validation failed. Failing keys: " + failingKeys);
+			throw new AssertionError("Cross-layer validation failed. Failing keys: " + failingKeys);
+		} else {
+			if (t != null)
+				t.pass("✅ Cross-layer validation passed (no failing keys)");
+		}
+	}
 
-            results.add(kres);
-        }
+	// ---------------- Summary HTML ----------------
+	private static String buildCrossLayerSummaryHtml(List<?> listResults) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("<html><head><meta charset='utf-8'><style>");
+		sb.append("body{font-family:Arial;padding:12px;font-size:14px} ");
+		sb.append(
+				".legend{margin-bottom:10px} .legend span{display:inline-block;padding:8px;margin-right:8px;border-radius:4px}");
+		sb.append(
+				".pass{background:#d4edda;color:#155724;padding:8px} .fail{background:#f8d7da;color:#721c24;padding:8px} .warn{background:#fff3cd;color:#856404;padding:8px}");
+		sb.append(
+				"table{border-collapse:collapse;width:100%} th,td{border:1px solid #ddd;padding:10px;text-align:left;vertical-align:top;font-size:14px} th{background:#f2f2f2;font-weight:700}");
+		sb.append(".mono{font-family:monospace;font-size:13px} .keycol{width:18%} .statuscol{width:14%}");
+		sb.append("</style></head><body>");
+		sb.append(
+				"<div class='legend'><span class='pass'>✅ Green = All layers match</span><span class='warn'>⚠️ Yellow = Null/Missing in ES</span><span class='fail'>❌ Red = Missing or Mismatch (DB null or mismatch)</span></div>");
+		sb.append(
+				"<table><tr><th class='keycol'>Key</th><th>Request</th><th>Response</th><th>Elasticsearch</th><th>Database (raw / logical)</th><th class='statuscol'>Status</th></tr>");
 
-        String summaryHtml = buildCrossLayerSummaryHtml(results);
-        if (t != null) {
-            t.info("📊 Cross-layer summary:");
-            t.info(summaryHtml);
-        }
+		for (Object o : listResults) {
+			try {
+				@SuppressWarnings("unchecked")
+				Map<String, Object> m = OBJECT_MAPPER.convertValue(o, Map.class);
+				String key = (String) m.getOrDefault("key", "<unknown>");
+				String req = (String) m.getOrDefault("req", "null");
+				String resp = (String) m.getOrDefault("resp", "null");
+				String es = (String) m.getOrDefault("es", "null");
+				String db = (String) m.getOrDefault("db", "null");
+				String status = (String) m.getOrDefault("status", "PASS");
+				String css = (String) m.getOrDefault("css", "pass");
 
-        if (!failingKeys.isEmpty()) {
-            if (t != null) t.fail("❌ Cross-layer validation failed. Failing keys: " + failingKeys);
-            throw new AssertionError("Cross-layer validation failed. Failing keys: " + failingKeys);
-        } else {
-            if (t != null) t.pass("✅ Cross-layer validation passed (no failing keys)");
-        }
-    }
+				sb.append("<tr class='").append(css).append("'>");
+				sb.append("<td class='mono'>").append(htmlEscape(key)).append("</td>");
+				sb.append("<td class='mono'>").append(htmlEscape(req)).append("</td>");
+				sb.append("<td class='mono'>").append(htmlEscape(resp)).append("</td>");
+				sb.append("<td class='mono'>").append(htmlEscape(es)).append("</td>");
+				sb.append("<td class='mono'>").append(htmlEscape(db)).append("</td>");
+				sb.append("<td>").append(htmlEscape(status)).append("</td>");
+				sb.append("</tr>");
+			} catch (Exception ignored) {
+			}
+		}
 
-    // ---------------- Summary HTML ----------------
-    private static String buildCrossLayerSummaryHtml(List<?> listResults) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("<html><head><meta charset='utf-8'><style>");
-        sb.append("body{font-family:Arial;padding:12px;font-size:14px} ");
-        sb.append(".legend{margin-bottom:10px} .legend span{display:inline-block;padding:8px;margin-right:8px;border-radius:4px}");
-        sb.append(".pass{background:#d4edda;color:#155724;padding:8px} .fail{background:#f8d7da;color:#721c24;padding:8px} .warn{background:#fff3cd;color:#856404;padding:8px}");
-        sb.append("table{border-collapse:collapse;width:100%} th,td{border:1px solid #ddd;padding:10px;text-align:left;vertical-align:top;font-size:14px} th{background:#f2f2f2;font-weight:700}");
-        sb.append(".mono{font-family:monospace;font-size:13px} .keycol{width:18%} .statuscol{width:14%}");
-        sb.append("</style></head><body>");
-        sb.append("<div class='legend'><span class='pass'>✅ Green = All layers match</span><span class='warn'>⚠️ Yellow = Null/Missing in ES</span><span class='fail'>❌ Red = Missing or Mismatch (DB null or mismatch)</span></div>");
-        sb.append("<table><tr><th class='keycol'>Key</th><th>Request</th><th>Response</th><th>Elasticsearch</th><th>Database (raw / logical)</th><th class='statuscol'>Status</th></tr>");
+		sb.append("</table></body></html>");
+		return sb.toString();
+	}
 
-        for (Object o : listResults) {
-            try {
-                @SuppressWarnings("unchecked")
-                Map<String,Object> m = OBJECT_MAPPER.convertValue(o, Map.class);
-                String key = (String) m.getOrDefault("key", "<unknown>");
-                String req = (String) m.getOrDefault("req", "null");
-                String resp = (String) m.getOrDefault("resp", "null");
-                String es = (String) m.getOrDefault("es", "null");
-                String db = (String) m.getOrDefault("db", "null");
-                String status = (String) m.getOrDefault("status", "PASS");
-                String css = (String) m.getOrDefault("css", "pass");
+	// ---------------- Capture + helper panels ----------------
 
-                sb.append("<tr class='").append(css).append("'>");
-                sb.append("<td class='mono'>").append(htmlEscape(key)).append("</td>");
-                sb.append("<td class='mono'>").append(htmlEscape(req)).append("</td>");
-                sb.append("<td class='mono'>").append(htmlEscape(resp)).append("</td>");
-                sb.append("<td class='mono'>").append(htmlEscape(es)).append("</td>");
-                sb.append("<td class='mono'>").append(htmlEscape(db)).append("</td>");
-                sb.append("<td>").append(htmlEscape(status)).append("</td>");
-                sb.append("</tr>");
-            } catch (Exception ignored) {}
-        }
+	private static void captureLayerScreenshotsForKeyStrictJsonMatch(String key, String requestJson, Response response,
+			Map<String, Object> esSource, LinkedHashMap<String, Object> dbRawRowOrdered, ExtentTest t)
+			throws Exception {
+		String reqPanel = highlightKeyInJsonStrict(requestJson == null ? "<no request>" : requestJson, key, "REQUEST");
+		String respPanel = highlightKeyInJsonStrict(response == null ? "<no response>" : response.getBody().asString(),
+				key, "RESPONSE");
+		String esPanel = buildDbHtmlLogical(esSource == null ? Collections.emptyMap() : esSource, key,
+				"ELASTICSEARCH (logical)");
+		String dbPanelRaw = buildDbHtmlRaw(dbRawRowOrdered == null ? new LinkedHashMap<>() : dbRawRowOrdered, key,
+				"DATABASE (raw columns)");
 
-        sb.append("</table></body></html>");
-        return sb.toString();
-    }
+		String reqB = captureHtmlHeadlessBase64(reqPanel);
+		String respB = captureHtmlHeadlessBase64(respPanel);
+		String esB = captureHtmlHeadlessBase64(esPanel);
+		String dbB = captureHtmlHeadlessBase64(dbPanelRaw);
 
-    // ---------------- Capture + helper panels ----------------
+		String combinedHtml = buildCombinedHtmlGrid(key, reqB, respB, esB, dbB);
+		String combinedShot = captureHtmlHeadlessBase64(combinedHtml);
 
-    private static void captureLayerScreenshotsForKeyStrictJsonMatch(
-            String key,
-            String requestJson,
-            Response response,
-            Map<String,Object> esSource,
-            LinkedHashMap<String,Object> dbRawRowOrdered,
-            ExtentTest t
-    ) throws Exception {
-        String reqPanel = highlightKeyInJsonStrict(requestJson == null ? "<no request>" : requestJson, key, "REQUEST");
-        String respPanel = highlightKeyInJsonStrict(response == null ? "<no response>" : response.getBody().asString(), key, "RESPONSE");
-        String esPanel = buildDbHtmlLogical(esSource == null ? Collections.emptyMap() : esSource, key, "ELASTICSEARCH (logical)");
-        String dbPanelRaw = buildDbHtmlRaw(dbRawRowOrdered == null ? new LinkedHashMap<>() : dbRawRowOrdered, key, "DATABASE (raw columns)");
+		if (t != null) {
+			if (combinedShot != null) {
+				t.info("📸 Comparison for key: " + key).addScreenCaptureFromBase64String(combinedShot,
+						"Comparison_" + key.replaceAll("[^A-Za-z0-9_\\-]", "_"));
+			} else {
+				if (reqB != null)
+					t.info("Request: " + key).addScreenCaptureFromBase64String(reqB);
+				if (respB != null)
+					t.info("Response: " + key).addScreenCaptureFromBase64String(respB);
+				if (esB != null)
+					t.info("ES: " + key).addScreenCaptureFromBase64String(esB);
+				if (dbB != null)
+					t.info("DB: " + key).addScreenCaptureFromBase64String(dbB);
+			}
+		}
+	}
 
-        String reqB = captureHtmlHeadlessBase64(reqPanel);
-        String respB = captureHtmlHeadlessBase64(respPanel);
-        String esB = captureHtmlHeadlessBase64(esPanel);
-        String dbB = captureHtmlHeadlessBase64(dbPanelRaw);
+	private static String highlightKeyInJsonStrict(String json, String key, String title) {
+		if (json == null)
+			json = "<null>";
+		String escaped = htmlEscape(json);
+		try {
+			Pattern p = Pattern.compile("(?i)((\"|')(" + Pattern.quote(key) + ")(\"|')\\s*:\\s*)");
+			Matcher m = p.matcher(escaped);
+			StringBuffer sb = new StringBuffer();
+			while (m.find()) {
+				m.appendReplacement(sb, "<mark style='background:#fffd80;color:#000;'>" + m.group(1) + "</mark>");
+			}
+			m.appendTail(sb);
+			escaped = sb.toString();
+		} catch (Exception ignored) {
+		}
+		String html = "<html><head><meta charset='utf-8'><style>body{font-family:monospace;white-space:pre-wrap;padding:10px;font-size:16px;line-height:1.25} mark{padding:0 3px;border-radius:3px}</style></head><body>"
+				+ "<div style='font-weight:800;margin-bottom:10px;font-size:16px;'>" + htmlEscape(title) + "</div>"
+				+ "<pre>" + escaped + "</pre></body></html>";
+		return html;
+	}
 
-        String combinedHtml = buildCombinedHtmlGrid(key, reqB, respB, esB, dbB);
-        String combinedShot = captureHtmlHeadlessBase64(combinedHtml);
+	private static String buildDbHtmlRaw(Map<String, Object> dbRawRowOrdered, String keyToHighlight, String title) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(
+				"<html><head><meta charset='utf-8'><style>body{font-family:Arial;padding:10px;font-size:15px} table{border-collapse:collapse;width:100%} th,td{border:1px solid #ddd;padding:10px;text-align:left;vertical-align:top} th{background:#f2f2f2;font-weight:800} .hl{background:#fff3cd}.mono{font-family:monospace;font-size:14px}</style></head><body>");
+		sb.append("<div style='font-weight:800;margin-bottom:10px;font-size:16px;'>").append(htmlEscape(title))
+				.append("</div>");
+		sb.append("<table><tr><th>Column</th><th>Value</th></tr>");
+		if (dbRawRowOrdered == null || dbRawRowOrdered.isEmpty()) {
+			sb.append("<tr><td colspan='2' class='mono'>&lt;no data&gt;</td></tr>");
+		} else {
+			for (Map.Entry<String, Object> e : dbRawRowOrdered.entrySet()) {
+				String col = e.getKey();
+				String val = toScalarString(e.getValue());
+				boolean hl = col != null && col.equalsIgnoreCase(keyToHighlight);
+				sb.append("<tr").append(hl ? " class='hl'" : "").append(">");
+				sb.append("<td class='mono'>").append(htmlEscape(col)).append("</td>");
+				sb.append("<td class='mono'>").append(htmlEscape(safe(val))).append("</td>");
+				sb.append("</tr>");
+			}
+		}
+		sb.append("</table></body></html>");
+		return sb.toString();
+	}
 
-        if (t != null) {
-            if (combinedShot != null) {
-                t.info("📸 Comparison for key: " + key)
-                        .addScreenCaptureFromBase64String(combinedShot, "Comparison_" + key.replaceAll("[^A-Za-z0-9_\\-]", "_"));
-            } else {
-                if (reqB != null) t.info("Request: " + key).addScreenCaptureFromBase64String(reqB);
-                if (respB != null) t.info("Response: " + key).addScreenCaptureFromBase64String(respB);
-                if (esB != null) t.info("ES: " + key).addScreenCaptureFromBase64String(esB);
-                if (dbB != null) t.info("DB: " + key).addScreenCaptureFromBase64String(dbB);
-            }
-        }
-    }
+	private static String buildDbHtmlLogical(Map<String, Object> logicalFlat, String keyToHighlight, String title) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(
+				"<html><head><meta charset='utf-8'><style>body{font-family:Arial;padding:10px;font-size:15px} table{border-collapse:collapse;width:100%} th,td{border:1px solid #ddd;padding:10px;text-align:left} th{background:#f2f2f2;font-weight:800} .hl{background:#fff3cd} .mono{font-family:monospace;font-size:14px}</style></head><body>");
+		sb.append("<div style='font-weight:800;margin-bottom:10px;font-size:16px;'>").append(htmlEscape(title))
+				.append("</div>");
+		sb.append("<table><tr><th>Key</th><th>Value</th></tr>");
+		if (logicalFlat == null || logicalFlat.isEmpty()) {
+			sb.append("<tr><td colspan='2' class='mono'>&lt;no data&gt;</td></tr>");
+		} else {
+			logicalFlat.entrySet().stream().sorted(Map.Entry.comparingByKey()).forEach(e -> {
+				String k = e.getKey();
+				String v = toScalarString(e.getValue());
+				boolean hl = k != null && k.equalsIgnoreCase(keyToHighlight);
+				sb.append("<tr").append(hl ? " class='hl'" : "").append(">");
+				sb.append("<td class='mono'>").append(htmlEscape(k)).append("</td>");
+				sb.append("<td class='mono'>").append(htmlEscape(safe(v))).append("</td>");
+				sb.append("</tr>");
+			});
+		}
+		sb.append("</table></body></html>");
+		return sb.toString();
+	}
 
-    private static String highlightKeyInJsonStrict(String json, String key, String title) {
-        if (json == null) json = "<null>";
-        String escaped = htmlEscape(json);
-        try {
-            Pattern p = Pattern.compile("(?i)((\"|')(" + Pattern.quote(key) + ")(\"|')\\s*:\\s*)");
-            Matcher m = p.matcher(escaped);
-            StringBuffer sb = new StringBuffer();
-            while (m.find()) {
-                m.appendReplacement(sb, "<mark style='background:#fffd80;color:#000;'>" + m.group(1) + "</mark>");
-            }
-            m.appendTail(sb);
-            escaped = sb.toString();
-        } catch (Exception ignored) {}
-        String html = "<html><head><meta charset='utf-8'><style>body{font-family:monospace;white-space:pre-wrap;padding:10px;font-size:16px;line-height:1.25} mark{padding:0 3px;border-radius:3px}</style></head><body>"
-                + "<div style='font-weight:800;margin-bottom:10px;font-size:16px;'>" + htmlEscape(title) + "</div>"
-                + "<pre>" + escaped + "</pre></body></html>";
-        return html;
-    }
+	private static String buildCombinedHtmlGrid(String key, String reqBase64, String respBase64, String esBase64,
+			String dbBase64) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("<html><head><meta charset='utf-8'><title>Compare ").append(htmlEscape(key)).append("</title>");
+		sb.append(
+				"<style>body{font-family:Arial;padding:12px} .grid{display:grid;grid-template-columns:1fr 1fr;grid-gap:12px} .card{border:1px solid #ddd;padding:12px} .title{font-weight:800;margin-bottom:8px;font-size:16px} img{max-width:100%;height:auto;display:block}</style>");
+		sb.append("</head><body>");
+		sb.append("<h2 style='font-size:18px;margin-bottom:10px'>Comparison for key: ").append(htmlEscape(key))
+				.append("</h2>");
+		sb.append("<div class='grid'>");
+		sb.append("<div class='card'><div class='title'>Request</div>");
+		sb.append(reqBase64 == null ? "<div>&lt;no image&gt;</div>"
+				: "<img src='data:image/png;base64," + reqBase64 + "'/>");
+		sb.append("</div>");
+		sb.append("<div class='card'><div class='title'>Response</div>");
+		sb.append(respBase64 == null ? "<div>&lt;no image&gt;</div>"
+				: "<img src='data:image/png;base64," + respBase64 + "'/>");
+		sb.append("</div>");
+		sb.append("<div class='card'><div class='title'>Elasticsearch</div>");
+		sb.append(esBase64 == null ? "<div>&lt;no image&gt;</div>"
+				: "<img src='data:image/png;base64," + esBase64 + "'/>");
+		sb.append("</div>");
+		sb.append("<div class='card'><div class='title'>Database</div>");
+		sb.append(dbBase64 == null ? "<div>&lt;no image&gt;</div>"
+				: "<img src='data:image/png;base64," + dbBase64 + "'/>");
+		sb.append("</div>");
+		sb.append("</div></body></html>");
+		return sb.toString();
+	}
 
-    private static String buildDbHtmlRaw(Map<String,Object> dbRawRowOrdered, String keyToHighlight, String title) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("<html><head><meta charset='utf-8'><style>body{font-family:Arial;padding:10px;font-size:15px} table{border-collapse:collapse;width:100%} th,td{border:1px solid #ddd;padding:10px;text-align:left;vertical-align:top} th{background:#f2f2f2;font-weight:800} .hl{background:#fff3cd}.mono{font-family:monospace;font-size:14px}</style></head><body>");
-        sb.append("<div style='font-weight:800;margin-bottom:10px;font-size:16px;'>").append(htmlEscape(title)).append("</div>");
-        sb.append("<table><tr><th>Column</th><th>Value</th></tr>");
-        if (dbRawRowOrdered == null || dbRawRowOrdered.isEmpty()) {
-            sb.append("<tr><td colspan='2' class='mono'>&lt;no data&gt;</td></tr>");
-        } else {
-            for (Map.Entry<String,Object> e : dbRawRowOrdered.entrySet()) {
-                String col = e.getKey();
-                String val = toScalarString(e.getValue());
-                boolean hl = col != null && col.equalsIgnoreCase(keyToHighlight);
-                sb.append("<tr").append(hl ? " class='hl'":"").append(">");
-                sb.append("<td class='mono'>").append(htmlEscape(col)).append("</td>");
-                sb.append("<td class='mono'>").append(htmlEscape(safe(val))).append("</td>");
-                sb.append("</tr>");
-            }
-        }
-        sb.append("</table></body></html>");
-        return sb.toString();
-    }
+	private static String captureHtmlHeadlessBase64(String html) {
+		WebDriver driver = null;
+		Path tmp = null;
+		try {
+			tmp = java.nio.file.Files.createTempFile("av_html_", ".html");
+			java.nio.file.Files.write(tmp, html.getBytes(java.nio.charset.StandardCharsets.UTF_8));
 
-    private static String buildDbHtmlLogical(Map<String,Object> logicalFlat, String keyToHighlight, String title) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("<html><head><meta charset='utf-8'><style>body{font-family:Arial;padding:10px;font-size:15px} table{border-collapse:collapse;width:100%} th,td{border:1px solid #ddd;padding:10px;text-align:left} th{background:#f2f2f2;font-weight:800} .hl{background:#fff3cd} .mono{font-family:monospace;font-size:14px}</style></head><body>");
-        sb.append("<div style='font-weight:800;margin-bottom:10px;font-size:16px;'>").append(htmlEscape(title)).append("</div>");
-        sb.append("<table><tr><th>Key</th><th>Value</th></tr>");
-        if (logicalFlat == null || logicalFlat.isEmpty()) {
-            sb.append("<tr><td colspan='2' class='mono'>&lt;no data&gt;</td></tr>");
-        } else {
-            logicalFlat.entrySet().stream()
-                    .sorted(Map.Entry.comparingByKey())
-                    .forEach(e -> {
-                        String k = e.getKey();
-                        String v = toScalarString(e.getValue());
-                        boolean hl = k != null && k.equalsIgnoreCase(keyToHighlight);
-                        sb.append("<tr").append(hl ? " class='hl'":"").append(">");
-                        sb.append("<td class='mono'>").append(htmlEscape(k)).append("</td>");
-                        sb.append("<td class='mono'>").append(htmlEscape(safe(v))).append("</td>");
-                        sb.append("</tr>");
-                    });
-        }
-        sb.append("</table></body></html>");
-        return sb.toString();
-    }
+			System.setProperty("webdriver.chrome.silentOutput", "true");
+			org.openqa.selenium.chrome.ChromeOptions options = new org.openqa.selenium.chrome.ChromeOptions();
+			// larger window-size for high-res screenshots
+			options.addArguments("--headless=new");
+			options.addArguments("--disable-gpu", "--no-sandbox", "--window-size=2200,1400", "--hide-scrollbars");
+			driver = new ChromeDriver(options);
+			driver.get(tmp.toUri().toString());
+			try {
+				Thread.sleep(800);
+			} catch (InterruptedException ignored) {
+			}
+			byte[] png = ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
+			return Base64.getEncoder().encodeToString(png);
+		} catch (Exception e) {
+			ExtentTest t = log();
+			if (t != null)
+				t.warning("⚠️ captureHtmlHeadlessBase64 failed: " + e.getMessage());
+			return null;
+		} finally {
+			try {
+				if (driver != null)
+					driver.quit();
+			} catch (Exception ignored) {
+			}
+			try {
+				if (tmp != null)
+					java.nio.file.Files.deleteIfExists(tmp);
+			} catch (Exception ignored) {
+			}
+		}
+	}
 
-    private static String buildCombinedHtmlGrid(String key, String reqBase64, String respBase64, String esBase64, String dbBase64) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("<html><head><meta charset='utf-8'><title>Compare ").append(htmlEscape(key)).append("</title>");
-        sb.append("<style>body{font-family:Arial;padding:12px} .grid{display:grid;grid-template-columns:1fr 1fr;grid-gap:12px} .card{border:1px solid #ddd;padding:12px} .title{font-weight:800;margin-bottom:8px;font-size:16px} img{max-width:100%;height:auto;display:block}</style>");
-        sb.append("</head><body>");
-        sb.append("<h2 style='font-size:18px;margin-bottom:10px'>Comparison for key: ").append(htmlEscape(key)).append("</h2>");
-        sb.append("<div class='grid'>");
-        sb.append("<div class='card'><div class='title'>Request</div>");
-        sb.append(reqBase64 == null ? "<div>&lt;no image&gt;</div>" : "<img src='data:image/png;base64," + reqBase64 + "'/>");
-        sb.append("</div>");
-        sb.append("<div class='card'><div class='title'>Response</div>");
-        sb.append(respBase64 == null ? "<div>&lt;no image&gt;</div>" : "<img src='data:image/png;base64," + respBase64 + "'/>");
-        sb.append("</div>");
-        sb.append("<div class='card'><div class='title'>Elasticsearch</div>");
-        sb.append(esBase64 == null ? "<div>&lt;no image&gt;</div>" : "<img src='data:image/png;base64," + esBase64 + "'/>");
-        sb.append("</div>");
-        sb.append("<div class='card'><div class='title'>Database</div>");
-        sb.append(dbBase64 == null ? "<div>&lt;no image&gt;</div>" : "<img src='data:image/png;base64," + dbBase64 + "'/>");
-        sb.append("</div>");
-        sb.append("</div></body></html>");
-        return sb.toString();
-    }
+	public static void validateQueryParamsInList(Response response, Object pathOrParams,
+			Map<String, Object> optionalParams) {
 
-    private static String captureHtmlHeadlessBase64(String html) {
-        WebDriver driver = null;
-        Path tmp = null;
-        try {
-            tmp = java.nio.file.Files.createTempFile("av_html_", ".html");
-            java.nio.file.Files.write(tmp, html.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+		ExtentTest t = ExtentCucumberListener.getCurrentScenario();
 
-            System.setProperty("webdriver.chrome.silentOutput", "true");
-            org.openqa.selenium.chrome.ChromeOptions options = new org.openqa.selenium.chrome.ChromeOptions();
-            // larger window-size for high-res screenshots
-            options.addArguments("--headless=new");
-            options.addArguments("--disable-gpu", "--no-sandbox", "--window-size=2200,1400", "--hide-scrollbars");
-            driver = new ChromeDriver(options);
-            driver.get(tmp.toUri().toString());
-            try { Thread.sleep(800); } catch (InterruptedException ignored) {}
-            byte[] png = ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
-            return Base64.getEncoder().encodeToString(png);
-        } catch (Exception e) {
-            ExtentTest t = log();
-            if (t != null) t.warning("⚠️ captureHtmlHeadlessBase64 failed: " + e.getMessage());
-            return null;
-        } finally {
-            try { if (driver != null) driver.quit(); } catch (Exception ignored) {}
-            try { if (tmp != null) java.nio.file.Files.deleteIfExists(tmp); } catch (Exception ignored) {}
-        }
-    }
+		String listPath = null;
+		Map<String, Object> expectedParams;
+
+// ✅ Handle both usages
+		if (pathOrParams instanceof String) {
+			listPath = (String) pathOrParams;
+			expectedParams = optionalParams;
+		} else {
+			expectedParams = (Map<String, Object>) pathOrParams;
+		}
+
+		boolean allMatch = true;
+		List<Map<String, Object>> list = null;
+
+// ✅ Explicit path
+		if (listPath != null) {
+			try {
+				list = response.jsonPath().getList(listPath);
+			} catch (Exception e) {
+// ignore
+			}
+		}
+// ✅ Auto detect
+		else {
+			try {
+				Map<String, Object> embedded = response.jsonPath().getMap("_embedded");
+
+				if (embedded != null && !embedded.isEmpty()) {
+					String firstKey = embedded.keySet().iterator().next();
+					listPath = "_embedded." + firstKey;
+					list = response.jsonPath().getList(listPath);
+				}
+			} catch (Exception e) {
+// ignore
+			}
+		}
+
+// ✅ CASE 1: LIST validation
+		if (list != null && !list.isEmpty()) {
+
+			for (Map<String, Object> item : list) {
+
+				for (Map.Entry<String, Object> entry : expectedParams.entrySet()) {
+
+					String field = entry.getKey();
+					Object expectedValue = entry.getValue();
+					Object actual = item.get(field);
+
+					boolean isMatch = validateAllValues(actual, expectedValue);
+
+					String expectedStr = expectedValue == null ? "null" : expectedValue.toString();
+					String actualStr = (actual instanceof List) ? actual.toString()
+							: (actual == null ? "null" : actual.toString());
+
+					if (!isMatch) {
+
+						allMatch = false;
+
+						if (t != null) {
+							t.fail("❌ [ " + field + " ] expected=[ "  + expectedStr +  " ] and in the response=[ " + actualStr + " ]");
+						}
+
+					} else {
+						if (t != null) {
+							t.pass("✅ [ " + field + " ] expected=[ " + expectedStr + " ] and in the response=[ " + actualStr+ " ]");
+						}
+					}
+				}
+			}
+
+		}
+// ✅ CASE 2: OBJECT validation
+		else {
+
+			for (Map.Entry<String, Object> entry : expectedParams.entrySet()) {
+
+				String field = entry.getKey();
+				Object expectedValue = entry.getValue();
+				Object actual = response.jsonPath().get(field);
+
+				boolean isMatch = validateAllValues(actual, expectedValue);
+
+				String expectedStr = expectedValue == null ? "null" : expectedValue.toString();
+				String actualStr = (actual instanceof List) ? actual.toString()
+						: (actual == null ? "null" : actual.toString());
+
+				if (!isMatch) {
+
+					allMatch = false;
+
+					if (t != null) {
+						t.fail("❌ [ " + field + " ] expected=[ "  + expectedStr +  " ] and in the response=[ "  + actualStr +  " ]");
+					}
+
+				} else {
+					if (t != null) {
+						t.pass("✅ [ " + field + " ] expected=[ "  + expectedStr +  " ] and in the response=[ "  + actualStr +  " ]");
+					}
+				}
+			}
+		}
+
+		if (!allMatch) {
+			throw new AssertionError("❌ Query param validation failed");
+		}
+	}
+
+	private static boolean validateAllValues(Object actual, Object expected) {
+
+		if (actual instanceof List) {
+
+			List<?> list = (List<?>) actual;
+
+			if (list.isEmpty())
+				return false;
+
+			for (Object val : list) {
+				if (!Objects.equals(expected == null ? null : expected.toString(),
+						val == null ? null : val.toString())) {
+					return false; // ❌ any mismatch
+				}
+			}
+			return true; // ✅ all matched
+		}
+
+		// ✅ Single value
+		return Objects.equals(expected == null ? null : expected.toString(), actual == null ? null : actual.toString());
+	}
+
+//	private static boolean validateAllValues(Object actual, Object expected) {
+//
+//	    // ✅ If actual is list → check ANY match
+//	    if (actual instanceof List) {
+//
+//	        List<?> list = (List<?>) actual;
+//
+//	        if (list.isEmpty()) return false;
+//
+//	        for (Object val : list) {
+//	            if (Objects.equals(
+//	                    expected == null ? null : expected.toString(),
+//	                    val == null ? null : val.toString()
+//	            )) {
+//	                return true; // ✅ FOUND → PASS
+//	            }
+//	        }
+//	        return false; // ❌ not found
+//	    }
+//
+//	    // ✅ Single value
+//	    return Objects.equals(
+//	            expected == null ? null : expected.toString(),
+//	            actual == null ? null : actual.toString()
+//	    );
+//	}
 }
-    

@@ -30,6 +30,16 @@ Feature: Module API testing
     Then Validate API ES and DB for ModuleId after PATCH skipping ES true excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "null"
     Then The Module response status code should be 200
 
+  @Custom_Quereies_for_Module
+  Scenario: To verify that GET request FindByLowerlabel
+    When FindByLowerLabel For Module
+    Then The Module response status code should be 200
+
+  @Custom_Quereies_for_Module
+  Scenario: To verify that after GET request FindbyProjectIdandLowerLabel
+    When FindByProjectIdAndLowerLabel For Module
+    Then The Module response status code should be 200
+
   @Module
   Scenario: To verify that after Delete request data should get removed from DataBase
     When Delete Module with ID

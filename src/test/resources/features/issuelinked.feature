@@ -30,6 +30,16 @@ Feature: IssueLinked API testing
     Then Validate API ES and DB for IssueLinkedId after PATCH skipping ES true excludingEverywhere "null" excludeFromRequest "id,deleted,linkeddate" excludeFromEs "deleted"
     Then The IssueLinked response status code should be 200
 
+  @Custom_Queries_for_IssueLinked
+  Scenario: To verify that after GET request FindByRelationshipAndRelatedIssueIdInOrderByPositionDesc
+    When FindByRelationshipAndRelatedIssueIdInOrderByPositionDesc
+    Then The IssueLinked response status code should be 200
+
+  @Custom_Queries_for_IssueLinked
+  Scenario: To verify that after GET request FindByRelatedIssueIdInAndRelationshipAndDependencyTypeIn
+    When FindByRelatedIssueIdInAndRelationshipAndDependencyTypeIn
+    Then The IssueLinked response status code should be 200
+
   @IssueLinked
   Scenario: To verify that after Delete request data should get removed from DataBase
     When Delete IssueLinked with ID

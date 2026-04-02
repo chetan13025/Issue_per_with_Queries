@@ -29,6 +29,12 @@ Feature: RootCause API testing
     When Update Patch RootCause
     Then Validate API ES and DB for RootCauseId after PATCH skipping ES true excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"
     Then The RootCause response status code should be 200
+    
+    @Custom_Queries_for_RootCause
+    Scenario: To verify that after GET request FindByprojectId
+    When FinByProjectId For Rootcause
+    Then The RootCause response status code should be 200
+
 
   @RootCause
   Scenario: To verify that after Delete request data should get removed from DataBase

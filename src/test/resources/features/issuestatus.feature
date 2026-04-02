@@ -28,6 +28,17 @@ Feature: IssueStatus API testing
   Scenario: To verify that after Patch request data should get update in DataBase
     When Update Patch IssueStatus
     Then Validate API ES and DB for IssueStatusId after PATCH skipping ES true excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"
+    Then The IssueStatus response status code should be 200
+
+  @Custom_Queries_for_IssueStatus
+  Scenario: To verify that after GET request findbystatusRoleandProjectId
+    When FindByStatusRoleAndProjectIdIn
+    Then The IssueStatus response status code should be 200
+
+  @Custom_Queries_for_IssueStatus
+  Scenario: To verify that after GET request findbyprojectId
+    When FindByProjectId For IssueStatus
+    Then The IssueStatus response status code should be 200
 
   @IssueStatus
   Scenario: To verify that after delete request data should get removed from DataBase

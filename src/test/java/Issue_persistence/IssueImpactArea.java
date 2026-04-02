@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -35,10 +36,11 @@ import io.restassured.response.Response;
 import reports.ExtentCucumberListener;
 import utils.ConfigReader;
 import validators.ApiDataValidator;
+import validators.ApiValidators;
 
 public class IssueImpactArea {
 
-	public static int IssueImpactAreaId;
+	public static int IssueImpactAreaId,IssueId;
 	private Response response;
 	private String requestBody;
 	private String RequestBodyForValidation;
@@ -47,6 +49,7 @@ public class IssueImpactArea {
 	private static String tenantId = ConfigReader.getProperty("tenantId");
 	private static String author = ConfigReader.getProperty("author");
 	private static String IssueImpactArea_endpoint = ConfigReader.getProperty("issueimpactare_endpoint");
+	private static String IssueImpactArea_FindByIssueIdendpoint = ConfigReader.getProperty("issueimpactarea_findbyissueid");
 	private static String IssueImpactAreaBulk_endpoint = ConfigReader.getProperty("issueimpactarebulk_endpoint");
 	private static String IssueImpactAreaBulkUpdate_endpoint = ConfigReader.getProperty("issueimpactarebulku_endpoint");
 	private static String IssueImpactAreaBulkDelete_endpoint = ConfigReader.getProperty("issueimpactarebulkd_endpoint");
@@ -279,6 +282,7 @@ public class IssueImpactArea {
 		System.out.println("PATCH Request Body:\n" + newJson);
 		System.out.println("PATCH Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
+		IssueId=response.jsonPath().getInt("issueId");
 		RequestBodyForValidation=newJson;
 		logToExtent("Update IssueImpactArea (PATCH)", newJson, response);
 		captureDbSnapshot(IssueImpactAreaId, "Update IssueImpactArea (PATCH)");
@@ -288,6 +292,20 @@ public class IssueImpactArea {
 //		captureElasticScreenshot(IssueImpactAreaId, "Update IssueImpactArea (PATCH)");
 
 
+	}
+	
+	@When("FindByIssueId for Issueimpactarea")
+	public void findByIssueId_for_issueimapctarea() {
+		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
+				.header("Author", author).queryParam("issueId", IssueId).when()
+				.get(baseUrl + IssueImpactArea_FindByIssueIdendpoint).then().extract().response();
+
+		System.out.println("Response Body:\n" + response.getBody().asString());
+		System.out.println("Status Code: " + response.getStatusCode());
+		logToExtent("Fetch IssueImpactArea by ID", null, response);
+		Map<String, Object> params = new HashMap<>();
+		params.put("issueId", IssueId);   
+		ApiValidators.validateQueryParamsInList(response,"_embedded.issueImpactAreas",params);
 	}
 
 	@When("Delete IssueImpactArea with ID")

@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -38,15 +39,18 @@ import validators.ApiDataValidator;
 import validators.ApiValidators;
 
 public class Nature {
-	public static int NatureId;
+	public static int NatureId,ProjectId;
 	private Response response;
 	private String requestBody;
 	private String RequestBodyForValidation;
 	public List<Integer> NatureIds;
+	public static Boolean IsDefault;
 	private static String baseUrl = ConfigReader.getProperty("baseUrl");
 	private static String tenantId = ConfigReader.getProperty("tenantId");
 	private static String author = ConfigReader.getProperty("author");
 	private static String Nature_endpoint = ConfigReader.getProperty("nature_endpoint");
+	private static String Nature_FindByProjectIdendpoint = ConfigReader.getProperty("nature_findbyprojectid");
+	private static String Nature_FindByProjectIdandIsDefaultendpoint = ConfigReader.getProperty("nature_findbyprojectidandisdefault");
 	private static String NatureBulk_endpoint = ConfigReader.getProperty("naturebulk_endpoint");
 	private static String NatureBulkUpdate_endpoint = ConfigReader.getProperty("naturebulku_endpoint");
 	private static String NatureBulkDelete_endpoint = ConfigReader.getProperty("naturebulkd_endpoint");
@@ -270,6 +274,8 @@ public class Nature {
 		System.out.println("PATCH Request Body:\n" + newJson);
 		System.out.println("PATCH Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
+		ProjectId = response.jsonPath().getInt("projectId");
+		IsDefault= response.jsonPath().getBoolean("isDefault");
 		RequestBodyForValidation=newJson;
 		logToExtent("Update Nature (PATCH)", newJson, response);
 		captureDbSnapshot(NatureId, "Update Nature (PATCH)");
@@ -278,6 +284,36 @@ public class Nature {
 		// captureElasticScreenshot(NatureId, "Update Nature (PATCH)");
 
 	}
+	
+	@When("FindByProjectId For Nature")
+	public void findByProjectId_for_Nature() {
+		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
+				.header("Author", author).queryParam("projectId", ProjectId).when().get(baseUrl + Nature_FindByProjectIdendpoint).then()
+				.extract().response();
+
+		System.out.println("Response Body:\n" + response.getBody().asString());
+		System.out.println("Status Code: " + response.getStatusCode());
+		logToExtent("Fetch Nature by ID", null, response);
+		Map<String, Object> params = new HashMap<>();
+		params.put("projectId", ProjectId);   
+		ApiValidators.validateQueryParamsInList(response,"_embedded.natures",params);
+	}
+	
+	@When("FindByProjectIdAndIsDefault For Nature")
+	public void findByProjectIdAndIsDefault_for_nature() {
+		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
+				.header("Author", author).queryParam("projectId", ProjectId).queryParam("isDefault", IsDefault).when().get(baseUrl + Nature_FindByProjectIdandIsDefaultendpoint).then()
+				.extract().response();
+
+		System.out.println("Response Body:\n" + response.getBody().asString());
+		System.out.println("Status Code: " + response.getStatusCode());
+		logToExtent("Fetch Nature by ID", null, response);
+		Map<String, Object> params = new HashMap<>();
+		params.put("projectId", ProjectId);
+		params.put("isDefault", IsDefault);
+		ApiValidators.validateQueryParamsInList(response,"_embedded.natures",params);
+	}
+	
 	@When("Delete Nature with ID")
 	public void delete_nature_with_ID() {
 		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)

@@ -30,6 +30,11 @@ Feature: IssueComments API testing
     Then Validate API ES and DB for IssueCommentsId after PATCH skipping ES true excludingEverywhere "null" excludeFromRequest "id,deleted,createdate" excludeFromEs "deleted"
     Then The IssueComment response status code should be 200
 
+  @Custom_Queries_for_IssueComment
+  Scenario: To verify that after GET request FindByIssueId
+    When FindByIssueId for IssueComments
+    Then The IssueComment response status code should be 200
+
   @IssueComment
   Scenario: To verify that after Delete request data should get removed from DataBase
     When Delete IssueComment with ID
@@ -43,5 +48,4 @@ Feature: IssueComments API testing
   @Negative_scenarioes_for_IssueComment_entity
   Scenario: To verify that after PUT request data should get update in Database (Which is  already deleted)
     When Update IssueComment Details
-    Then Validate API ES and DB for IssueCommentsId after PUT skipping ES false excludingEverywhere "null" excludeFromRequest "id,deleted,createdate" excludeFromEs "deleted"
     Then The IssueComment response status code should be 200

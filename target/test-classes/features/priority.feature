@@ -30,6 +30,16 @@ Feature: Priority API testing
     Then Validate API ES and DB for PriorityId after PATCH skipping ES true excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"
     Then The Priority response status code should be 200
 
+  @Custom_Queries_for_Priorities
+  Scenario: To verify that after GET request FindByProjectId For Priorities
+    When FindByProjectId For Priorities
+    Then The Priority response status code should be 200
+
+  @Custom_Queries_for_Priorities
+  Scenario: To verify that after GET request FindByProjectIdandIsDefault For Priorities
+    When FindByProjectIdAndIsDefault For Priorities
+    Then The Priority response status code should be 200
+
   @Priority
   Scenario: To verify that after Delete request data should get removed from DataBase
     When Delete Priority with ID

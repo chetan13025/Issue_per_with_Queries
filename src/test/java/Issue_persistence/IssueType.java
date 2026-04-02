@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -38,15 +39,18 @@ import validators.ApiDataValidator;
 import validators.ApiValidators;
 
 public class IssueType {
-	public static int IssueTypeId;
+	public static int IssueTypeId, ProjectId;
 	private Response response;
 	private String requestBody;
 	private String RequestBodyForValidation;
 	public List<Integer> IssueTypeIds;
+	public static Boolean IsDefault;
 	private static String baseUrl = ConfigReader.getProperty("baseUrl");
 	private static String tenantId = ConfigReader.getProperty("tenantId");
 	private static String author = ConfigReader.getProperty("author");
 	private static String IssueType_endpoint = ConfigReader.getProperty("issuetype_endpoint");
+	private static String IssueType_FindByProjectIdendpoint = ConfigReader.getProperty("issuetype_endpoint");
+	private static String IssueType_FindByProjectIdandIsDefaultendpoint = ConfigReader.getProperty("issuetype_findbyprojectidandisdefault");
 	private static String IssueTypeBulk_endpoint = ConfigReader.getProperty("issuetypebulk_endpoint");
 	private static String IssueTypeBulkUpdate_endpoint = ConfigReader.getProperty("issuetypebulku_endpoint");
 	private static String IssueTypeBulkDelete_endpoint = ConfigReader.getProperty("issuetypebulkd_endpoint");
@@ -77,7 +81,8 @@ public class IssueType {
 
 		try (Connection conn = DriverManager.getConnection("jdbc:mysql://10.10.2.45:3306", "root", "dhi123");
 				Statement stmt = conn.createStatement();
-				// ResultSet rs = stmt.executeQuery("SELECT * FROM `issue_persistence_piqa`.`IssueType` LIMIT 1000"))
+				// ResultSet rs = stmt.executeQuery("SELECT * FROM
+				// `issue_persistence_piqa`.`IssueType` LIMIT 1000"))
 				ResultSet rs = stmt
 						.executeQuery("SELECT * FROM (" + "   SELECT * FROM `issue_persistence_piqa`.`IssueType` "
 								+ "   ORDER BY id DESC LIMIT 5" + ") AS lastFive " + "ORDER BY id ASC;")) {
@@ -270,6 +275,8 @@ public class IssueType {
 		System.out.println("PATCH Request Body:\n" + newJson);
 		System.out.println("PATCH Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
+		ProjectId = response.jsonPath().getInt("projectId");
+		IsDefault = response.jsonPath().getBoolean("isDefault");
 		RequestBodyForValidation = newJson;
 		logToExtent("Update IssueType (PATCH)", newJson, response);
 		captureDbSnapshot(IssueTypeId, "Update IssueType (PATCH)");
@@ -277,6 +284,35 @@ public class IssueType {
 //		ApiValidators.validateRequestToResponse(newJson, response, IssueTypeId, "comments");
 		// captureElasticScreenshot(IssueTypeId, "Update IssueType (PATCH)");
 
+	}
+
+	@When("FindByProjectId For IssueType")
+	public void findByProjectId_for_issuetype() {
+		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
+				.header("Author", author).queryParam("projectId", ProjectId).when()
+				.get(baseUrl + IssueType_FindByProjectIdendpoint).then().extract().response();
+
+		System.out.println("Response Body:\n" + response.getBody().asString());
+		System.out.println("Status Code: " + response.getStatusCode());
+		logToExtent("Fetch IssueType by ID", null, response);
+		Map<String, Object> params = new HashMap<>();
+		params.put("projectId", ProjectId);
+		ApiValidators.validateQueryParamsInList(response, "_embedded.issueTypes", params);
+	}
+
+	@When("FindByProjectIdAndIsDefault For IssueType")
+	public void findByProjectIdAndIsDefault_for_issuetype() {
+		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
+				.header("Author", author).queryParam("projectId", ProjectId).queryParam("isDefault", IsDefault).when()
+				.get(baseUrl + IssueType_FindByProjectIdandIsDefaultendpoint).then().extract().response();
+
+		System.out.println("Response Body:\n" + response.getBody().asString());
+		System.out.println("Status Code: " + response.getStatusCode());
+		logToExtent("Fetch IssueType by ID", null, response);
+		Map<String, Object> params = new HashMap<>();
+		params.put("projectId", ProjectId);
+		params.put("isDefault", IsDefault);
+		ApiValidators.validateQueryParamsInList(response, "_embedded.issueTypes", params);
 	}
 
 	@When("Delete IssueType with ID")

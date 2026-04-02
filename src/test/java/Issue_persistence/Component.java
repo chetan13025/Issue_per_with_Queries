@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -39,14 +40,17 @@ import validators.ApiDataValidator;
 import validators.ApiValidators;
 
 public class Component {
-	public static int ComponentId;
+	public static int ComponentId,ProjectId;
 	private Response response;
 	private String requestBody;
 	private String RequestBodyForValidation;
+	public static String Label;
 	private static String baseUrl = ConfigReader.getProperty("baseUrl");
 	private static String tenantId = ConfigReader.getProperty("tenantId");
 	private static String author = ConfigReader.getProperty("author");
 	private static String Component_endpoint = ConfigReader.getProperty("component_endpoint");
+	private static String Component_FindByLowerLabelendpoint = ConfigReader.getProperty("compo_findbylowerlabel");
+	private static String Component_FindByProjectIdByLabelendpoint = ConfigReader.getProperty("compo_findbyprojectID");
 	private static String ComponentBulk_endpoint = ConfigReader.getProperty("componentbulk_endpoint");
 	private static String ComponentBulkUpdate_endpoint = ConfigReader.getProperty("componentbulku_endpoint");
 	private static String ComponentBulkDelete_endpoint = ConfigReader.getProperty("componentbulkd_endpoint");
@@ -274,6 +278,8 @@ public class Component {
 		System.out.println("PATCH Request Body:\n" + newJson);
 		System.out.println("PATCH Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
+		Label = response.jsonPath().get("label");
+		ProjectId=response.jsonPath().get("projectId");
 		RequestBodyForValidation = newJson;
 		logToExtent("Update Component (PATCH)", newJson, response);
 		captureDbSnapshot(ComponentId, "Update Component (PATCH)");
@@ -281,6 +287,37 @@ public class Component {
 //		ApiValidators.validateRequestToResponse(newJson, response, IssueTypeId, "comments");
 		// captureElasticScreenshot(ComponentId, "Update Component (PATCH)");
 
+	}
+	
+	@When("FindByLowerLabel For Component")
+	public void findByLowerLabel_for_component() {
+		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
+				.header("Author", author).queryParam("label", Label).when().get(baseUrl + Component_FindByLowerLabelendpoint).then()
+				.extract().response();
+
+		System.out.println("Response Body:\n" + response.getBody().asString());
+		System.out.println("Status Code: " + response.getStatusCode());
+		logToExtent("Fetch Component by ID", null, response);
+		Map<String, Object> params = new HashMap<>();
+		params.put("label", Label);   
+		
+		ApiValidators.validateQueryParamsInList(response,params,null);
+	}
+	
+	
+	@When("FindByProjectIdOrderByLabelAsc")
+	public void findByProjectIdOrderByLabelAsc() {
+		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
+				.header("Author", author).queryParam("projectId", ProjectId).when().get(baseUrl + Component_FindByProjectIdByLabelendpoint).then()
+				.extract().response();
+
+		System.out.println("Response Body:\n" + response.getBody().asString());
+		System.out.println("Status Code: " + response.getStatusCode());
+		logToExtent("Fetch Component by ID", null, response);
+		Map<String, Object> params = new HashMap<>();
+		params.put("projectId", ProjectId);   // ✅ no parseInt
+		
+		ApiValidators.validateQueryParamsInList(response,params,null);
 	}
 	@When("Delete Component with ID")
 	public void delete_component_with_ID() {

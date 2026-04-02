@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -35,9 +36,10 @@ import io.restassured.response.Response;
 import reports.ExtentCucumberListener;
 import utils.ConfigReader;
 import validators.ApiDataValidator;
+import validators.ApiValidators;
 
 public class IssueMilestone {
-	public static int IssueMilestoneId;
+	public static int IssueMilestoneId,ProjectId;
 	private Response response;
 	private String requestBody;
 	private String RequestBodyForValidation;
@@ -46,6 +48,7 @@ public class IssueMilestone {
 	private static String tenantId = ConfigReader.getProperty("tenantId");
 	private static String author = ConfigReader.getProperty("author");
 	private static String IssueMilestone_endpoint = ConfigReader.getProperty("issuemilestone_endpoint");
+	private static String IssueMilestone_FindByProjectIdendpoint = ConfigReader.getProperty("issuemilestone_endpoint");
 	private static String IssueMilestoneBulk_endpoint = ConfigReader.getProperty("issuemilestonebulk_endpoint");
 	private static String IssueMilestoneBulkUpdate_endpoint = ConfigReader.getProperty("issuemilestonebulku_endpoint");
 	private static String IssueMilestoneBulkDelete_endpoint = ConfigReader.getProperty("issuemilestonebulkd_endpoint");
@@ -207,7 +210,7 @@ public class IssueMilestone {
 		System.out.println("Status Code: " + response.getStatusCode());
 		IssueMilestoneId = response.jsonPath().getInt("id");
 		RequestBodyForValidation=requestBody;
-		System.out.println("Stored IssueLogId: " + IssueMilestoneId);
+		System.out.println("Stored IssueMilestoneId: " + IssueMilestoneId);
 		logToExtent("Create IssueMilestone Response", requestBody, response);
 		captureDbSnapshot(IssueMilestoneId, "Create New IssueMilestone");
 		// captureElasticScreenshot(IssueMilestoneId, "Create New IssueMilestone");
@@ -269,11 +272,26 @@ public class IssueMilestone {
 		System.out.println("PATCH Request Body:\n" + newJson);
 		System.out.println("PATCH Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
+		ProjectId= response.jsonPath().getInt("projectId");		
 		RequestBodyForValidation=newJson;
 		logToExtent("Update IssueMilestone (PATCH)", newJson, response);
 		captureDbSnapshot(IssueMilestoneId, "Update IssueMilestone (PATCH)");
 		// captureElasticScreenshot(IssueMilestoneId, "Update IssueMilestone (PATCH)");
 
+	}
+	
+	@When("FindByProjectId for IssueMilestone")
+	public void findByProjectId() {
+		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
+				.header("Author", author).queryParam("projectId", ProjectId).when().get(baseUrl + IssueMilestone_FindByProjectIdendpoint).then()
+				.extract().response();
+
+		System.out.println("Response Body:\n" + response.getBody().asString());
+		System.out.println("Status Code: " + response.getStatusCode());
+		logToExtent("Fetch IssueMilestone by ID", null, response);
+		Map<String, Object> params = new HashMap<>();
+		params.put("projectId", ProjectId);   
+		ApiValidators.validateQueryParamsInList(response,"_embedded.issueMilestones",params);
 	}
 	@When("Delete IssueMilestone with ID")
 	public void delete_issuemilestone_with_ID() {

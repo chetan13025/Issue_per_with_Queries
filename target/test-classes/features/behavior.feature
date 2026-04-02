@@ -25,9 +25,19 @@ Feature: Behavior API testing
     Then The Behavior response status code should be 200
 
   @Behavior
-  Scenario: To verify that after Patch request data shouldget update in DataBase
+  Scenario: To verify that after Patch request data should get update in DataBase
     When Update Patch Behavior
     Then Validate API ES and DB for BehaviorId after PATCH skipping ES true excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"
+    Then The Behavior response status code should be 200
+
+  @Custom_Quries_for_Behavior_entity
+  Scenario: To verify that after GET request of FindByIssueIdorderByIdAsc
+    When FindByIssueIdOrderByIdAsc
+    Then The Behavior response status code should be 200
+
+  @Custom_Quries_for_Behavior_entity
+  Scenario: To verify that after GET request of findByIssueIdAndBehaviorTypeOrderByIdAsc
+    When findByIssueIdAndBehaviorTypeOrderByIdAsc
     Then The Behavior response status code should be 200
 
   @Behavior
@@ -44,5 +54,3 @@ Feature: Behavior API testing
   Scenario: To verify that after PUT request data should get update in Database (Which is already deleted)
     When Update Behavior Details
     Then The Behavior response status code should be 200
-   
-    

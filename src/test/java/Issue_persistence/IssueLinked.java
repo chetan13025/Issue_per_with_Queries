@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -35,18 +36,22 @@ import io.restassured.response.Response;
 import reports.ExtentCucumberListener;
 import utils.ConfigReader;
 import validators.ApiDataValidator;
+import validators.ApiValidators;
 
 public class IssueLinked {
 	
-	public static int IssueLinkedId;
+	public static int IssueLinkedId,RelatedIssueId;
 	private Response response;
 	private String requestBody;
 	private String RequestBodyForValidation;
 	public List<Integer> IssueLinkedIds;
+	public static String Relationship,DependencyType;
 	private static String baseUrl = ConfigReader.getProperty("baseUrl");
 	private static String tenantId = ConfigReader.getProperty("tenantId");
 	private static String author = ConfigReader.getProperty("author");
 	private static String IssueLinked_endpoint = ConfigReader.getProperty("issuelinked_endpoint");
+	private static String IssueLinked_FindByRelationshipandRelatedIssueIdendpoint = ConfigReader.getProperty("issuelinked_findbyrelationandrela");
+	private static String IssueLinked_FindByRelationshipandRelatedIssueIdDependencyTypeendpoint = ConfigReader.getProperty("issuelinked_findbyrelationandrelaanddep");
 	private static String IssueLinkedBulk_endpoint = ConfigReader.getProperty("issuelinkedbulk_endpoint");
 	private static String IssueLinkedBulkUpdate_endpoint = ConfigReader.getProperty("issuelinkedbulku_endpoint");
 	private static String IssueLinkedBulkDelete_endpoint = ConfigReader.getProperty("issuelinkedbulkd_endpoint");
@@ -279,6 +284,9 @@ public class IssueLinked {
 		System.out.println("PATCH Request Body:\n" + newJson);
 		System.out.println("PATCH Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
+		Relationship = response.jsonPath().get("relationship");
+		RelatedIssueId = response.jsonPath().getInt("relatedIssueId");
+		DependencyType = response.jsonPath().get("dependencyType");
 		RequestBodyForValidation=newJson;
 		logToExtent("Update IssueLinked (PATCH)", newJson, response);
 		captureDbSnapshot(IssueLinkedId, "Update IssueLinked (PATCH)");
@@ -288,6 +296,37 @@ public class IssueLinked {
 //		captureElasticScreenshot(IssueLinkedId, "Update IssueLinked (PATCH)");
 
 
+	}
+	
+	@When("FindByRelationshipAndRelatedIssueIdInOrderByPositionDesc")
+	public void findByRelationshipAndRelatedIssueIdInOrderByPositionDesc() {
+		response = given().header("Content-Type", "application/json").header("Accept", "application/hal+json").header("X-TENANT-ID", tenantId)
+				.header("Author", author).queryParam("relationship", Relationship).queryParam("relatedIssueId", RelatedIssueId).when().get(baseUrl + IssueLinked_FindByRelationshipandRelatedIssueIdendpoint).then()
+				.extract().response();
+
+		System.out.println("Response Body:\n" + response.getBody().asString());
+		System.out.println("Status Code: " + response.getStatusCode());
+		logToExtent("Fetch IssueLinked by ID", null, response);
+		Map<String, Object> params = new HashMap<>();
+		params.put("relationship", Relationship);
+		params.put("relatedIssueId", RelatedIssueId);
+		ApiValidators.validateQueryParamsInList(response,"_embedded.issueLinkeds",params);
+	}
+	
+	@When("FindByRelatedIssueIdInAndRelationshipAndDependencyTypeIn")
+	public void findByRelatedIssueIdInAndRelationshipAndDependencyTypeIn() {
+		response = given().header("Content-Type", "application/json").header("Accept", "application/hal+json").header("X-TENANT-ID", tenantId)
+				.header("Author", author).queryParam("relatedIssueId", RelatedIssueId).queryParam("relationship", Relationship).queryParam("dependencyType", DependencyType).when().get(baseUrl + IssueLinked_FindByRelationshipandRelatedIssueIdDependencyTypeendpoint).then()
+				.extract().response();
+
+		System.out.println("Response Body:\n" + response.getBody().asString());
+		System.out.println("Status Code: " + response.getStatusCode());
+		logToExtent("Fetch IssueLinked by ID", null, response);
+		Map<String, Object> params = new HashMap<>();
+		params.put("relationship", Relationship);
+		params.put("relatedIssueId", RelatedIssueId);
+		params.put("dependencyType", DependencyType);
+		ApiValidators.validateQueryParamsInList(response,"_embedded.issueLinkeds",params);
 	}
 
 	@When("Delete IssueLinked with ID")

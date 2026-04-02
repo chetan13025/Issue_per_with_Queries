@@ -30,6 +30,11 @@ Feature: IssueSprint API testing
     Then Validate API ES and DB for IssueSprintId after PATCH skipping ES true excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"
     Then The IssueSprint response status code should be 200
 
+  @Custom_Queries_IssueSprint
+  Scenario: To verify that after GET request FindByIssueIdAndSprintId
+    When FindByIssueIdAndSprintId
+    Then The IssueSprint response status code should be 200
+
   @IssueSprint
   Scenario: To verify that After Delete Data should delete from DataBase
     When Delete IssueSprint with ID

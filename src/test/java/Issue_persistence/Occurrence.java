@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -38,15 +39,18 @@ import validators.ApiDataValidator;
 import validators.ApiValidators;
 
 public class Occurrence {
-	public static int OccurrenceId;
+	public static int OccurrenceId,ProjectId;
 	private Response response;
 	private String requestBody;
 	private String RequestBodyForValidation;
 	public List<Integer> OccurrenceIds;
+	public static Boolean IsDefault;
 	private static String baseUrl = ConfigReader.getProperty("baseUrl");
 	private static String tenantId = ConfigReader.getProperty("tenantId");
 	private static String author = ConfigReader.getProperty("author");
 	private static String Occurrence_endpoint = ConfigReader.getProperty("occurrence_endpoint");
+	private static String Occurrence_FindByProjectIdendpoint = ConfigReader.getProperty("occurence_findbyprojectid");
+	private static String Occurrence_FindByProjectIdandIsDefaultendpoint = ConfigReader.getProperty("occurence_findbyprojectidandisdefult");
 	private static String OccurrenceBulk_endpoint = ConfigReader.getProperty("occurrencebulk_endpoint");
 	private static String OccurrenceBulkUpdate_endpoint = ConfigReader.getProperty("occurrencebulku_endpoint");
 	private static String OccurrenceBulkDelete_endpoint = ConfigReader.getProperty("occurrencebulkd_endpoint");
@@ -270,6 +274,8 @@ public class Occurrence {
 		System.out.println("PATCH Request Body:\n" + newJson);
 		System.out.println("PATCH Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
+		ProjectId = response.jsonPath().getInt("projectId");
+		IsDefault = response.jsonPath().getBoolean("isDefault");
 		RequestBodyForValidation=newJson;
 		logToExtent("Update Occurrence (PATCH)", newJson, response);
 		captureDbSnapshot(OccurrenceId, "Update Occurrence (PATCH)");
@@ -277,6 +283,35 @@ public class Occurrence {
 //		ApiValidators.validateRequestToResponse(newJson, response, IssueTypeId, "comments");
 		// captureElasticScreenshot(OccurrenceId, "Update Occurrence (PATCH)");
 
+	}
+	
+	@When("FindByProjectId For Occurrence")
+	public void findbyprojectid_for_occurrence() {
+		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
+				.header("Author", author).queryParam("projectId", ProjectId).when().get(baseUrl + Occurrence_FindByProjectIdendpoint).then()
+				.extract().response();
+
+		System.out.println("Response Body:\n" + response.getBody().asString());
+		System.out.println("Status Code: " + response.getStatusCode());
+		logToExtent("Fetch Occurrence by ID", null, response);
+		Map<String, Object> params = new HashMap<>();
+		params.put("projectId", ProjectId);   
+		ApiValidators.validateQueryParamsInList(response,"_embedded.occurrences",params);
+	}
+	
+	@When("FindByProjectIdandIsDefault For Occurence")
+	public void findbyprojectidandisdefault_for_occurence() {
+		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
+				.header("Author", author).queryParam("projectId", ProjectId).queryParam("isDefault", IsDefault).when().get(baseUrl + Occurrence_FindByProjectIdandIsDefaultendpoint).then()
+				.extract().response();
+
+		System.out.println("Response Body:\n" + response.getBody().asString());
+		System.out.println("Status Code: " + response.getStatusCode());
+		logToExtent("Fetch Occurrence by ID", null, response);
+		Map<String, Object> params = new HashMap<>();
+		params.put("projectId", ProjectId);
+		params.put("isDefault", IsDefault);
+		ApiValidators.validateQueryParamsInList(response,"_embedded.occurrences",params);
 	}
 	@When("Delete Occurrence with ID")
 	public void delete_occurrence_with_ID() {

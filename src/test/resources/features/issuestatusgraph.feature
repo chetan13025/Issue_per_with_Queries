@@ -30,6 +30,16 @@ Feature: IssueStatusGraph API testing
     Then Validate API ES and DB for IssueSatusGraphId after PATCH skipping ES true excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"
     Then The IssueStatusGraph response status code should be 200
 
+  @Custom_Queries_for_IssueStatusGraph
+  Scenario: To verify that after GET request FindByStatusStartAndType
+    When FindByStatusStartAndType
+    Then The IssueStatusGraph response status code should be 200
+
+  @Custom_Queries_for_IssueStatusGraph
+  Scenario: TO verify that after GET request FindByStatusEndAndType
+    When FindByStatusEndAndType
+    Then The IssueStatusGraph response status code should be 200
+
   @IssueStatusGraph
   Scenario: To verify that after Delete data should get delete from DataBase
     When Delete IssueStatusGraph with ID

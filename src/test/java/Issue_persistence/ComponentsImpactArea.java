@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -38,7 +39,7 @@ import validators.ApiDataValidator;
 import validators.ApiValidators;
 
 public class ComponentsImpactArea {
-	public static int ComponentImpactAreaId;
+	public static int ComponentImpactAreaId,ImpactAreaId,ComponentId;
 	private Response response;
 	private String requestBody;
 	private String RequestBodyForValidation;
@@ -46,6 +47,8 @@ public class ComponentsImpactArea {
 	private static String tenantId = ConfigReader.getProperty("tenantId");
 	private static String author = ConfigReader.getProperty("author");
 	private static String ComponentImpactArea_endpoint = ConfigReader.getProperty("componentimpactarea_endpoint");
+	private static String ComponentImpactArea_FindByImpactAreaIdendpoint = ConfigReader.getProperty("component_findbyImpactareaid");
+	private static String ComponentImpactArea_FindByComponentIdendpoint = ConfigReader.getProperty("component_findbyCompenentid");
 	private static String ComponentImpactAreaBulk_endpoint = ConfigReader.getProperty("componentimpcatareabulk_endpoint");
 	private static String ComponentImpactAreaBulkUpdate_endpoint = ConfigReader.getProperty("componentimpcatareabulku_endpoint");
 	private static String ComponentImpactAreaBulkDelete_endpoint = ConfigReader.getProperty("componentimpcatareabulkd_endpoint");
@@ -269,6 +272,8 @@ public class ComponentsImpactArea {
 		System.out.println("PATCH Request Body:\n" + newJson);
 		System.out.println("PATCH Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
+		ImpactAreaId=response.jsonPath().getInt("impactAreaId");
+		ComponentId=response.jsonPath().getInt("componentId");
 		RequestBodyForValidation = newJson;
 		logToExtent("Update ComponentImpactArea (PATCH)", newJson, response);
 		captureDbSnapshot(ComponentImpactAreaId, "Update ComponentImpactArea (PATCH)");
@@ -276,6 +281,34 @@ public class ComponentsImpactArea {
 //		ApiValidators.validateRequestToResponse(newJson, response, IssueTypeId, "comments");
 		// captureElasticScreenshot(ComponentImpactAreaId, "Update ComponentImpactArea (PATCH)");
 
+	}
+	
+	@When("FindByImpactAreaId")
+	public void findByImpactAreaId() {
+		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
+				.header("Author", author).queryParam("impactAreaId", ImpactAreaId).when().get(baseUrl + ComponentImpactArea_FindByImpactAreaIdendpoint).then()
+				.extract().response();
+
+		System.out.println("Response Body:\n" + response.getBody().asString());
+		System.out.println("Status Code: " + response.getStatusCode());
+		logToExtent("FindByImpactAreaId", null, response);
+		Map<String, Object> params = new HashMap<>();
+		params.put("impactAreaId", ImpactAreaId);   
+		ApiValidators.validateQueryParamsInList(response,params,null);
+	}
+	
+	@When("FindByComponentIdIn")
+	public void findByComponentIdIn() {
+		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
+				.header("Author", author).queryParam("componentId", ComponentId).when().get(baseUrl + ComponentImpactArea_FindByComponentIdendpoint).then()
+				.extract().response();
+
+		System.out.println("Response Body:\n" + response.getBody().asString());
+		System.out.println("Status Code: " + response.getStatusCode());
+		logToExtent("Fetch ComponentImpactArea by ID", null, response);
+		Map<String, Object> params = new HashMap<>();
+		params.put("componentId", ComponentId);   
+		ApiValidators.validateQueryParamsInList(response,params,null);
 	}
 	@When("Delete ComponentImpactArea with ID")
 	public void delete_componentimpactarea_with_ID() {

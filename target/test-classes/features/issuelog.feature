@@ -30,6 +30,16 @@ Feature: IssueLog API testing
     Then Validate API ES and DB for IssueLogId after PATCH skipping ES true excludingEverywhere "null" excludeFromRequest "id,deleted,eventdate" excludeFromEs "deleted"
     Then The IssueLog response status code should be 200
 
+  @Custom_Queries_for_IssueLog
+  Scenario: To verify that after GET request FindByIssueIdAndEventTypeAndTargetIdAndTargetTypeOrderByEventDateDesc
+    When FindByIssueIdAndEventTypeAndTargetIdAndTargetTypeOrderByEventDateDesc
+    Then The IssueLog response status code should be 200
+
+  @Custom_Queries_for_IssueLog
+  Scenario: To verify that after GET request FindByUserIdOrderByEventDateDesc
+    When FindByUserIdOrderByEventDateDesc For IssueLog
+    Then The IssueLog response status code should be 200
+
   @IssueLog
   Scenario: To verify that after Delete request data should get removed from DataBase
     When Delete IssueLog with ID

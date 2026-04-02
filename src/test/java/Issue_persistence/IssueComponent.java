@@ -1,4 +1,4 @@
-package Issue_persistence;
+	package Issue_persistence;
 
 import static io.restassured.RestAssured.given;
 import static org.junit.Assert.assertEquals;
@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -35,9 +36,10 @@ import io.restassured.response.Response;
 import reports.ExtentCucumberListener;
 import utils.ConfigReader;
 import validators.ApiDataValidator;
+import validators.ApiValidators;
 
 public class IssueComponent {
-	public static int IssueComponentId;
+	public static int IssueComponentId,IssueId,IssueId1;
 	private Response response;
 	private String requestBody;
 	private String RequestBodyForValidation;
@@ -46,6 +48,8 @@ public class IssueComponent {
 	private static String tenantId = ConfigReader.getProperty("tenantId");
 	private static String author = ConfigReader.getProperty("author");
 	private static String IssueComponent_endpoint = ConfigReader.getProperty("issuecomponent_endpoint");
+	private static String IssueComponent_FindByIssueIdendpoint = ConfigReader.getProperty("issuecomponent_findbyissueid");
+	private static String IssueComponent_FindByIssueIdInendpoint = ConfigReader.getProperty("issuecomponent_findbyissueidin");
 	private static String IssueComponentBulk_endpoint = ConfigReader.getProperty("issuecomponentbulk_endpoint");
 	private static String IssueComponentBulkUpdate_endpoint = ConfigReader.getProperty("issuecomponentbulku_endpoint");
 	private static String IssueComponentBulkDelete_endpoint = ConfigReader.getProperty("issuecomponentbulkd_endpoint");
@@ -202,6 +206,8 @@ public class IssueComponent {
 		System.out.println("Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
 		IssueComponentId = response.jsonPath().getInt("id");
+		IssueId=response.jsonPath().getInt("issueId");
+//		System.out.println(IssueId);
 		RequestBodyForValidation=requestBody;
 		System.out.println("Stored IssueComponent: " + IssueComponentId);
 		logToExtent("Create IssueComponent Response", requestBody, response);
@@ -265,13 +271,45 @@ public class IssueComponent {
 		System.out.println("PATCH Request Body:\n" + newJson);
 		System.out.println("PATCH Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
+		IssueId1 = response.jsonPath().getInt("issueId");
 		RequestBodyForValidation=newJson;
 		logToExtent("Update IssueComponent (PATCH)", newJson, response);
 		captureDbSnapshot(IssueComponentId, "Update IssueComponent (PATCH)");
 		// captureElasticScreenshot(IssueComponentId, "Update IssueComponent (PATCH)");
 
 	}
+	
+	@When("FindByIssueId for IssueComponent")
+	public void FindByIssueId_for_IssueComponent() {
+		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
+				.header("Author", author).queryParam("issueId", IssueId1).when().get(baseUrl + IssueComponent_FindByIssueIdendpoint).then()
+				.extract().response();
 
+		System.out.println("Response Body:\n" + response.getBody().asString());
+		System.out.println("Status Code: " + response.getStatusCode());
+		logToExtent("Fetch IssueComments by ID", null, response);
+		Map<String, Object> params = new HashMap<>();
+		params.put("issueId", IssueId1);   
+		ApiValidators.validateQueryParamsInList(response,"_embedded.issueComponents",params);
+	}
+	
+//	String issueIds = IssueId + "," + IssueId1;
+	@When("findByIssueIdIn for IssueComponent")
+	public void findByIssueIdIn_for_issuecomponent() {
+		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
+				.header("Author", author).queryParam("issueId",IssueId1).when().get(baseUrl + IssueComponent_FindByIssueIdInendpoint).then()
+				.extract().response();
+
+		System.out.println("Response Body:\n" + response.getBody().asString());
+		System.out.println("Status Code: " + response.getStatusCode());
+		logToExtent("Fetch IssueComments by ID", null, response);
+		Map<String, Object> params = new HashMap<>();
+		params.put("issueId", IssueId1);
+		ApiValidators.validateQueryParamsInList(response,"_embedded.issueComponents",params);
+	}
+
+	
+	
 	@When("Delete IssueComponent with ID")
 	public void delete_issuecomponentt_with_ID() {
 		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
@@ -312,6 +350,7 @@ public class IssueComponent {
 		System.out.println("Stored IssueComponentIds: " + ScenarioContext.Ids);
 
 		ScenarioContext.RequestBodyForValidation = requestBody;
+		List<Integer> issueIds = response.jsonPath().getList("DATA.issueId");
 
 		logToExtent("Create IssueComponent Response", requestBody, response);
 

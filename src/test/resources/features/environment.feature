@@ -30,6 +30,16 @@ Feature: Environment API testing
     Then Validate API ES and DB for EnvironmentId after PATCH skipping ES true excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"
     Then The Environment response status code should be 200
 
+  @Custom_Querires_for_Environment_entity
+  Scenario: To verify that after GET request of FindByProjectID
+    When FindByProjectId for Environment
+    Then The Environment response status code should be 200
+
+  @Custom_Querires_for_Environment_entity
+  Scenario: To verify that after GET request findByProjectIdandisDefault
+    When findByProjectIdAndIsDefault for Enviornment
+    Then The Environment response status code should be 200
+
   @Environment
   Scenario: To verify that after Delete request data should get removed from DataBase
     When Delete Environment with ID

@@ -12,6 +12,7 @@ import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -44,15 +45,18 @@ import validators.ApiValidator;
 import validators.ApiValidators;
 
 public class Behavior {
-	public static int BehaviorId;
+	public static int BehaviorId,IssueId;
 	private Response response;
 	private String requestBody;
+	public static String BehaviorType;
 	private String RequestBodyForValidation;
 	List<Integer> BehaviorIds = new ArrayList<>();
 	private static String baseUrl = ConfigReader.getProperty("baseUrl");
 	private static String tenantId = ConfigReader.getProperty("tenantId");
 	private static String author = ConfigReader.getProperty("author");
 	private static String Behavior_endpoint = ConfigReader.getProperty("behavior_endpoint");
+	private static String Behavior_FindByIssueIdendpoint = ConfigReader.getProperty("Beha_findbyIssueId");
+	private static String Behavior_FindByIssueIdandBehaviourendpoint = ConfigReader.getProperty("Beha_findbyIssueIDandBehatype");
 	private static String BehaviorBulk_endpoint = ConfigReader.getProperty("behaviorbulk_endpoint");
 	private static String BehaviorBulkUpdate_endpoint = ConfigReader.getProperty("behaviorbulku_endpoint");
 	private static String BehaviorBulkDelete_endpoint = ConfigReader.getProperty("behaviorbulkd_endpoint");
@@ -217,6 +221,7 @@ public class Behavior {
 		BehaviorId = response.jsonPath().getInt("id");
 		RequestBodyForValidation = requestBody;
 		System.out.println("Stored BehaviorId: " + BehaviorId);
+//		System.out.println(IssueId);
 		logToExtent("Create Behavior Response", requestBody, response);
 		
 //		captureDbSnapshot(BehaviorId, "Create New Behavior");
@@ -307,6 +312,9 @@ public class Behavior {
 		System.out.println("PATCH Request Body:\n" + newJson);
 		System.out.println("PATCH Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
+		IssueId = response.jsonPath().getInt("issueId");
+		BehaviorType=response.jsonPath().get("behaviorType");
+		System.out.println(BehaviorType);
 		RequestBodyForValidation = newJson;
 		logToExtent("Update Behavior (PATCH)", newJson, response);
 //		captureDbSnapshot(BehaviorId, "Update Behavior (PATCH)");
@@ -328,6 +336,40 @@ public class Behavior {
 //		     );
 
 	}
+
+	@When("FindByIssueIdOrderByIdAsc")
+	public void FindByIssueIdOrderByIdAsc() {
+		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
+				.header("Author", author).queryParam("issueId", IssueId).when().get(baseUrl + Behavior_FindByIssueIdendpoint)
+				.then().extract().response();
+
+		System.out.println("Response Body:\n" + response.getBody().asString());
+		System.out.println("Status Code: " + response.getStatusCode());
+		logToExtent("FindByIssueIdOrderByIdAsc", null, response);
+		Map<String, Object> params = new HashMap<>();
+		params.put("issueId", IssueId);   
+		ApiValidators.validateQueryParamsInList(response,"_embedded.behaviors",params);
+	}
+	
+	@When("findByIssueIdAndBehaviorTypeOrderByIdAsc")
+	public void findByIssueIdAndBehaviorTypeOrderByIdAsc() {
+		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
+				.header("Author", author).queryParam("issueId", IssueId).queryParam("behaviorType", BehaviorType).when().get(baseUrl + Behavior_FindByIssueIdandBehaviourendpoint)
+				.then().extract().response();
+
+		System.out.println("Response Body:\n" + response.getBody().asString());
+		System.out.println("Status Code: " + response.getStatusCode());
+		logToExtent("findByIssueIdAndBehaviorTypeOrderByIdAsc", null, response);
+		Map<String, Object> params = new HashMap<>();
+		params.put("issueId", IssueId);   // ✅ no parseInt
+		params.put("behaviorType", BehaviorType);
+		ApiValidators.validateQueryParamsInList(response,"_embedded.behaviors",params);
+//		ApiValidators.validatePathParamToResponse(response, "id", BehaviorId);
+	}
+	
+	
+	
+	
 
 	@When("Delete Behavior with ID")
 	public void delete_behavior_with_ID() {

@@ -30,6 +30,11 @@ Feature: UnitTestResult API testing
     Then Validate API ES and DB for UnitTestResultId after PATCH skipping ES true excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"
     Then The UnitTestResult response status code should be 200
 
+  @Custom_Queries_For_UnitTestResult
+  Scenario: To verify that after GET request FindByIssueId for UnitTestResult
+    When FindByIssueId for UnitTestResults
+    Then The UnitTestResult response status code should be 200
+
   @UnitTestResult
   Scenario: To verify that after Delete request data should get removed from DataBase
     When Delete UnitTestResult with ID

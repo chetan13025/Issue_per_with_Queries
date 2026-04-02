@@ -30,6 +30,16 @@ Feature: IssueVote API testing
     Then Validate API ES and DB for IssueVoteId after PATCH skipping ES true excludingEverywhere "null" excludeFromRequest "id,deleted,createdate,updatedate" excludeFromEs "deleted"
     Then The IssueVote response status code should be 200
 
+  @Custom_Quereies_for_IssueVote
+  Scenario: To verify that after GET request FindByIssueidOrderByIssueid
+    When FindByIssueIdOrderByIssueIdDesc For IssueVote
+    Then The IssueVote response status code should be 200
+
+  @Custom_Quereies_for_IssueVote
+  Scenario: To verify that after GET request FindByIssueIdIn
+    When FindByIssueIdIn For IssueVote
+    Then The IssueVote response status code should be 200
+
   @IssueVote
   Scenario: TO verify that After Delete request Data should get delete in DataBAse
     When Delete IssueVote with ID

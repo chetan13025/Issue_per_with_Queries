@@ -30,6 +30,11 @@ Feature: Resolution API testing
     Then Validate API ES and DB for ResolutionId after PATCH skipping ES true excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"
     Then The Resolution response status code should be 200
 
+  @Custom_Queries_For_Resolution
+  Scenario: To verify that after GET request FindByProjectId For Resolution
+    When FindByProjectId For Resolution
+    Then The Resolution response status code should be 200
+
   @Resolution
   Scenario: To verify that after Delete request data should get removed from DataBase
     When Delete Resolution with ID

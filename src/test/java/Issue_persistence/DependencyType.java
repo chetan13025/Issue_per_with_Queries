@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -38,15 +39,18 @@ import validators.ApiDataValidator;
 import validators.ApiValidators;
 
 public class DependencyType {
-	public static int DependencyTypeId;
+	public static int DependencyTypeId,ProjectId;
 	private Response response;
 	private String requestBody;
+	public static String Label;
 	private String RequestBodyForValidation;
 	public List<Integer> DependencyTypeIds;
 	private static String baseUrl = ConfigReader.getProperty("baseUrl");
 	private static String tenantId = ConfigReader.getProperty("tenantId");
 	private static String author = ConfigReader.getProperty("author");
 	private static String DependencyType_endpoint = ConfigReader.getProperty("dependencytype_endpoint");
+	private static String DependencyType_FindByProjectIdendpoint = ConfigReader.getProperty("depende_findbyprojectid");
+	private static String DependencyType_FindByProjectIdandLabelendpoint = ConfigReader.getProperty("depende_findbyprojectandlabel");
 	private static String DependencyTypeBulk_endpoint = ConfigReader.getProperty("dependencytypebulk_endpoint");
 	private static String DependencyTypeBulkUpdate_endpoint = ConfigReader.getProperty("dependencytypebulku_endpoint");
 	private static String DependencyTypeBulkDelete_endpoint = ConfigReader.getProperty("dependencytypebulkd_endpoint");
@@ -270,6 +274,8 @@ public class DependencyType {
 		System.out.println("PATCH Request Body:\n" + newJson);
 		System.out.println("PATCH Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
+		ProjectId=response.jsonPath().getInt("projectId");
+		Label=response.jsonPath().get("label");
 		RequestBodyForValidation = newJson;
 		logToExtent("Update DependencyType (PATCH)", newJson, response);
 		captureDbSnapshot(DependencyTypeId, "Update DependencyType (PATCH)");
@@ -277,6 +283,38 @@ public class DependencyType {
 //		ApiValidators.validateRequestToResponse(newJson, response, IssueTypeId, "comments");
 		// captureElasticScreenshot(DependencyTypeId, "Update DependencyType (PATCH)");
 
+	}
+	
+
+	@When("FindByProjectId DependenceType")
+	public void findByProjectId_DependenceType() {
+		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
+				.header("Author", author).queryParam("projectId", ProjectId).when().get(baseUrl + DependencyType_FindByProjectIdendpoint).then()
+				.extract().response();
+
+		System.out.println("Response Body:\n" + response.getBody().asString());
+		System.out.println("Status Code: " + response.getStatusCode());
+		logToExtent("FindByProjectId", null, response);
+		Map<String, Object> params = new HashMap<>();
+		params.put("projectId", ProjectId);   
+		ApiValidators.validateQueryParamsInList(response,params,null);
+		
+	}
+	
+	@When("FindByProjectIdAndLabel")
+	public void findByProjectIdAndLabel() {
+		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
+				.header("Author", author).queryParam("projectId", ProjectId).queryParam("label", Label).when().get(baseUrl + DependencyType_FindByProjectIdandLabelendpoint).then()
+				.extract().response();
+
+		System.out.println("Response Body:\n" + response.getBody().asString());
+		System.out.println("Status Code: " + response.getStatusCode());
+		logToExtent("FindByProjectIdAndLabel", null, response);
+		Map<String, Object> params = new HashMap<>();
+		params.put("projectId", ProjectId);   
+		params.put("label", Label);   
+		ApiValidators.validateQueryParamsInList(response,params,null);
+		
 	}
 	@When("Delete DependencyType with ID")
 	public void delete_dependencytype_with_ID() {

@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -38,7 +39,7 @@ import validators.ApiDataValidator;
 import validators.ApiValidators;
 
 public class IssueSprint {
-	public static int IssueSprintId;
+	public static int IssueSprintId,IssueId,SprintId;
 	private Response response;
 	private String requestBody;
 	private String RequestBodyForValidation;
@@ -47,6 +48,7 @@ public class IssueSprint {
 	private static String tenantId = ConfigReader.getProperty("tenantId");
 	private static String author = ConfigReader.getProperty("author");
 	private static String IssueSprint_endpoint = ConfigReader.getProperty("issuesprint_endpoint");
+	private static String IssueSprint_FindByIssueIdandSprintIdendpoint = ConfigReader.getProperty("issuesprint_endpoint");
 	private static String IssueSprintBulk_endpoint = ConfigReader.getProperty("issuesprintbulk_endpoint");
 	private static String IssueSprintBulkUpdate_endpoint = ConfigReader.getProperty("issuesprintbulku_endpoint");
 	private static String IssueSprintBulkDelete_endpoint = ConfigReader.getProperty("issuesprintbulkd_endpoint");
@@ -269,6 +271,8 @@ public class IssueSprint {
 		System.out.println("PATCH Request Body:\n" + newJson);
 		System.out.println("PATCH Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
+		IssueId = response.jsonPath().getInt("issueId");
+		SprintId = response.jsonPath().getInt("sprintId");
 		RequestBodyForValidation=newJson;
 		logToExtent("Update IssueSprint (PATCH)", newJson, response);
 		captureDbSnapshot(IssueSprintId, "Update IssueSprint (PATCH)");
@@ -276,6 +280,21 @@ public class IssueSprint {
 //		ApiValidators.validateRequestToResponse(newJson, response, IssueRootCauseId, "comments");
 		// captureElasticScreenshot(IssueSprintId, "Update IssueSprint (PATCH)");
 
+	}
+	
+	@When("FindByIssueIdAndSprintId")
+	public void findByIssueIdAndSprintId() {
+		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
+				.header("Author", author).queryParam("issueId", IssueId).queryParam("sprintId", SprintId).when().get(baseUrl + IssueSprint_FindByIssueIdandSprintIdendpoint).then()
+				.extract().response();
+
+		System.out.println("Response Body:\n" + response.getBody().asString());
+		System.out.println("Status Code: " + response.getStatusCode());
+		logToExtent("Fetch IssueSprint by ID", null, response);
+		Map<String, Object> params = new HashMap<>();
+		params.put("issueId", IssueId);
+		params.put("sprintId", SprintId);
+		ApiValidators.validateQueryParamsInList(response,params,null);
 	}
 	@When("Delete IssueSprint with ID")
 	public void delete_issuesprint_with_ID() {

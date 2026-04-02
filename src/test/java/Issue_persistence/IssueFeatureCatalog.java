@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -35,17 +36,21 @@ import io.restassured.response.Response;
 import reports.ExtentCucumberListener;
 import utils.ConfigReader;
 import validators.ApiDataValidator;
+import validators.ApiValidators;
 
 public class IssueFeatureCatalog {
-	public static int IssueFeatureCatalogId;
+	public static int IssueFeatureCatalogId,ProjctId;
 	private Response response;
 	private String requestBody;
 	private String RequestBodyForValidation;
 	public List<Integer> IssueFeatureCatalogIds;
+	public String Rulename;
 	private static String baseUrl = ConfigReader.getProperty("baseUrl");
 	private static String tenantId = ConfigReader.getProperty("tenantId");
 	private static String author = ConfigReader.getProperty("author");
 	private static String IssueFeatureCatalog_endpoint = ConfigReader.getProperty("issuefeaturecatalog_endpoint");
+	private static String IssueFeatureCatalog_FindByRuleNameendpoint = ConfigReader.getProperty("issuefeaturecatalog_findbyrulename");
+	private static String IssueFeatureCatalog_FindByProjectIdendpoint = ConfigReader.getProperty("issuefeaturecatalog_findbyprojectid");
 	private static String IssueFeatureCatalogBulk_endpoint = ConfigReader.getProperty("issuefeaturecatalogbulk_endpoint");
 	private static String IssueFeatureCatalogBulkUpdate_endpoint = ConfigReader.getProperty("issuefeaturecatalogbulku_endpoint");
 	private static String IssueFeatureCatalogBulkDelete_endpoint = ConfigReader.getProperty("issuefeaturecatalogbulkd_endpoint");
@@ -267,13 +272,46 @@ public class IssueFeatureCatalog {
 		System.out.println("PATCH Request Body:\n" + newJson);
 		System.out.println("PATCH Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
+		Rulename=response.jsonPath().get("ruleName");
+		ProjctId=response.jsonPath().getInt("projectId");
 		RequestBodyForValidation=newJson;
 		logToExtent("Update User (PATCH)", newJson, response);
 		captureDbSnapshot(IssueFeatureCatalogId, "Update User (PATCH)");
 		// captureElasticScreenshot(IssueFeatureCatalogId, "Update User (PATCH)");
 
 	}
+	
+	
+	@When("FindByRuleName for IssueFeatureCatalog")
+	public void FindByRuleName() {
+		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
+				.header("Author", author).queryParam("ruleName", Rulename).when().get(baseUrl + IssueFeatureCatalog_FindByRuleNameendpoint).then()
+				.extract().response();
 
+		System.out.println("Response Body:\n" + response.getBody().asString());
+		System.out.println("Status Code: " + response.getStatusCode());
+		logToExtent("Fetch IssueFeatureCatalog by ID", null, response);
+		Map<String, Object> params = new HashMap<>();
+		params.put("ruleName", Rulename);   
+		ApiValidators.validateQueryParamsInList(response,"_embedded.issueFeatureCatalogs",params);
+	}
+	
+	@When("FindByProjectId for IssueFeatureCatalog")
+	public void findByProjectId_for_IssueFeatureCatalog() {
+		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
+				.header("Author", author).queryParam("projectId", ProjctId).when().get(baseUrl + IssueFeatureCatalog_FindByProjectIdendpoint).then()
+				.extract().response();
+
+		System.out.println("Response Body:\n" + response.getBody().asString());
+		System.out.println("Status Code: " + response.getStatusCode());
+		logToExtent("Fetch IssueFeatureCatalog by ID", null, response);
+		Map<String, Object> params = new HashMap<>();
+		params.put("projectId", ProjctId);   
+		ApiValidators.validateQueryParamsInList(response,"_embedded.issueFeatureCatalogs",params);
+	}
+	
+	
+	
 	@When("Delete IssueFeatureCatalog with ID")
 	public void delete_issuefeaturecatalog_with_ID() {
 		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)

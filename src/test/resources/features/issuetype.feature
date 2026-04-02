@@ -30,6 +30,16 @@ Feature: IssueType API testing
     Then Validate API ES and DB for IssueTypeId after PATCH skipping ES true excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"
     Then The IssueType response status code should be 200
 
+  @Custom_Quereies_for_IssueType
+  Scenario: To verify that after GET request FindByProjectId
+    When FindByProjectId For IssueType
+    Then The IssueType response status code should be 200
+
+  @Custom_Quereies_for_IssueType
+  Scenario: To verify that after GET request FindByProjectIdandIsDefault
+    When FindByProjectIdAndIsDefault For IssueType
+    Then The IssueType response status code should be 200
+
   @IssueType
   Scenario: To verify that After Delete request Data is Deleting from DataBase
     When Delete IssueType with ID

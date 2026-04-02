@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -38,15 +39,18 @@ import validators.ApiDataValidator;
 import validators.ApiValidators;
 
 public class IssueVersion {
-	public static int IssueVersionId;
+	public static int IssueVersionId,ProjectVersionId,IssueId;
 	private Response response;
 	private String requestBody;
 	private String RequestBodyForValidation;
 	public List<Integer> IssueVersionIds;
+	public static String Type;
 	private static String baseUrl = ConfigReader.getProperty("baseUrl");
 	private static String tenantId = ConfigReader.getProperty("tenantId");
 	private static String author = ConfigReader.getProperty("author");
 	private static String IssueVersion_endpoint = ConfigReader.getProperty("issueversion_endpoint");
+	private static String IssueVersion_FindByProjectVersionIdandIssueIdandTypeendpoint = ConfigReader.getProperty("issueversion_findbyprojectversionandissueid");
+	private static String IssueVersion_FindByIssueIdandTypeendpoint = ConfigReader.getProperty("issueversion_findbyissueidandtype");
 	private static String IssueVersionBulk_endpoint = ConfigReader.getProperty("issueversionbulk_endpoint");
 	private static String IssueVersionBulkUpdate_endpoint = ConfigReader.getProperty("issueversionbulku_endpoint");
 	private static String IssueVersionBulkDelete_endpoint = ConfigReader.getProperty("issueversionbulkd_endpoint");
@@ -269,6 +273,9 @@ public class IssueVersion {
 		System.out.println("PATCH Request Body:\n" + newJson);
 		System.out.println("PATCH Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
+		ProjectVersionId = response.jsonPath().getInt("projectVersionId");
+		IssueId = response.jsonPath().getInt("issueId");
+		Type = response.jsonPath().get("type");
 		RequestBodyForValidation=newJson;
 		logToExtent("Update IssueVersion (PATCH)", newJson, response);
 		captureDbSnapshot(IssueVersionId, "Update IssueVersion (PATCH)");
@@ -277,6 +284,41 @@ public class IssueVersion {
 		// captureElasticScreenshot(IssueVersionId, "Update IssueVersion (PATCH)");
 
 	}
+	
+	@When("FindByProjectVersionIdAndIssueIdAndType")
+	public void findByProjectVersionIdAndIssueIdAndType() {
+		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
+				.header("Author", author).queryParam("projectVersionId", ProjectVersionId).queryParam("issueId", IssueId)
+				.queryParam("type", Type)
+				.when().get(baseUrl + IssueVersion_FindByProjectVersionIdandIssueIdandTypeendpoint).then()
+				.extract().response();
+
+		System.out.println("Response Body:\n" + response.getBody().asString());
+		System.out.println("Status Code: " + response.getStatusCode());
+		logToExtent("Fetch IssueVersion by ID", null, response);
+		Map<String, Object> params = new HashMap<>();
+		params.put("issueId", IssueId); 
+		params.put("projectVersionId", ProjectVersionId); 
+		params.put("type", Type); 
+		ApiValidators.validateQueryParamsInList(response,"_embedded.issueVersions",params);
+	}
+	
+	@When("FindByIssueIdAndType")
+	public void findByIssueIdAndType() {
+		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
+				.header("Author", author).queryParam("issueId", IssueId).queryParam("type", Type)
+				.when().get(baseUrl + IssueVersion_FindByIssueIdandTypeendpoint).then()
+				.extract().response();
+
+		System.out.println("Response Body:\n" + response.getBody().asString());
+		System.out.println("Status Code: " + response.getStatusCode());
+		logToExtent("Fetch IssueVersion by ID", null, response);
+		Map<String, Object> params = new HashMap<>();
+		params.put("issueId", IssueId);
+		params.put("type", Type);
+		ApiValidators.validateQueryParamsInList(response,"_embedded.issueVersions",params);
+	}
+	
 	@When("Delete IssueVersion with ID")
 	public void delete_issueversion_with_ID() {
 		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)

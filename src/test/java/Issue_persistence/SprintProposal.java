@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -38,7 +39,7 @@ import validators.ApiDataValidator;
 import validators.ApiValidators;
 
 public class SprintProposal {
-	public static int SprintProposalId;
+	public static int SprintProposalId,SprintId,IssueId;
 	private Response response;
 	private String requestBody;
 	private String RequestBodyForValidation;
@@ -47,6 +48,8 @@ public class SprintProposal {
 	private static String tenantId = ConfigReader.getProperty("tenantId");
 	private static String author = ConfigReader.getProperty("author");
 	private static String SprintProposal_endpoint = ConfigReader.getProperty("sprintproposal_endpoint");
+	private static String SprintProposal_FindBySprintIdendpoint = ConfigReader.getProperty("sprintproposal_findbysprintid");
+	private static String SprintProposal_FindByIssueIdendpoint = ConfigReader.getProperty("sprintproposal_findbyissueid");
 	private static String SprintProposalBulk_endpoint = ConfigReader.getProperty("sprintproposalbulk_endpoint");
 	private static String SprintProposalBulkUpdate_endpoint = ConfigReader.getProperty("sprintproposalbulku_endpoint");
 	private static String SprintProposalBulkDelete_endpoint = ConfigReader.getProperty("sprintproposalbulkd_endpoint");
@@ -271,6 +274,8 @@ public class SprintProposal {
 		System.out.println("PATCH Request Body:\n" + newJson);
 		System.out.println("PATCH Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
+		SprintId = response.jsonPath().getInt("sprintId");
+		IssueId = response.jsonPath().getInt("issueId");
 		RequestBodyForValidation=newJson;
 		logToExtent("Update SprintProposal (PATCH)", newJson, response);
 		captureDbSnapshot(SprintProposalId, "Update SprintProposal (PATCH)");
@@ -278,6 +283,36 @@ public class SprintProposal {
 //		ApiValidators.validateRequestToResponse(newJson, response, IssueTypeId, "comments");
 		// captureElasticScreenshot(SprintProposalId, "Update SprintProposal (PATCH)");
 
+	}
+	
+	@When("FindBySprintId For SprintProposal")
+	public void findbysprintid_for_sprintproposal() {
+		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
+				.header("Author", author).queryParam("sprintId", SprintId).when().get(baseUrl + SprintProposal_FindBySprintIdendpoint).then()
+				.extract().response();
+
+		System.out.println("Response Body:\n" + response.getBody().asString());
+		System.out.println("Status Code: " + response.getStatusCode());
+		logToExtent("Fetch SprintProposal by ID", null, response);
+		Map<String, Object> params = new HashMap<>();
+		params.put("sprintId", SprintId);   
+		ApiValidators.validateQueryParamsInList(response,"_embedded.sprintProposals",params);
+	
+	}
+	
+	@When("FindByIssueId For SprintProposal")
+	public void Findbyissueid_forsprintproposal() {
+		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
+				.header("Author", author).queryParam("issueId", IssueId).when().get(baseUrl + SprintProposal_FindByIssueIdendpoint).then()
+				.extract().response();
+
+		System.out.println("Response Body:\n" + response.getBody().asString());
+		System.out.println("Status Code: " + response.getStatusCode());
+		logToExtent("Fetch SprintProposal by ID", null, response);
+		Map<String, Object> params = new HashMap<>();
+		params.put("issueId", IssueId);   
+		ApiValidators.validateQueryParamsInList(response,"_embedded.sprintProposals",params);
+	
 	}
 	@When("Delete SprintProposal with ID")
 	public void delete_sprintproposal_with_ID() {

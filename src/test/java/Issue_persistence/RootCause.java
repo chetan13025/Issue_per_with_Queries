@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -38,7 +39,7 @@ import validators.ApiDataValidator;
 import validators.ApiValidators;
 
 public class RootCause {
-	public static int RootCauseId;
+	public static int RootCauseId,ProjectId;
 	private Response response;
 	private String requestBody;
 	private String RequestBodyForValidation;
@@ -47,6 +48,7 @@ public class RootCause {
 	private static String tenantId = ConfigReader.getProperty("tenantId");
 	private static String author = ConfigReader.getProperty("author");
 	private static String RootCause_endpoint = ConfigReader.getProperty("rootcause_endpoint");
+	private static String RootCause_FindByProjectIdendpoint = ConfigReader.getProperty("rootcause_findbyprojectid");
 	private static String RootCauseBulk_endpoint = ConfigReader.getProperty("rootcausebulk_endpoint");
 	private static String RootCauseBulkUpdate_endpoint = ConfigReader.getProperty("rootcausebulku_endpoint");
 	private static String RootCauseBulkDelete_endpoint = ConfigReader.getProperty("rootcausebulkd_endpoint");
@@ -271,6 +273,7 @@ public class RootCause {
 		System.out.println("PATCH Request Body:\n" + newJson);
 		System.out.println("PATCH Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
+		ProjectId = response.jsonPath().getInt("projectId");
 		RequestBodyForValidation=newJson;
 		logToExtent("Update RootCause (PATCH)", newJson, response);
 		captureDbSnapshot(RootCauseId, "Update RootCause (PATCH)");
@@ -278,6 +281,21 @@ public class RootCause {
 //		ApiValidators.validateRequestToResponse(newJson, response, IssueTypeId, "comments");
 		// captureElasticScreenshot(RootCauseId, "Update RootCause (PATCH)");
 
+	}
+	
+	@When("FinByProjectId For Rootcause")
+	public void findbyprojectid_for_rootcause() {
+		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
+				.header("Author", author).queryParam("projectId", ProjectId).when().get(baseUrl + RootCause_FindByProjectIdendpoint).then()
+				.extract().response();
+
+		System.out.println("Response Body:\n" + response.getBody().asString());
+		System.out.println("Status Code: " + response.getStatusCode());
+		logToExtent("Fetch RootCause by ID", null, response);
+		Map<String, Object> params = new HashMap<>();
+		params.put("projectId", ProjectId);   
+		ApiValidators.validateQueryParamsInList(response,"_embedded.rootCauses",params);
+		
 	}
 	@When("Delete RootCause with ID")
 	public void delete_rootcause_with_ID() {

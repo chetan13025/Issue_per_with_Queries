@@ -30,6 +30,16 @@ Feature: Nature API testing
     Then Validate API ES and DB for NatureId after PATCH skipping ES true excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"
     Then The Nature response status code should be 200
 
+  @Custom_Queries_For_Nature
+  Scenario: To verify that after GET request FindByProjectId
+    When FindByProjectId For Nature
+    Then The Nature response status code should be 200
+
+  @Custom_Queries_For_Nature
+  Scenario: TO verify that after GET request FindByProjectIdandIsDefault
+    When FindByProjectIdAndIsDefault For Nature
+    Then The Nature response status code should be 200
+
   @Nature
   Scenario: To verify that after Delete request data should get removed form DataBase
     When Delete Nature with ID

@@ -30,6 +30,22 @@ Feature: IssueComponent API testing
     Then Validate API ES and DB for IssueComponentId after PATCH skipping ES true excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"
     Then The IssueComponent response status code should be 200
 
+  @Custom_queries_for_IssueComponent_entity
+  Scenario: To verify that after GET request FindByIssueId
+    When FindByIssueId for IssueComponent
+    Then The IssueComponent response status code should be 200
+
+  #@Custom_queries_for_IssueComponent_entity
+  #Scenario: To verify that after POST new IssueComponent should create
+   # Given I have a IssueComponent
+    #When Create New IssueComponent
+    #And The IssueComponent response status code should be 201
+
+  @Custom_queries_for_IssueComponent_entity
+  Scenario: To verify that after FindByIssueIdIn
+    When findByIssueIdIn for IssueComponent
+    Then The IssueComponent response status code should be 200
+
   @IssueComponent
   Scenario: To verify that after Delete request data should get delete from DataBase
     When Delete IssueComponent with ID

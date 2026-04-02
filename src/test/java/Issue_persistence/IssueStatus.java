@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -39,15 +40,18 @@ import validators.ApiValidators;
 
 public class IssueStatus {
 
-	public static int IssueStatusId;
+	public static int IssueStatusId,ProjectId;
 	private Response response;
 	private String requestBody;
 	private String RequestBodyForValidation;
 	public List<Integer> IssueStatusIds;
+	public static String StatusRole;
 	private static String baseUrl = ConfigReader.getProperty("baseUrl");
 	private static String tenantId = ConfigReader.getProperty("tenantId");
 	private static String author = ConfigReader.getProperty("author");
 	private static String IssueStatus_endpoint = ConfigReader.getProperty("issuestatus_endpoint");
+	private static String IssueStatus_FindByStatusRoleandProjectIdendpoint = ConfigReader.getProperty("issuestatus_findbystatusroleandprojectid");
+	private static String IssueStatus_FindByProjectIdendpoint = ConfigReader.getProperty("issuestatus_findbyprojectid");
 	private static String IssueStatusBulk_endpoint = ConfigReader.getProperty("issuestatusbulk_endpoint");
 	private static String IssueStatusBulkUpdate_endpoint = ConfigReader.getProperty("issuestatusbulku_endpoint");
 	private static String IssueStatusBulkDelete_endpoint = ConfigReader.getProperty("issuestatusbulkd_endpoint");
@@ -271,6 +275,8 @@ public class IssueStatus {
 		System.out.println("PATCH Request Body:\n" + newJson);
 		System.out.println("PATCH Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
+		StatusRole = response.jsonPath().get("statusRole");
+		ProjectId = response.jsonPath().getInt("projectId");
 		RequestBodyForValidation=newJson;
 		logToExtent("Update IssueStatus (PATCH)", newJson, response);
 		captureDbSnapshot(IssueStatusId, "Update IssueStatus (PATCH)");
@@ -279,6 +285,35 @@ public class IssueStatus {
 		// captureElasticScreenshot(IssueStatusId, "Update IssueStatus (PATCH)");
 
 	}
+	
+	@When("FindByStatusRoleAndProjectIdIn")
+	public void findByStatusRoleAndProjectIdIn() {
+		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
+				.header("Author", author).queryParam("statusRole", StatusRole).queryParam("projectId", ProjectId).when().get(baseUrl + IssueStatus_FindByStatusRoleandProjectIdendpoint).then()
+				.extract().response();
+		System.out.println("Response Body:\n" + response.getBody().asString());
+		System.out.println("Status Code: " + response.getStatusCode());
+		logToExtent("Fetch IssueStatus by ID", null, response);
+		Map<String, Object> params = new HashMap<>();
+		params.put("statusRole", StatusRole);   
+		params.put("projectId", ProjectId);   
+		ApiValidators.validateQueryParamsInList(response,"_embedded.issueStatuses",params);
+	}
+	
+	@When("FindByProjectId For IssueStatus")
+	public void findByProjectId() {
+		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
+				.header("Author", author).queryParam("projectId", ProjectId).when().get(baseUrl + IssueStatus_FindByProjectIdendpoint).then()
+				.extract().response();
+		System.out.println("Response Body:\n" + response.getBody().asString());
+		System.out.println("Status Code: " + response.getStatusCode());
+		logToExtent("Fetch IssueStatus by ID", null, response);
+		Map<String, Object> params = new HashMap<>();  
+		params.put("projectId", ProjectId);   
+		ApiValidators.validateQueryParamsInList(response,"_embedded.issueStatuses",params);
+	}
+	
+	
 	@When("Delete IssueStatus with ID")
 	public void delete_issuestatus_with_ID() {
 		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)

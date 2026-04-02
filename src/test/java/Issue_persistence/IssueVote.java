@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -38,7 +39,7 @@ import validators.ApiDataValidator;
 import validators.ApiValidators;
 
 public class IssueVote {
-	public static int IssueVoteId;
+	public static int IssueVoteId,IssueId;
 	private Response response;
 	private String requestBody;
 	private String RequestBodyForValidation;
@@ -47,6 +48,8 @@ public class IssueVote {
 	private static String tenantId = ConfigReader.getProperty("tenantId");
 	private static String author = ConfigReader.getProperty("author");
 	private static String IssueVote_endpoint = ConfigReader.getProperty("issuevote_endpoint");
+	private static String IssueVote_FindByIssueIdOrderByendpoint = ConfigReader.getProperty("issuevote_finfbyissueidorder");
+	private static String IssueVote_FindByIssueIdInendpoint = ConfigReader.getProperty("issuevote_findbyissueidin");
 	private static String IssueVoteBulk_endpoint = ConfigReader.getProperty("issuevotebulk_endpoint");
 	private static String IssueVoteBulkUpdate_endpoint = ConfigReader.getProperty("issuevotebulku_endpoint");
 	private static String IssueVoteBulkDelete_endpoint = ConfigReader.getProperty("issuevotebulkd_endpoint");
@@ -270,6 +273,7 @@ public class IssueVote {
 		System.out.println("PATCH Request Body:\n" + newJson);
 		System.out.println("PATCH Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
+		IssueId = response.jsonPath().getInt("issueId");
 		RequestBodyForValidation=newJson;
 		logToExtent("Update IssueVote (PATCH)", newJson, response);
 		captureDbSnapshot(IssueVoteId, "Update IssueVote (PATCH)");
@@ -278,6 +282,34 @@ public class IssueVote {
 		// captureElasticScreenshot(IssueVoteId, "Update IssueVote (PATCH)");
 
 	}
+	
+	@When("FindByIssueIdOrderByIssueIdDesc For IssueVote")
+	public void findByIssueIdOrderByIssueIdDesc() {
+		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
+				.header("Author", author).queryParam("issueId", IssueId).when().get(baseUrl + IssueVote_FindByIssueIdOrderByendpoint).then()
+				.extract().response();
+
+		System.out.println("Response Body:\n" + response.getBody().asString());
+		System.out.println("Status Code: " + response.getStatusCode());
+		logToExtent("Fetch IssueVote by ID", null, response);
+		Map<String, Object> params = new HashMap<>();
+		params.put("issueId", IssueId);   
+		ApiValidators.validateQueryParamsInList(response,"_embedded.issueVotes",params);
+	}
+	
+	@When("FindByIssueIdIn For IssueVote")
+	public void findByIssueIdIn() {
+		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
+				.header("Author", author).queryParam("issueId", IssueId).when().get(baseUrl + IssueVote_FindByIssueIdInendpoint).then()
+				.extract().response();
+		System.out.println("Response Body:\n" + response.getBody().asString());
+		System.out.println("Status Code: " + response.getStatusCode());
+		logToExtent("Fetch IssueVote by ID", null, response);
+		Map<String, Object> params = new HashMap<>();
+		params.put("issueId", IssueId);   
+		ApiValidators.validateQueryParamsInList(response,"_embedded.issueVotes",params);
+	}
+	
 	@When("Delete IssueVote with ID")
 	public void delete_issuevote_with_ID() {
 		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)

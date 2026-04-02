@@ -30,6 +30,16 @@ Feature: SprintProposal API testing
     Then Validate API ES and DB for SprintProposalId after PATCH skipping ES true excludingEverywhere "null" excludeFromRequest "id,deleted,eventdate" excludeFromEs "deleted"
     Then The SprintProposal response status code should be 200
 
+  @Custom_Queries_For_SprintProposal
+  Scenario: To verify that after GET request FindBySprintId
+    When FindBySprintId For SprintProposal
+    Then The SprintProposal response status code should be 200
+
+  @Custom_Queries_For_SprintProposal
+  Scenario: To verify that after GET request FindByIssueId
+    When FindByIssueId For SprintProposal
+    Then The SprintProposal response status code should be 200
+
   @SprintProposal
   Scenario: To verify that after Delete request data should get removed from DataBase
     When Delete SprintProposal with ID

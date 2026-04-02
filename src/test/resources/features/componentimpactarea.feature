@@ -30,6 +30,16 @@ Feature: ComponentimpactArea API testing
     Then Validate API ES and DB for ComponentImpactAreaId after POST skipping ES true excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"
     Then The ComponentImpactArea response status code should be 200
 
+  @Custom_Queries_for_ComponentImpactArea_entity
+  Scenario: To verify that after GET request findByImpactAreaId
+    When FindByImpactAreaId
+    Then The ComponentImpactArea response status code should be 200
+
+  @Custom_Queries_for_ComponentImpactArea_entity
+  Scenario: To verify that after GET request findByComponentIdIn
+    When FindByComponentIdIn
+    Then The ComponentImpactArea response status code should be 200
+
   @ComponentImpactArea
   Scenario: To verify that after delete request data should get removed from DataBase
     When Delete ComponentImpactArea with ID

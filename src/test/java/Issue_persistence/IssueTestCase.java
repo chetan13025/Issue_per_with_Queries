@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -38,7 +39,7 @@ import validators.ApiDataValidator;
 import validators.ApiValidators;
 
 public class IssueTestCase {
-	public static int IssueTestCaseId;
+	public static int IssueTestCaseId,IssueId;
 	private Response response;
 	private String requestBody;
 	private String RequestBodyForValidation;
@@ -47,6 +48,7 @@ public class IssueTestCase {
 	private static String tenantId = ConfigReader.getProperty("tenantId");
 	private static String author = ConfigReader.getProperty("author");
 	private static String IssueTestCase_endpoint = ConfigReader.getProperty("issuetestcase_endpoint");
+	private static String IssueTestCase_FindByIssueIdendpoint = ConfigReader.getProperty("issuetestcase_findbyissueid");
 	private static String IssueTestCaseBulk_endpoint = ConfigReader.getProperty("issuetestcasebulk_endpoint");
 	private static String IssueTestCaseBulkUpdate_endpoint = ConfigReader.getProperty("issuetestcasebulku_endpoint");
 	private static String IssueTestCaseulkDelete_endpoint = ConfigReader.getProperty("issuetestcasebulkd_endpoint");
@@ -269,6 +271,7 @@ public class IssueTestCase {
 		System.out.println("PATCH Request Body:\n" + newJson);
 		System.out.println("PATCH Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
+		IssueId = response.jsonPath().getInt("issueId");
 		RequestBodyForValidation=newJson;
 		logToExtent("Update IssueTestCase (PATCH)", newJson, response);
 		captureDbSnapshot(IssueTestCaseId, "Update IssueTestCase (PATCH)");
@@ -276,6 +279,20 @@ public class IssueTestCase {
 //		ApiValidators.validateRequestToResponse(newJson, response, IssueRootCauseId, "comments");
 		// captureElasticScreenshot(IssueTestCaseId, "Update IssueTestCase (PATCH)");
 
+	}
+	
+	@When("FindByIssueId For IssueTestCase")
+	public void findByIssueId_for_testcase() {
+		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
+				.header("Author", author).queryParam("issueId", IssueId).when().get(baseUrl + IssueTestCase_FindByIssueIdendpoint).then()
+				.extract().response();
+
+		System.out.println("Response Body:\n" + response.getBody().asString());
+		System.out.println("Status Code: " + response.getStatusCode());
+		logToExtent("Fetch IssueTestCase by ID", null, response);
+		Map<String, Object> params = new HashMap<>();
+		params.put("issueId", IssueId);   
+		ApiValidators.validateQueryParamsInList(response,"_embedded.issueTestCases",params);
 	}
 	@When("Delete IssueTestCase with ID")
 	public void delete_issuetestcase_with_ID() {

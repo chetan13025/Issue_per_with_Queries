@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -38,15 +39,18 @@ import validators.ApiDataValidator;
 import validators.ApiValidators;
 
 public class Priority {
-	public static int PriorityId;
+	public static int PriorityId,ProjectId;
 	private Response response;
 	private String requestBody;
 	private String RequestBodyForValidation;
 	public List<Integer> PriorityIds;
+	public static Boolean IsDefault;
 	private static String baseUrl = ConfigReader.getProperty("baseUrl");
 	private static String tenantId = ConfigReader.getProperty("tenantId");
 	private static String author = ConfigReader.getProperty("author");
 	private static String Priority_endpoint = ConfigReader.getProperty("priority_endpoint");
+	private static String Priority_FindByProjectIdendpoint = ConfigReader.getProperty("priorities_findbyprojectid");
+	private static String Priority_FindByProjectIdandIsDefaultendpoint = ConfigReader.getProperty("priorities_findbyprojectidandisdefault");
 	private static String PriorityBulk_endpoint = ConfigReader.getProperty("prioritybulk_endpoint");
 	private static String PriorityBulkUpdate_endpoint = ConfigReader.getProperty("prioritybulku_endpoint");
 	private static String PriorityBulkDelete_endpoint = ConfigReader.getProperty("prioritybulkd_endpoint");
@@ -270,6 +274,8 @@ public class Priority {
 		System.out.println("PATCH Request Body:\n" + newJson);
 		System.out.println("PATCH Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
+		ProjectId = response.jsonPath().getInt("projectId");
+		IsDefault = response.jsonPath().getBoolean("isDefault");
 		RequestBodyForValidation=newJson;
 		logToExtent("Update Priority (PATCH)", newJson, response);
 		captureDbSnapshot(PriorityId, "Update Priority (PATCH)");
@@ -278,6 +284,37 @@ public class Priority {
 		// captureElasticScreenshot(PriorityId, "Update Priority (PATCH)");
 
 	}
+	
+	@When("FindByProjectId For Priorities")
+	public void Findbyprojectid_for_Priorities() {
+		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
+				.header("Author", author).queryParam("projectId", ProjectId).when().get(baseUrl + Priority_FindByProjectIdendpoint).then()
+				.extract().response();
+
+		System.out.println("Response Body:\n" + response.getBody().asString());
+		System.out.println("Status Code: " + response.getStatusCode());
+		logToExtent("Fetch Priority by ID", null, response);
+		Map<String, Object> params = new HashMap<>();
+		params.put("projectId", ProjectId);   
+		ApiValidators.validateQueryParamsInList(response,"_embedded.priorities",params);
+	}
+	@When("FindByProjectIdAndIsDefault For Priorities")
+	public void findByProjectIdAndIsDefault_for_priorities() {
+		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
+				.header("Author", author).queryParam("projectId", ProjectId).queryParam("isDefault", IsDefault)
+				.when().get(baseUrl + Priority_FindByProjectIdandIsDefaultendpoint).then()
+				.extract().response();
+
+		System.out.println("Response Body:\n" + response.getBody().asString());
+		System.out.println("Status Code: " + response.getStatusCode());
+		logToExtent("Fetch Priority by ID", null, response);
+		Map<String, Object> params = new HashMap<>();
+		params.put("projectId", ProjectId); 
+		params.put("isDefault", IsDefault); 
+		ApiValidators.validateQueryParamsInList(response,"_embedded.priorities",params);
+	
+	}
+	
 	@When("Delete Priority with ID")
 	public void delete_priority_with_ID() {
 		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)

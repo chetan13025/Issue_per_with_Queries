@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -38,7 +39,7 @@ import validators.ApiDataValidator;
 import validators.ApiValidators;
 
 public class IssueRootCause {
-	public static int IssueRootCauseId;
+	public static int IssueRootCauseId,IssueId;
 	private Response response;
 	private String requestBody;
 	private String RequestBodyForValidation;
@@ -47,6 +48,7 @@ public class IssueRootCause {
 	private static String tenantId = ConfigReader.getProperty("tenantId");
 	private static String author = ConfigReader.getProperty("author");
 	private static String IssueRootCause_endpoint = ConfigReader.getProperty("issuerootcause_endpoint");
+	private static String IssueRootCause_FindByIssueIdendpoint = ConfigReader.getProperty("issuuerootcause_findbyissueid");
 	private static String IssueRootCauseBulk_endpoint = ConfigReader.getProperty("issuerootcausebulk_endpoint");
 	private static String IssueRootCauseBulkUpdate_endpoint = ConfigReader.getProperty("issuerootcausebulku_endpoint");
 	private static String IssueRootCauseBulkDelete_endpoint = ConfigReader.getProperty("issuerootcausebulkd_endpoint");
@@ -268,6 +270,7 @@ public class IssueRootCause {
 		System.out.println("PATCH Request Body:\n" + newJson);
 		System.out.println("PATCH Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
+		IssueId = response.jsonPath().getInt("issueId");
 		RequestBodyForValidation=newJson;
 		logToExtent("Update IssueRootCause (PATCH)", newJson, response);
 		captureDbSnapshot(IssueRootCauseId, "Update IssueRootCause (PATCH)");
@@ -275,6 +278,20 @@ public class IssueRootCause {
 //		ApiValidators.validateRequestToResponse(newJson, response, IssueRootCauseId, "comments");
 		// captureElasticScreenshot(IssueRootCauseId, "Update IssueRootCause (PATCH)");
 
+	}
+	
+	@When("FindByIssueId For IssueRootCause")
+	public void FindByIssueId_for_issuerootcause() {
+		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
+				.header("Author", author).queryParam("issueId", IssueId).when().get(baseUrl + IssueRootCause_FindByIssueIdendpoint).then()
+				.extract().response();
+
+		System.out.println("Response Body:\n" + response.getBody().asString());
+		System.out.println("Status Code: " + response.getStatusCode());
+		logToExtent("Fetch IssueRootCause by ID", null, response);
+		Map<String, Object> params = new HashMap<>();
+		params.put("issueId", IssueId);   
+		ApiValidators.validateQueryParamsInList(response,params,null);
 	}
 	@When("Delete IssueRootCause with ID")
 	public void delete_issuerootcause_with_ID() {

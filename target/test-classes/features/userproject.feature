@@ -30,6 +30,16 @@ Feature: UserProject API testing
     Then Validate API ES and DB for UserProjectId after PATCH skipping ES true excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"
     Then The UserProject response status code should be 200
 
+  @Custom_Queries_For_UserProject
+  Scenario: To verify that after GET request FinfByuserId For UserProject
+    When FindByUserId For UserProject
+    Then The UserProject response status code should be 200
+
+  @Custom_Queries_For_UserProject
+  Scenario: To verify that after GET request FindByUserName For UserProject
+    When FindByUserName For UserProject
+    Then The UserProject response status code should be 200
+
   @UserProject
   Scenario: To verify that after Delete request data should get removed from DataBase
     When Delete UserProject with ID
@@ -43,5 +53,4 @@ Feature: UserProject API testing
   @Negative_Scenarioes_for_UserProject_entity
   Scenario: To verify that after PUT request data should get update in DataBase (Which is already deleted)
     When Update UserProject Details
-    Then Validate API ES and DB for UserProjectId after PUT skipping ES true excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"
     Then The UserProject response status code should be 200

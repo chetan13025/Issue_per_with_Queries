@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -35,6 +36,7 @@ import io.restassured.response.Response;
 import reports.ExtentCucumberListener;
 import utils.ConfigReader;
 import validators.ApiDataValidator;
+import validators.ApiValidators;
 
 public class UserStates {
 	public static int UserStateId;
@@ -42,10 +44,12 @@ public class UserStates {
 	private String requestBody;
 	private String RequestBodyForValidation;
 	public List<Integer> UserStateIds;
+	public static String UserId;
 	private static String baseUrl = ConfigReader.getProperty("baseUrl");
 	private static String tenantId = ConfigReader.getProperty("tenantId");
 	private static String author = ConfigReader.getProperty("author");
 	private static String UserStates_endpoint = ConfigReader.getProperty("userstates_endpoint");
+	private static String UserStates_FindByUserIdendpoint = ConfigReader.getProperty("userstate_findbyuserid");
 	private static String UserStatesBulk_endpoint = ConfigReader.getProperty("userstatesbulk_endpoint");
 	private static String UserStatesBulkUpdate_endpoint = ConfigReader.getProperty("userstatesbulku_endpoint");
 	private static String UserStatesBulkDelete_endpoint = ConfigReader.getProperty("userstatesbulkd_endpoint");
@@ -271,11 +275,26 @@ public class UserStates {
 		System.out.println("PATCH Request Body:\n" + newJson);
 		System.out.println("PATCH Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
+		UserId = response.jsonPath().get("userId");
 		RequestBodyForValidation=newJson;
 		logToExtent("Update UserState (PATCH)", newJson, response);
 		captureDbSnapshot(UserStateId, "Update UserState (PATCH)");
 		// captureElasticScreenshot(UserStateId, "Update UserState (PATCH)");
 
+	}
+	
+	@When("FindByUserId For Userstates")
+	public void findbyuserid_for_usestates() {
+		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
+				.header("Author", author).queryParam("userId", UserId).when().get(baseUrl + UserStates_FindByUserIdendpoint).then()
+				.extract().response();
+
+		System.out.println("Response Body:\n" + response.getBody().asString());
+		System.out.println("Status Code: " + response.getStatusCode());
+		logToExtent("Fetch UserState by ID", null, response);
+		Map<String, Object> params = new HashMap<>();
+		params.put("userId", UserId);   
+		ApiValidators.validateQueryParamsInList(response,"_embedded.userStates",params);
 	}
 	
 	@When("Delete UserState with ID")

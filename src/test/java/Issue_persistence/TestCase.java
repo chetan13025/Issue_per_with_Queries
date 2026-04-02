@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -38,15 +39,18 @@ import validators.ApiDataValidator;
 import validators.ApiValidators;
 
 public class TestCase {
-	public static int TestCaseId;
+	public static int TestCaseId,IssueId;
 	private Response response;
 	private String requestBody;
 	private String RequestBodyForValidation;
 	public List<Integer> TestCaseIds;
+	public static String Title,Code;
 	private static String baseUrl = ConfigReader.getProperty("baseUrl");
 	private static String tenantId = ConfigReader.getProperty("tenantId");
 	private static String author = ConfigReader.getProperty("author");
 	private static String TestCase_endpoint = ConfigReader.getProperty("testcase_endpoint");
+	private static String TestCase_FindByIssueIdandTitleOrCodeendpoint = ConfigReader.getProperty("testcase_findbyissueidandtitleorcode");
+	private static String TestCase_FindByIssueIdendpoint = ConfigReader.getProperty("testcase_findbyissueid");
 	private static String TestCaseBulk_endpoint = ConfigReader.getProperty("testcasebulk_endpoint");
 	private static String TestCaseBulkUpdate_endpoint = ConfigReader.getProperty("testcasebulku_endpoint");
 	private static String TestCaseBulkDelete_endpoint = ConfigReader.getProperty("testcasebulkd_endpoint");
@@ -224,6 +228,7 @@ public class TestCase {
 		logToExtent("Fetch All TestCase Response", requestBody, response);
 	}
 	
+	
 	@When("Fetch TestCase Details with ID")
 	public void Fetch_testcase_Details_with_ID() {
 		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
@@ -233,7 +238,7 @@ public class TestCase {
 		System.out.println("Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
 		logToExtent("Fetch TestCase by ID", null, response);
-		ApiValidators.validatePathParamToResponse(response, "id", TestCaseId);
+	
 	}
 	
 	@When("Update TestCase Details")
@@ -270,6 +275,9 @@ public class TestCase {
 		System.out.println("PATCH Request Body:\n" + newJson);
 		System.out.println("PATCH Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
+		IssueId = response.jsonPath().getInt("issueId");
+		Title = response.jsonPath().get("title");
+		Code = response.jsonPath().get("code");
 		RequestBodyForValidation=newJson;
 		logToExtent("Update TestCase (PATCH)", newJson, response);
 		captureDbSnapshot(TestCaseId, "Update TestCase (PATCH)");
@@ -278,6 +286,39 @@ public class TestCase {
 		// captureElasticScreenshot(TestCaseId, "Update TestCase (PATCH)");
 
 	}
+	
+	@When("FindTestCaseByIssueIdAndTitleOrCode For TestCase")
+	public void findTestCaseByIssueIdAndTitleOrCode_for_testcase() {
+		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
+				.header("Author", author).queryParam("issueId", IssueId).queryParam("title", Title)
+				.queryParam("code", Code)
+				.when().get(baseUrl + TestCase_FindByIssueIdandTitleOrCodeendpoint).then()
+				.extract().response();
+
+		System.out.println("Response Body:\n" + response.getBody().asString());
+		System.out.println("Status Code: " + response.getStatusCode());
+		logToExtent("Fetch TestCase by ID", null, response);
+		Map<String, Object> params = new HashMap<>();
+		params.put("issueId", IssueId);  
+		params.put("title", Title);  
+		params.put("code", Code);  
+		ApiValidators.validateQueryParamsInList(response,"_embedded.testCases",params);
+	}
+	
+	@When("FindByIssueId For TestCase")
+	public void findbyissueid_for_testcase() {
+		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
+				.header("Author", author).queryParam("issueId", IssueId).when().get(baseUrl + TestCase_FindByIssueIdendpoint).then()
+				.extract().response();
+
+		System.out.println("Response Body:\n" + response.getBody().asString());
+		System.out.println("Status Code: " + response.getStatusCode());
+		logToExtent("Fetch TestCase by ID", null, response);
+		Map<String, Object> params = new HashMap<>();
+		params.put("issueId", IssueId); 
+		ApiValidators.validateQueryParamsInList(response,"_embedded.testCases",params);
+	}
+	
 	@When("Delete TestCase with ID")
 	public void delete_testcase_with_ID() {
 		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)

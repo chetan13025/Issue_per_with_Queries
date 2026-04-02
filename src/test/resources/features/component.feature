@@ -30,6 +30,16 @@ Feature: Component API testing
     Then Validate API ES and DB for ComponentId after PATCH skipping ES true excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"
     Then The Component response status code should be 200
 
+  @Custom_Queries_for_Component_entity
+  Scenario: To verify that after GET request findByLowerLabel
+    When FindByLowerLabel For Component
+    Then The Component response status code should be 200
+
+  @Custom_Queries_for_Component_entity
+  Scenario: To verify that after GET request findByProjectIdOrderByLabelAsc
+    When FindByProjectIdOrderByLabelAsc
+    Then The Component response status code should be 200
+
   @Component
   Scenario: To verify that after Delete request data should get removed from DataBase
     When Delete Component with ID

@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -35,9 +36,10 @@ import io.restassured.response.Response;
 import reports.ExtentCucumberListener;
 import utils.ConfigReader;
 import validators.ApiDataValidator;
+import validators.ApiValidators;
 
 public class IssueComments {
-	public static int IssueCommentsId;
+	public static int IssueCommentsId,IssueId;
 	private Response response;
 	private String requestBody;
 	private String RequestBodyForValidation;
@@ -46,6 +48,7 @@ public class IssueComments {
 	private static String tenantId = ConfigReader.getProperty("tenantId");
 	private static String author = ConfigReader.getProperty("author");
 	private static String IssueComments_endpoint = ConfigReader.getProperty("issuecomments_endpoint");
+	private static String IssueComments_FindByIssueIdendpoint = ConfigReader.getProperty("issuecomments_findbyissueid");
 	private static String IssueCommentsBulk_endpoint = ConfigReader.getProperty("issuecommentsbulk_endpoint");
 	private static String IssueCommentsBulkUpdate_endpoint = ConfigReader.getProperty("issuecommentsbulku_endpoint");
 	private static String IssueCommentsBulkDelete_endpoint = ConfigReader.getProperty("issuecommentsbulkd_endpoint");
@@ -272,6 +275,7 @@ public class IssueComments {
 		System.out.println("PATCH Request Body:\n" + newJson);
 		System.out.println("PATCH Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
+		IssueId=response.jsonPath().getInt("issueId");
 		RequestBodyForValidation = newJson;
 		logToExtent("Update User (PATCH)", newJson, response);
 		captureDbSnapshot(IssueCommentsId, "Update User (PATCH)");
@@ -279,6 +283,20 @@ public class IssueComments {
 
 //		captureElasticScreenshot(IssueCommentsId, "Update User (PATCH)");
 
+	}
+	
+	@When("FindByIssueId for IssueComments")
+	public void findByIssueId_for_issuecomments() {
+		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
+				.header("Author", author).queryParam("issueId", IssueId).when()
+				.get(baseUrl + IssueComments_FindByIssueIdendpoint).then().extract().response();
+
+		System.out.println("Response Body:\n" + response.getBody().asString());
+		System.out.println("Status Code: " + response.getStatusCode());
+		logToExtent("Fetch IssueComments by ID", null, response);
+		Map<String, Object> params = new HashMap<>();
+		params.put("issueId", IssueId);   
+		ApiValidators.validateQueryParamsInList(response,params,null);
 	}
 
 	@When("Delete IssueComment with ID")

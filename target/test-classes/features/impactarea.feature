@@ -30,6 +30,16 @@ Feature: ImpactArea API testing
     Then Validate API ES and DB for ImpactAreaId after PATCH skipping ES true excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"
     Then The ImpactArea response status code should be 200
 
+  @Custom_Queries_for_ImpactArea_entity
+  Scenario: To verify that GET request FindByLowerLabel
+    When FindByLowerLabel for ImpactArea
+    Then The ImpactArea response status code should be 200
+
+  @Custom_Queries_for_ImpactArea_entity
+  Scenario: To verify that GET request findByProjectIdOrderByLabelAsc
+    When FindByProjectIdOrderByLabelAsc for ImpactArea
+    Then The ImpactArea response status code should be 200
+
   @ImpactArea
   Scenario: To verify that after Delete request data should get removed from DataBase
     When Delete ImpactArea with ID

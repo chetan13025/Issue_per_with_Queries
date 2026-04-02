@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -38,15 +39,18 @@ import validators.ApiDataValidator;
 import validators.ApiValidators;
 
 public class IssueSatusGraph {
-	public static int IssueSatusGraphId;
+	public static int IssueSatusGraphId,StatusStart,StatusEnd;
 	private Response response;
 	private String requestBody;
 	private String RequestBodyForValidation;
 	public List<Integer> IssueSatusGraphIds;
+	public static String Type;
 	private static String baseUrl = ConfigReader.getProperty("baseUrl");
 	private static String tenantId = ConfigReader.getProperty("tenantId");
 	private static String author = ConfigReader.getProperty("author");
 	private static String IssueStatusGraph_endpoint = ConfigReader.getProperty("issuestatusgraph_endpoint");
+	private static String IssueStatusGraph_FindByStatusandTypeendpoint = ConfigReader.getProperty("issuestatusgraph_findbystatusstartandtype");
+	private static String IssueStatusGraph_FindByStatusendTypeendpoint = ConfigReader.getProperty("issuestatusgraph_findbystatusendanftype");
 	private static String IssueStatusGraphBulk_endpoint = ConfigReader.getProperty("issuestatusgraphbulk_endpoint");
 	private static String IssueStatusGraphBulkUpdate_endpoint = ConfigReader.getProperty("issuestatusgraphbulku_endpoint");
 	private static String IssueStatusGraphBulkDelete_endpoint = ConfigReader.getProperty("issuestatusgraphbulkd_endpoint");
@@ -269,6 +273,9 @@ public class IssueSatusGraph {
 		System.out.println("PATCH Request Body:\n" + newJson);
 		System.out.println("PATCH Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
+		StatusStart = response.jsonPath().getInt("statusStart");
+		Type = response.jsonPath().get("type");
+		StatusEnd = response.jsonPath().getInt("statusEnd");
 		RequestBodyForValidation=newJson;
 		logToExtent("Update IssueStatusGraph (PATCH)", newJson, response);
 		captureDbSnapshot(IssueSatusGraphId, "Update IssueStatusGraph (PATCH)");
@@ -277,6 +284,38 @@ public class IssueSatusGraph {
 		// captureElasticScreenshot(IssueSatusGraphId, "Update IssueStatusGraph (PATCH)");
 
 	}
+	
+	@When("FindByStatusStartAndType")
+	public void findByStatusStartAndType() {
+		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
+				.header("Author", author).queryParam("statusStart", StatusStart).queryParam("type", Type).when().get(baseUrl + IssueStatusGraph_FindByStatusandTypeendpoint).then()
+				.extract().response();
+
+		System.out.println("Response Body:\n" + response.getBody().asString());
+		System.out.println("Status Code: " + response.getStatusCode());
+		logToExtent("Fetch IssueStatusGraph by ID", null, response);
+		Map<String, Object> params = new HashMap<>();
+		params.put("statusStart", StatusStart);
+		params.put("type", Type);
+		ApiValidators.validateQueryParamsInList(response,"_embedded.issueStatusGraphs",params);
+		
+	}
+	
+	@When("FindByStatusEndAndType")
+	public void findByStatusEndAndType() {
+		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
+				.header("Author", author).queryParam("statusEnd", StatusEnd).queryParam("type", Type).when().get(baseUrl + IssueStatusGraph_FindByStatusendTypeendpoint).then()
+				.extract().response();
+		System.out.println("Response Body:\n" + response.getBody().asString());
+		System.out.println("Status Code: " + response.getStatusCode());
+		logToExtent("Fetch IssueStatusGraph by ID", null, response);
+		Map<String, Object> params = new HashMap<>();
+		params.put("statusEnd", StatusEnd);
+		params.put("type", Type);
+		ApiValidators.validateQueryParamsInList(response,"_embedded.issueStatusGraphs",params);
+		
+	}
+	
 	@When("Delete IssueStatusGraph with ID")
 	public void delete_issuestatusgraph_with_ID() {
 		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)

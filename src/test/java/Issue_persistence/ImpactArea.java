@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -38,15 +39,18 @@ import validators.ApiDataValidator;
 import validators.ApiValidators;
 
 public class ImpactArea {
-	public static int ImpactAreaId;
+	public static int ImpactAreaId,ProjectId;
 	private Response response;
 	private String requestBody;
 	private String RequestBodyForValidation;
 	public List<Integer> ImpactAreaIds;
+	public static String Label;
 	private static String baseUrl = ConfigReader.getProperty("baseUrl");
 	private static String tenantId = ConfigReader.getProperty("tenantId");
 	private static String author = ConfigReader.getProperty("author");
 	private static String ImpactArea_endpoint = ConfigReader.getProperty("impactarea_endpoint");
+	private static String ImpactArea_FindBylowerLabelendpoint = ConfigReader.getProperty("impact_areafindbylowerlabel");
+	private static String ImpactArea_FindByProjectIdendpoint = ConfigReader.getProperty("impact_areafindbyprojectid");
 	private static String ImpactAreaBulk_endpoint = ConfigReader.getProperty("impactareabulk_endpoint");
 	private static String ImpactAreaBulkUpdate_endpoint = ConfigReader.getProperty("impactareabulku_endpoint");
 	private static String ImpactAreaBulkDelete_endpoint = ConfigReader.getProperty("impactareabulkd_endpoint");
@@ -229,7 +233,7 @@ public class ImpactArea {
 	public void Fetch_impactarea_Details_with_ID() {
 		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
 				.header("Author", author).pathParam("id", ImpactAreaId).when()
-				.get(baseUrl + ImpactArea_endpoint + "/{id}").then().extract().response();
+				.get(baseUrl + ImpactArea_endpoint+ "/{id}").then().extract().response();
 
 		System.out.println("Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
@@ -271,6 +275,8 @@ public class ImpactArea {
 		System.out.println("PATCH Request Body:\n" + newJson);
 		System.out.println("PATCH Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
+		Label = response.jsonPath().get("label");
+		ProjectId = response.jsonPath().getInt("projectId");
 		RequestBodyForValidation = newJson;
 		logToExtent("Update ImpactArea (PATCH)", newJson, response);
 		captureDbSnapshot(ImpactAreaId, "Update ImpactArea (PATCH)");
@@ -278,6 +284,42 @@ public class ImpactArea {
 //		ApiValidators.validateRequestToResponse(newJson, response, IssueTypeId, "comments");
 		// captureElasticScreenshot(ImpactAreaId, "Update ImpactArea (PATCH)");
 
+	}
+	
+	@When("FindByLowerLabel for ImpactArea")
+	public void findByLowerLabel() {
+		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
+				.header("Author", author).queryParam("label", Label).when()
+				.get(baseUrl + ImpactArea_FindBylowerLabelendpoint).then().extract().response();
+
+		System.out.println("Response Body:\n" + response.getBody().asString());
+		System.out.println("Status Code: " + response.getStatusCode());
+		logToExtent("Fetch ImpactArea by ID", null, response);
+		Map<String, Object> params = new HashMap<>();
+		params.put("label", Label);   
+		ApiValidators.validateQueryParamsInList(
+		        response,
+		        "_embedded.impactAreas",
+		        params
+		);
+	}
+	
+	@When("FindByProjectIdOrderByLabelAsc for ImpactArea")
+	public void findByProjectIdOrderByLabelAsc_for_impactarea() {
+		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
+				.header("Author", author).queryParam("projectId", ProjectId).when()
+				.get(baseUrl + ImpactArea_FindByProjectIdendpoint).then().extract().response();
+
+		System.out.println("Response Body:\n" + response.getBody().asString());
+		System.out.println("Status Code: " + response.getStatusCode());
+		logToExtent("Fetch ImpactArea by ID", null, response);
+		Map<String, Object> params = new HashMap<>();
+		params.put("projectId", ProjectId);   
+		ApiValidators.validateQueryParamsInList(
+		        response,
+		        "_embedded.impactAreas",
+		        params
+		);
 	}
 
 	@When("Delete ImpactArea with ID")

@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -38,7 +39,7 @@ import validators.ApiDataValidator;
 import validators.ApiValidators;
 
 public class IssueStep {
-	public static int IssueStepId;
+	public static int IssueStepId,IssueId;
 	private Response response;
 	private String requestBody;
 	private String RequestBodyForValidation;
@@ -47,6 +48,7 @@ public class IssueStep {
 	private static String tenantId = ConfigReader.getProperty("tenantId");
 	private static String author = ConfigReader.getProperty("author");
 	private static String IssueStep_endpoint = ConfigReader.getProperty("issuestep_endpoint");
+	private static String IssueStep_FindByIssueIdendpoint = ConfigReader.getProperty("issuestep_findbyissueid");
 	private static String IssueStepBulk_endpoint = ConfigReader.getProperty("issuestepbulk_endpoint");
 	private static String IssueStepBulkUpdate_endpoint = ConfigReader.getProperty("issuestepbulku_endpoint");
 	private static String IssueStepBulkDelete_endpoint = ConfigReader.getProperty("issuestepbulkd_endpoint");
@@ -269,6 +271,7 @@ public class IssueStep {
 		System.out.println("PATCH Request Body:\n" + newJson);
 		System.out.println("PATCH Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
+		IssueId = response.jsonPath().getInt("issueId");
 		RequestBodyForValidation=newJson;
 		logToExtent("Update IssueStep (PATCH)", newJson, response);
 		captureDbSnapshot(IssueStepId, "Update IssueStep (PATCH)");
@@ -277,6 +280,20 @@ public class IssueStep {
 		// captureElasticScreenshot(IssueStepId, "Update IssueStep (PATCH)");
 
 	}
+	
+	@When("FindByIssueIdOrderByIdAsc For IssueStep")
+	public void findByIssueIdOrderByIdAsc() {
+		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
+				.header("Author", author).queryParam("issueId", IssueId).when().get(baseUrl + IssueStep_FindByIssueIdendpoint).then()
+				.extract().response();
+		System.out.println("Response Body:\n" + response.getBody().asString());
+		System.out.println("Status Code: " + response.getStatusCode());
+		logToExtent("Fetch IssueStep by ID", null, response);
+		Map<String, Object> params = new HashMap<>();
+		params.put("issueId", IssueId);   
+		ApiValidators.validateQueryParamsInList(response,"_embedded.issueStepses",params);
+	}
+	
 	@When("Delete IssueStep with ID")
 	public void delete_issuestep_with_ID() {
 		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)

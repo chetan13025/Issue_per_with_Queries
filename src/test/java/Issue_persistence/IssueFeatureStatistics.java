@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -35,9 +36,10 @@ import io.restassured.response.Response;
 import reports.ExtentCucumberListener;
 import utils.ConfigReader;
 import validators.ApiDataValidator;
+import validators.ApiValidators;
 
 public class IssueFeatureStatistics {
-	public static int IssueFeatureStatisticsID;
+	public static int IssueFeatureStatisticsID,IssueId;
 	private Response response;
 	private String requestBody;
 	private String RequestBodyForValidation;
@@ -46,6 +48,7 @@ public class IssueFeatureStatistics {
 	private static String tenantId = ConfigReader.getProperty("tenantId");
 	private static String author = ConfigReader.getProperty("author");
 	private static String IssueFeatureStatistics_endpoint = ConfigReader.getProperty("issuefeaturestatistics_endpoint");
+	private static String IssueFeatureStatistics_FindByIssueidendpoint = ConfigReader.getProperty("issuefeaturestatistics_findbyissueid");
 	private static String IssueFeatureStatisticsBulk_endpoint = ConfigReader.getProperty("issuefeaturestatisticsbulk_endpoint");
 	private static String IssueFeatureStatisticsBulkUpdate_endpoint = ConfigReader.getProperty("issuefeaturestatisticsbulku_endpoint");
 	private static String IssueFeatureStatisticsBulkDelete_endpoint = ConfigReader.getProperty("issuefeaturestatisticsbulkd_endpoint");
@@ -270,11 +273,26 @@ public class IssueFeatureStatistics {
 		System.out.println("PATCH Request Body:\n" + newJson);
 		System.out.println("PATCH Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
+		IssueId=response.jsonPath().getInt("issueId");
 		RequestBodyForValidation=newJson;
 		logToExtent("Update IssueFeatureStatistics (PATCH)", newJson, response);
 		captureDbSnapshot(IssueFeatureStatisticsID, "Update IssueFeatureStatistics (PATCH)");
 		// captureElasticScreenshot(IssueFeatureStatisticsID, "Update IssueFeatureStatistics (PATCH)");
 
+	}
+	
+	@When("FindByIssueId for Issuefeaturestatistics")
+	public void FindByIssueId_for_issuefeaturestatistics() {
+		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
+				.header("Author", author).queryParam("issueId", IssueId).when().get(baseUrl + IssueFeatureStatistics_FindByIssueidendpoint).then()
+				.extract().response();
+
+		System.out.println("Response Body:\n" + response.getBody().asString());
+		System.out.println("Status Code: " + response.getStatusCode());
+		logToExtent("Fetch User by ID", null, response);
+		Map<String, Object> params = new HashMap<>();
+		params.put("issueId", IssueId);   
+		ApiValidators.validateQueryParamsInList(response,"_embedded.issueFeatureStatisticses",params);
 	}
 
 	@When("Delete IssueFeatureStatistics with ID")

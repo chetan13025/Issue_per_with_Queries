@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -37,6 +38,7 @@ import io.restassured.response.Response;
 import reports.ExtentCucumberListener;
 import utils.ConfigReader;
 import validators.ApiDataValidator;
+import validators.ApiValidators;
 
 public class Users {
 	public static int UserId;
@@ -44,10 +46,12 @@ public class Users {
 	private String requestBody;
 	private String RequestBodyForValidation;
 	public List<Integer> UserIds;
+	public static String Role;
 	private static String baseUrl = ConfigReader.getProperty("baseUrl");
 	private static String tenantId = ConfigReader.getProperty("tenantId");
 	private static String author = ConfigReader.getProperty("author");
 	private static String User_endpoint = ConfigReader.getProperty("users_endpoint");
+	private static String User_FindByRoleendpoint = ConfigReader.getProperty("user_findbyrole");
 	private static String UserBulk_endpoint = ConfigReader.getProperty("usersbulk_endpoint");
 	private static String UserBulkUpdate_endpoint = ConfigReader.getProperty("usersbulku_endpoint");
 	private static String UserBulkDelete_endpoint = ConfigReader.getProperty("usersbulkd_endpoint");
@@ -273,11 +277,26 @@ public class Users {
 		System.out.println("PATCH Request Body:\n" + newJson);
 		System.out.println("PATCH Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
+		Role = response.jsonPath().get("role");
 		RequestBodyForValidation=newJson;
 		logToExtent("Update User (PATCH)", newJson, response);
 		captureDbSnapshot(UserId, "Update User (PATCH)");
 		// captureElasticScreenshot(UserId, "Update User (PATCH)");
 
+	}
+	
+	@When("FindByRole For User")
+	public void findbyrole_for_user() {
+		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
+				.header("Author", author).queryParam("role", Role).when().get(baseUrl + User_FindByRoleendpoint).then()
+				.extract().response();
+
+		System.out.println("Response Body:\n" + response.getBody().asString());
+		System.out.println("Status Code: " + response.getStatusCode());
+		logToExtent("Fetch User by ID", null, response);
+		Map<String, Object> params = new HashMap<>();
+		params.put("role", Role);   
+		ApiValidators.validateQueryParamsInList(response,"_embedded.users",params);
 	}
 
 	@When("Delete User with ID")

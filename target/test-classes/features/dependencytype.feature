@@ -30,6 +30,16 @@ Feature: DependencyType API testing
     Then Validate API ES and DB for DependencyTypeId after POST skipping ES true excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"
     Then The DependencyType response status code should be 200
 
+  @Custom_queries_for_DependencyType
+  Scenario: To verify that after GET request findByProjectId
+    When FindByProjectId DependenceType
+    Then The DependencyType response status code should be 200
+
+  @Custom_queries_for_DependencyType
+  Scenario: To verify that after GET request findByProjectIdAndLabel
+    When FindByProjectIdAndLabel
+    Then The DependencyType response status code should be 200
+
   @DependencyType
   Scenario: To verify that after Delete request data should get removed from DataBase
     When Delete DependencyType with ID
@@ -44,4 +54,3 @@ Feature: DependencyType API testing
   Scenario: To verify that after PUT request data should get update in DataBase (Which is  already deleted)
     When Update DependencyType Details
     Then The DependencyType response status code should be 200
-    

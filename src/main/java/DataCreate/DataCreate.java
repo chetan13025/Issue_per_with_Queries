@@ -161,7 +161,7 @@ public class DataCreate {
 				+ "\",\n" + "  \"projectName\": \"" + esc.apply(projectName) + "\",\n" + "  \"workflowId\": \""
 				+ esc.apply(workflowId) + "\",\n" + "  \"qaAssignedDate\": \"" + esc.apply(qaAssignedDate) + "\",\n"
 				+ "  \"resolutionId\": " + resolutionId + ",\n" + "  \"updateDate\": \"" + esc.apply(updateDate)
-				+ "\",\n" + "  \"code\": \"" + esc.apply(code) + "\",\n" + "  \"resolutionDate\": \""
+				+ "\",\n" +  "  \"resolutionDate\": \""
 				+ esc.apply(resolutionDate) + "\",\n" + "  \"fixedAtSprintLabel\": \"" + esc.apply(fixedAtSprintLabel)
 				+ "\",\n" + "  \"description\": \"" + esc.apply(description) + "\",\n" + "  \"occurrenceId\": "
 				+ occurrenceId + ",\n" + "  \"title\": \"" + esc.apply(title) + "\",\n" + "  \"natureLabel\": \""
@@ -1784,6 +1784,6 @@ public class DataCreate {
 //		System.out.println(generateIssueCodeBulkJson());
 //		System.out.println(generateIssueComponentBulkJson());
 //		System.out.println(generateIssueFeatureCatalogBulkJson());
-		System.out.println(generateIssueJson());
+		System.out.println(generateIssueLinkedJson());
 	}
 }

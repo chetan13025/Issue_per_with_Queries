@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -38,7 +39,7 @@ import validators.ApiDataValidator;
 import validators.ApiValidators;
 
 public class UnitTestResult {
-	public static int UnitTestResultId;
+	public static int UnitTestResultId,IssueId;
 	private Response response;
 	private String requestBody;
 	private String RequestBodyForValidation;
@@ -47,6 +48,7 @@ public class UnitTestResult {
 	private static String tenantId = ConfigReader.getProperty("tenantId");
 	private static String author = ConfigReader.getProperty("author");
 	private static String UnitTestResult_endpoint = ConfigReader.getProperty("unittestresult_endpoint");
+	private static String UnitTestResult_FindByIssueIdendpoint = ConfigReader.getProperty("unittestresult_findbyissueid");
 	private static String UnitTestResultBulk_endpoint = ConfigReader.getProperty("unittestresultbulk_endpoint");
 	private static String UnitTestResultBulkUpdate_endpoint = ConfigReader.getProperty("unittestresultbulku_endpoint");
 	private static String UnitTestResultBulkDelete_endpoint = ConfigReader.getProperty("unittestresultbulkd_endpoint");
@@ -270,6 +272,7 @@ public class UnitTestResult {
 		System.out.println("PATCH Request Body:\n" + newJson);
 		System.out.println("PATCH Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
+		IssueId = response.jsonPath().getInt("issueId");
 		RequestBodyForValidation=newJson;
 		logToExtent("Update UnitTestResult (PATCH)", newJson, response);
 		captureDbSnapshot(UnitTestResultId, "Update UnitTestResult (PATCH)");
@@ -277,6 +280,20 @@ public class UnitTestResult {
 //		ApiValidators.validateRequestToResponse(newJson, response, IssueTypeId, "comments");
 		// captureElasticScreenshot(UnitTestResultId, "Update UnitTestResult (PATCH)");
 
+	}
+	
+	@When("FindByIssueId for UnitTestResults")
+	public void findbyissueid_for_unittestresults() {
+		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
+				.header("Author", author).queryParam("issueId", IssueId).when().get(baseUrl + UnitTestResult_FindByIssueIdendpoint).then()
+				.extract().response();
+
+		System.out.println("Response Body:\n" + response.getBody().asString());
+		System.out.println("Status Code: " + response.getStatusCode());
+		logToExtent("Fetch UnitTestResult by ID", null, response);
+		Map<String, Object> params = new HashMap<>();
+		params.put("issueId", IssueId);   
+		ApiValidators.validateQueryParamsInList(response,"_embedded.unitTestResults",params);
 	}
 	@When("Delete UnitTestResult with ID")
 	public void delete_unittestresult_with_ID() {

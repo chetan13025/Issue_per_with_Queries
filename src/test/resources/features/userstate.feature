@@ -29,6 +29,12 @@ Feature: UserState API testing
     When Update Patch UserState
     Then Validate API ES and DB for UserStateId after PATCH skipping ES true excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"
     Then The UserState response status code should be 200
+    
+    @Custom_Queries_For_UserState
+    Scenario: To verify that after GET request FindByUserId For UserState
+    When FindByUserId For Userstates
+    Then The UserState response status code should be 200
+
 
   @UserState
   Scenario: To verify that after Delete request data should get removed from DataBase

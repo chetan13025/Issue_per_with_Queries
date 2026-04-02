@@ -30,6 +30,11 @@ Feature: IssueRootCause API testing
     Then Validate API ES and DB for IssueRootCauseId after PATCH skipping ES true excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"
     Then The IssueRootCause response status code should be 200
 
+  @Custom_Queries_for_IssueRootCause
+  Scenario: To verify that after GET request FindByIssueId
+    When FindByIssueId For IssueRootCause
+    Then The IssueRootCause response status code should be 200
+
   @IssueRootCause
   Scenario: To verify that after Delete request data should get removed from DataBase
     When Delete IssueRootCause with ID

@@ -30,6 +30,16 @@ Feature: IssueVersion API testing
     Then Validate API ES and DB for IssueVersionId after PATCH skipping ES true excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"
     Then The IssueVersion response status code should be 200
 
+  @Custom_Queries_for_IssueVersion
+  Scenario: To verify that after GET request FindByProjectVersionIdandIssueIdandType
+    When FindByProjectVersionIdAndIssueIdAndType
+    Then The IssueVersion response status code should be 200
+
+  @Custom_Queries_for_IssueVersion
+  Scenario: To verify that after GET request FindByIssueIdandType
+    When FindByIssueIdAndType
+    Then The IssueVersion response status code should be 200
+
   @IssueVersion
   Scenario: To Verify that after Delete Data should get Delete from DataBase
     When Delete IssueVersion with ID

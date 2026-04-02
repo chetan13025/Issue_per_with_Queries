@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -38,15 +39,18 @@ import validators.ApiDataValidator;
 import validators.ApiValidators;
 
 public class Module {
-	public static int ModuleId;
+	public static int ModuleId,ProjectId;
 	private Response response;
 	private String requestBody;
 	private String RequestBodyForValidation;
 	public List<Integer> ModuleIds;
+	public static String Label;
 	private static String baseUrl = ConfigReader.getProperty("baseUrl");
 	private static String tenantId = ConfigReader.getProperty("tenantId");
 	private static String author = ConfigReader.getProperty("author");
 	private static String Module_endpoint = ConfigReader.getProperty("module_endpoint");
+	private static String Module_FindByLowerLabelendpoint = ConfigReader.getProperty("module_findbylowerlabel");
+	private static String Module_FindByProjectIdandLowerIdendpoint = ConfigReader.getProperty("module_findbyprojectandlowerlabel");
 	private static String ModuleBulk_endpoint = ConfigReader.getProperty("modulebulk_endpoint");
 	private static String ModuleBulkUpdate_endpoint = ConfigReader.getProperty("modulebulku_endpoint");
 	private static String ModuleBulkDelete_endpoint = ConfigReader.getProperty("modulebulkd_endpoint");
@@ -269,6 +273,8 @@ public class Module {
 		System.out.println("PATCH Request Body:\n" + newJson);
 		System.out.println("PATCH Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
+		Label = response.jsonPath().get("label");
+		ProjectId = response.jsonPath().getInt("projectId");
 		RequestBodyForValidation=newJson;
 		logToExtent("Update Module (PATCH)", newJson, response);
 		captureDbSnapshot(ModuleId, "Update Module (PATCH)");
@@ -276,6 +282,36 @@ public class Module {
 //		ApiValidators.validateRequestToResponse(newJson, response, IssueTypeId, "comments");
 		// captureElasticScreenshot(ModuleId, "Update Module (PATCH)");
 
+	}
+	
+	@When("FindByLowerLabel For Module")
+	public void findByLowerLabel_for_module() {
+		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
+				.header("Author", author).queryParam("label", Label).when().get(baseUrl + Module_FindByLowerLabelendpoint).then()
+				.extract().response();
+
+		System.out.println("Response Body:\n" + response.getBody().asString());
+		System.out.println("Status Code: " + response.getStatusCode());
+		logToExtent("Fetch Module by ID", null, response);
+		Map<String, Object> params = new HashMap<>();
+		params.put("label", Label);   
+		ApiValidators.validateQueryParamsInList(response,"_embedded.modules",params);
+	}
+	
+	@When("FindByProjectIdAndLowerLabel For Module")
+	public void findByProjectIdAndLowerLabel_module() {
+		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
+				.header("Author", author).queryParam("projectId", ProjectId).queryParam("label", Label)
+				.when().get(baseUrl + Module_FindByProjectIdandLowerIdendpoint).then()
+				.extract().response();
+
+		System.out.println("Response Body:\n" + response.getBody().asString());
+		System.out.println("Status Code: " + response.getStatusCode());
+		logToExtent("Fetch Module by ID", null, response);
+		Map<String, Object> params = new HashMap<>();
+		params.put("label", Label);   
+		params.put("projectId", ProjectId);
+		ApiValidators.validateQueryParamsInList(response,"_embedded.Modules",params);
 	}
 	@When("Delete Module with ID")
 	public void delete_module_with_ID() {

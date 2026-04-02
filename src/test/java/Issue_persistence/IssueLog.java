@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -35,17 +36,21 @@ import io.restassured.response.Response;
 import reports.ExtentCucumberListener;
 import utils.ConfigReader;
 import validators.ApiDataValidator;
+import validators.ApiValidators;
 
 public class IssueLog {
-	public static int IssueLogId;
+	public static int IssueLogId,TargetId,IssueId;
 	private Response response;
 	private String requestBody;
 	private String RequestBodyForValidation;
 	public List<Integer> IssueLogIds;
+	public static String TargetType,EventType,UserId;
 	private static String baseUrl = ConfigReader.getProperty("baseUrl");
 	private static String tenantId = ConfigReader.getProperty("tenantId");
 	private static String author = ConfigReader.getProperty("author");
 	private static String IssueLog_endpoint = ConfigReader.getProperty("issuelog_endpoint");
+	private static String IssueLog_FindByIssueIdandEventTypeandTargetTypeandTragetIdendpoint = ConfigReader.getProperty("issuelog_findbyissueidnadeventtypeandtar");
+	private static String IssueLog_FindByUserIdendpoint = ConfigReader.getProperty("issuelog_findbyuserid");
 	private static String IssueLogBulk_endpoint = ConfigReader.getProperty("issuelogbulk_endpoint");
 	private static String IssueLogBulkUpdate_endpoint = ConfigReader.getProperty("issuelogbulku_endpoint");
 	private static String IssueLogBulkDelete_endpoint = ConfigReader.getProperty("issuelogbulkd_endpoint");
@@ -278,6 +283,11 @@ public class IssueLog {
 		System.out.println("PATCH Request Body:\n" + newJson);
 		System.out.println("PATCH Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
+		IssueId = response.jsonPath().getInt("issueId");
+		EventType = response.jsonPath().get("eventType");
+		TargetType = response.jsonPath().get("targetType");
+		TargetId = response.jsonPath().getInt("targetId");
+		UserId=response.jsonPath().get("userId");		
 		RequestBodyForValidation = newJson;
 		logToExtent("Update IssueLog (PATCH)", newJson, response);
 		captureDbSnapshot(IssueLogId, "Update IssueLog (PATCH)");
@@ -286,6 +296,39 @@ public class IssueLog {
 
 //		captureElasticScreenshot(IssueLogId, "Update IssueLog (PATCH)");
 
+	}
+	
+	@When("FindByIssueIdAndEventTypeAndTargetIdAndTargetTypeOrderByEventDateDesc")
+	public void findByIssueIdAndEventTypeAndTargetIdAndTargetTypeOrderByEventDateDesc() {
+		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
+				.header("Author", author).queryParam("issueId", IssueId).queryParam("eventType", EventType).queryParam("targetType", TargetType)
+				.queryParam("targetId", TargetId).when()
+				.get(baseUrl + IssueLog_FindByIssueIdandEventTypeandTargetTypeandTragetIdendpoint)
+				.then().extract().response();
+
+		System.out.println("Response Body:\n" + response.getBody().asString());
+		System.out.println("Status Code: " + response.getStatusCode());
+		logToExtent("Fetch IssueLog by ID", null, response);
+		Map<String, Object> params = new HashMap<>();
+		params.put("issueId", IssueId); 
+		params.put("eventType", EventType); 
+		params.put("targetType", TargetType); 
+		params.put("targetId", TargetId); 
+		ApiValidators.validateQueryParamsInList(response,"_embedded.issueLogs",params);
+	}
+	@When("FindByUserIdOrderByEventDateDesc For IssueLog")
+	public void findByUserIdOrderByEventDateDesc() {
+		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
+				.header("Author", author).queryParam("userId", UserId).when()
+				.get(baseUrl + IssueLog_FindByUserIdendpoint)
+				.then().extract().response();
+
+		System.out.println("Response Body:\n" + response.getBody().asString());
+		System.out.println("Status Code: " + response.getStatusCode());
+		logToExtent("Fetch IssueLog by ID", null, response);
+		Map<String, Object> params = new HashMap<>();
+		params.put("userId", UserId); 
+		ApiValidators.validateQueryParamsInList(response,params,null);
 	}
 
 	@When("Delete IssueLog with ID")

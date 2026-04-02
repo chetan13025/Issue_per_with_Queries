@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -38,15 +39,18 @@ import validators.ApiValidator;
 import validators.ApiValidators;
 
 public class Issue {
-	public static int IssueId;
+	public static int IssueId,SprintId,IssueStatusId,Id;
 	private Response response;
 	private String requestBody;
 	private String RequestBodyForValidation;
 	public List<Integer> IssueIds;
+	public static String Title;
 	private static String baseUrl = ConfigReader.getProperty("baseUrl");
 	private static String tenantId = ConfigReader.getProperty("tenantId");
 	private static String author = ConfigReader.getProperty("author");
 	private static String Issue_endpoint = ConfigReader.getProperty("issue_endpoint");
+	private static String Issue_FindBySprintIdendpoint = ConfigReader.getProperty("issue_findbysprintid");
+	private static String Issue_FindByTitleOrIdendpoint = ConfigReader.getProperty("issue_findbytitleorid");
 	private static String IssueBulk_endpoint = ConfigReader.getProperty("issuebulk_endpoint");
 	private static String IssueBulkUpdate_endpoint = ConfigReader.getProperty("issuebulku_endpoint");
 	private static String IssueBulkDelete_endpoint = ConfigReader.getProperty("issuebulkd_endpoint");
@@ -265,11 +269,44 @@ public class Issue {
 		System.out.println("PATCH Request Body:\n" + newJson);
 		System.out.println("PATCH Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
+		SprintId = response.jsonPath().getInt("sprintId"); 
+		IssueStatusId = response.jsonPath().getInt("issueStatusId");
+		Id =response.jsonPath().getInt("id");
+		Title = response.jsonPath().get("title");
 		RequestBodyForValidation = newJson;
 		logToExtent("Update Issue (PATCH)", newJson, response);
 		captureDbSnapshot(IssueId, "Update Issue (PATCH)");
 //		ApiValidators.captureElasticScreenshot(IssueId, "issue", "Update Issue (PATCH)");
 
+	}
+	
+	@When("FindBySprintId For Issue")
+	public void findBySprintId() {
+		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
+				.header("Author", author).queryParam("sprintId", SprintId).when().get(baseUrl + Issue_FindBySprintIdendpoint).then()
+				.extract().response();
+
+		System.out.println("Response Body:\n" + response.getBody().asString());
+		System.out.println("Status Code: " + response.getStatusCode());
+		logToExtent("Fetch Issue by ID", null, response);
+		Map<String, Object> params = new HashMap<>();
+		params.put("sprintId", SprintId);   
+		ApiValidators.validateQueryParamsInList(response,"_embedded.issues",params);
+	}
+	
+	@When("FindTitleOrId For Issue")
+	public void findTitleOrId() {
+		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
+				.header("Author", author).queryParam("title", Title).queryParam("id", Id).when().get(baseUrl + Issue_FindByTitleOrIdendpoint ).then()
+				.extract().response();
+
+		System.out.println("Response Body:\n" + response.getBody().asString());
+		System.out.println("Status Code: " + response.getStatusCode());
+		logToExtent("Fetch Issue by ID", null, response);
+		Map<String, Object> params = new HashMap<>();
+		params.put("title", Title);   
+		params.put("id", Id);   
+		ApiValidators.validateQueryParamsInList(response,"_embedded.issues",params);
 	}
 
 	@When("Delete Issue with ID")

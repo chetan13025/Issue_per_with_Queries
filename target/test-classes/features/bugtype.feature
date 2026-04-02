@@ -30,6 +30,16 @@ Feature: BugType API testing
     Then Validate API ES and DB for BugTypeId after PATCH skipping ES true excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"
     Then The BugType response status code should be 200
 
+  @Custom_Queries_for_BugType_entity
+  Scenario: To verify that after GET request FindByProjectID
+    When FindByProjectId
+    Then The BugType response status code should be 200
+
+  @Custom_Queries_for_BugType_entity
+  Scenario: To verify that GET request FindByProjetcIdandisDefault
+    When FindByProjectIdAndIsDefault
+    Then The BugType response status code should be 200
+
   @BugType
   Scenario: To verify that after Delete request data should get removed from DataBase
     When Delete BugType with ID

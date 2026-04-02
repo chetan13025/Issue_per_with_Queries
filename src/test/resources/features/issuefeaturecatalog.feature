@@ -30,6 +30,16 @@ Feature: IssueFeatureCatalog API testing
     Then Validate API ES and DB for IssueFeatureCatalogId after PATCH skipping ES true excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"
     Then The IssueFeatureCatalog response status code should be 200
 
+  @Custom_Queries_for_IssueFeatureCatalog_entity
+  Scenario: To verify that after GET request FindByRuleName
+    When FindByRuleName for IssueFeatureCatalog
+    Then The IssueFeatureCatalog response status code should be 200
+
+  @Custom_Queries_for_IssueFeatureCatalog_entity
+  Scenario: To verify that after GET request FindByProjectID
+    When FindByProjectId for IssueFeatureCatalog
+    Then The IssueFeatureCatalog response status code should be 200
+
   @IssueFeatureCatalog
   Scenario: To verify that after Delete request data should get removed from DataBase
     When Delete IssueFeatureCatalog with ID

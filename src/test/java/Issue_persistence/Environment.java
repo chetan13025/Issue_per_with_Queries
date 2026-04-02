@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -38,15 +39,18 @@ import validators.ApiDataValidator;
 import validators.ApiValidators;
 
 public class Environment {
-	public static int EnvironmentId;
+	public static int EnvironmentId,ProjectId;
 	private Response response;
 	private String requestBody;
 	private String RequestBodyForValidation;
 	public List<Integer> EnvironmentIds;
+	public static Boolean IsDefault;
 	private static String baseUrl = ConfigReader.getProperty("baseUrl");
 	private static String tenantId = ConfigReader.getProperty("tenantId");
 	private static String author = ConfigReader.getProperty("author");
 	private static String Environment_endpoint = ConfigReader.getProperty("environment_endpoint");
+	private static String Environment_FindByProjectIdendpoint = ConfigReader.getProperty("environment_findbyprojectid");
+	private static String Environment_FindByProjectIdandisDefaultendpoint = ConfigReader.getProperty("environment_findbyprojectandisdefault");
 	private static String EnvironmentBulk_endpoint = ConfigReader.getProperty("environmentbulk_endpoint");
 	private static String EnvironmentBulkUpdate_endpoint = ConfigReader.getProperty("environmentbulku_endpoint");
 	private static String EnvironmentDelete_endpoint = ConfigReader.getProperty("environmentbulkd_endpoint");
@@ -270,6 +274,8 @@ public class Environment {
 		System.out.println("PATCH Request Body:\n" + newJson);
 		System.out.println("PATCH Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
+		ProjectId=response.jsonPath().getInt("projectId");
+		IsDefault=response.jsonPath().getBoolean("isDefault");
 		RequestBodyForValidation = newJson;
 		logToExtent("Update Environment (PATCH)", newJson, response);
 		captureDbSnapshot(EnvironmentId, "Update Environment (PATCH)");
@@ -278,6 +284,46 @@ public class Environment {
 		// captureElasticScreenshot(EnvironmentId, "Update Environment (PATCH)");
 
 	}
+	
+	@When("FindByProjectId for Environment")
+	public void findByProjectId_for_environment() {
+		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
+				.header("Author", author).queryParam("projectId", ProjectId).when().get(baseUrl + Environment_FindByProjectIdendpoint).then()
+				.extract().response();
+
+		System.out.println("Response Body:\n" + response.getBody().asString());
+		System.out.println("Status Code: " + response.getStatusCode());
+		logToExtent("Fetch Environment by ID", null, response);
+		Map<String, Object> params = new HashMap<>();
+		params.put("projectId", ProjectId);  
+		
+		ApiValidators.validateQueryParamsInList(
+		        response,
+		        "_embedded.environments",
+		        params
+		);
+	}
+	
+	@When("findByProjectIdAndIsDefault for Enviornment")
+	public void findByProjectIdAndIsDefault_environment() {
+		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
+				.header("Author", author).queryParam("projectId", ProjectId).queryParam("isDefault", IsDefault).when().get(baseUrl + Environment_FindByProjectIdandisDefaultendpoint).then()
+				.extract().response();
+
+		System.out.println("Response Body:\n" + response.getBody().asString());
+		System.out.println("Status Code: " + response.getStatusCode());
+		logToExtent("Fetch Environment by ID", null, response);
+		Map<String, Object> params = new HashMap<>();
+		params.put("projectId", ProjectId);   
+		params.put("isDefault", IsDefault);   
+		ApiValidators.validateQueryParamsInList(
+		        response,
+		        "_embedded.environments",
+		        params
+		);
+	}
+	
+	
 	@When("Delete Environment with ID")
 	public void delete_environment_with_ID() {
 		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)

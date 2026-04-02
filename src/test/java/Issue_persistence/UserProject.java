@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -35,6 +36,7 @@ import io.restassured.response.Response;
 import reports.ExtentCucumberListener;
 import utils.ConfigReader;
 import validators.ApiDataValidator;
+import validators.ApiValidators;
 
 public class UserProject {
 	public static int UserProjectId;
@@ -42,10 +44,13 @@ public class UserProject {
 	private String requestBody;
 	private String RequestBodyForValidation;
 	public List<Integer> UserProjectIds;
+	public static String UserName,UserId;
 	private static String baseUrl = ConfigReader.getProperty("baseUrl");
 	private static String tenantId = ConfigReader.getProperty("tenantId");
 	private static String author = ConfigReader.getProperty("author");
 	private static String UserProject_endpoint = ConfigReader.getProperty("userproject_endpoint");
+	private static String UserProject_FindByUserNameendpoint = ConfigReader.getProperty("userproject_findbyusername");
+	private static String UserProject_FindByUserIdendpoint = ConfigReader.getProperty("userproject_findbyuserid");
 	private static String UserProjectBulk_endpoint = ConfigReader.getProperty("userprojectbulk_endpoint");
 	private static String UserProjectBulkUpdate_endpoint = ConfigReader.getProperty("userprojectbulku_endpoint");
 	private static String UserProjectBulkDelete_endpoint = ConfigReader.getProperty("userprojectbulkd_endpoint");
@@ -269,11 +274,41 @@ public class UserProject {
 		System.out.println("PATCH Request Body:\n" + newJson);
 		System.out.println("PATCH Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
+		UserName = response.jsonPath().get("userName"); 
+		UserId = response.jsonPath().get("userId");
 		RequestBodyForValidation=newJson;
 		logToExtent("Update UserProject (PATCH)", newJson, response);
 		captureDbSnapshot(UserProjectId, "Update UserProject (PATCH)");
 		// captureElasticScreenshot(UserProjectId, "Update UserProject (PATCH)");
 
+	}
+	
+	@When("FindByUserId For UserProject")
+	public void findbyuserid_for_UserProject() {
+		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
+				.header("Author", author).queryParam("userId", UserId).when().get(baseUrl + UserProject_FindByUserIdendpoint).then()
+				.extract().response();
+
+		System.out.println("Response Body:\n" + response.getBody().asString());
+		System.out.println("Status Code: " + response.getStatusCode());
+		logToExtent("Fetch UserProject by ID", null, response);
+		Map<String, Object> params = new HashMap<>();
+		params.put("userId", UserId);   
+		ApiValidators.validateQueryParamsInList(response,"_embedded.userProjects",params);
+	}
+	
+	@When("FindByUserName For UserProject")
+	public void findbyusername_for_userproject() {
+		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
+				.header("Author", author).queryParam("userName", UserName).when().get(baseUrl + UserProject_FindByUserNameendpoint).then()
+				.extract().response();
+
+		System.out.println("Response Body:\n" + response.getBody().asString());
+		System.out.println("Status Code: " + response.getStatusCode());
+		logToExtent("Fetch UserProject by ID", null, response);
+		Map<String, Object> params = new HashMap<>();
+		params.put("userName", UserName);   
+		ApiValidators.validateQueryParamsInList(response,"_embedded.userProjects",params);
 	}
 	
 	@When("Delete UserProject with ID")

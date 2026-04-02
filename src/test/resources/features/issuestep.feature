@@ -30,6 +30,11 @@ Feature: IssueStep API testing
     Then Validate API ES and DB for IssueStepId after PATCH skipping ES true excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"
     Then The IssueStep response status code should be 200
 
+  @Custom_Queries_for_IssueStep
+  Scenario: To verify that after GET request FindByIssueIdOrderById
+    When FindByIssueIdOrderByIdAsc For IssueStep
+    Then The IssueStep response status code should be 200
+
   @IssueStep
   Scenario: To verify that after delete request data should get delete from DataBase
     When Delete IssueStep with ID

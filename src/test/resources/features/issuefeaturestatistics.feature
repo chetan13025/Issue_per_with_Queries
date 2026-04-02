@@ -30,6 +30,11 @@ Feature: IssueFeatureStatistics API testing
     Then Validate API ES and DB for IssueFeatureStatisticsID after PATCH skipping ES true excludingEverywhere "null" excludeFromRequest "id,deleted,createdate,updatedate" excludeFromEs "deleted"
     Then The IssueFeatureStatistics response status code should be 200
 
+  @Custom_queries_for_IssueFeatureStatistics
+  Scenario: To verify that after GET request FindByProjectId
+    When FindByIssueId for Issuefeaturestatistics
+    Then The IssueFeatureStatistics response status code should be 200
+
   @IssueFeatureStatistics
   Scenario: To verify that after Delete request data should get removed from DataBase
     When Delete IssueFeatureStatistics with ID

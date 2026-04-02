@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -39,14 +40,17 @@ import validators.ApiDataValidator;
 import validators.ApiValidators;
 
 public class BugType {
-	public static int BugTypeId;
+	public static int BugTypeId,ProjectID;
 	private Response response;
 	private String requestBody;
 	private String RequestBodyForValidation;
+	public static Boolean IsDefault;
 	private static String baseUrl = ConfigReader.getProperty("baseUrl");
 	private static String tenantId = ConfigReader.getProperty("tenantId");
 	private static String author = ConfigReader.getProperty("author");
 	private static String BugType_endpoint = ConfigReader.getProperty("bugtype_endpoint");
+	private static String BugType_FindbyprojectIdendpoint = ConfigReader.getProperty("bug_findbyprojectId");
+	private static String BugType_FindbyprojectIdandIsdefaultendpoint = ConfigReader.getProperty("bug_findbyprojectIdandisdefault");
 	private static String BugTypeBulk_endpoint = ConfigReader.getProperty("bugtypebulk_enpoint");
 	private static String BugTypeBulkUpdate_endpoint = ConfigReader.getProperty("bugtypeu_endpoint");
 	private static String BugTypeBulkDelete_endpoint = ConfigReader.getProperty("bugtyped_endpoint");
@@ -280,6 +284,8 @@ public class BugType {
 		System.out.println("PATCH Request Body:\n" + newJson);
 		System.out.println("PATCH Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
+		ProjectID=response.jsonPath().getInt("projectId");
+		IsDefault=response.jsonPath().getBoolean("isDefault");
 		RequestBodyForValidation = newJson;
 		logToExtent("Update BugType (PATCH)", newJson, response);
 //		captureDbSnapshot(BugTypeId, "Update BugType (PATCH)");
@@ -291,6 +297,40 @@ public class BugType {
 		// captureElasticScreenshot(BugTypeId, "Update BugType (PATCH)");
 
 	}
+	
+	@When("FindByProjectId")
+	public void findByProjectId() {
+		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
+				.header("Author", author).queryParam("projectId", ProjectID).when().get(baseUrl + BugType_FindbyprojectIdendpoint).then()
+				.extract().response();
+
+		System.out.println("Response Body:\n" + response.getBody().asString());
+		System.out.println("Status Code: " + response.getStatusCode());
+		logToExtent("Fetch BugType by ID", null, response);
+		Map<String, Object> params = new HashMap<>();
+		params.put("projectId", ProjectID);   
+		ApiValidators.validateQueryParamsInList(response,"_embedded.bugTypes",params);
+	}
+	
+	@When("FindByProjectIdAndIsDefault")
+	public void findByProjectIdAndIsDefault() {
+		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
+				.header("Author", author).queryParam("projectId", ProjectID).queryParam("isDefault", IsDefault).when().get(baseUrl + BugType_FindbyprojectIdandIsdefaultendpoint).then()
+				.extract().response();
+
+		System.out.println("Response Body:\n" + response.getBody().asString());
+		System.out.println("Status Code: " + response.getStatusCode());
+		logToExtent("Fetch BugType by ID", null, response);
+		Map<String, Object> params = new HashMap<>();
+		params.put("projectId", ProjectID);   
+		params.put("isDefault", IsDefault);   
+		ApiValidators.validateQueryParamsInList(response,params,null);
+	}
+	
+	
+	
+	
+	
 	@When("Delete BugType with ID")
 	public void delete_bugtype_with_ID() {
 		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)

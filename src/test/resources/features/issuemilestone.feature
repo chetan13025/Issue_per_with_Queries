@@ -30,6 +30,11 @@ Feature: IssueMilestone API testing
     Then Validate API ES and DB for IssueMilestoneId after PATCH skipping ES true excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"
     Then The IssueMilestone response status code should be 200
 
+  @Custom_Quereies_issueMilestone
+  Scenario: To verify that after GET request FindByProjectId
+    When FindByProjectId for IssueMilestone
+    Then The IssueMilestone response status code should be 200
+
   @IssueMilestone
   Scenario: To verify that after Delete request data should get removed from DataBase
     When Delete IssueMilestone with ID

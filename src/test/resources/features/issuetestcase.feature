@@ -30,6 +30,11 @@ Feature: IssueTestCase API testing
     Then Validate API ES and DB for IssueTestCaseId after PATCH skipping ES true excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"
     Then The IssueTestCase response status code should be 200
 
+  @Custom_Queries_For_IssueTestCase
+  Scenario: To verify that after GET request FindByIssueId
+    When FindByIssueId For IssueTestCase
+    Then The IssueTestCase response status code should be 200
+
   @IssueTestCase
   Scenario: To verify that After Delete request data is delete from DataBase
     When Delete IssueTestCase with ID

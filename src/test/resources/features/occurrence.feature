@@ -30,6 +30,16 @@ Feature: Occurrence API testing
     Then Validate API ES and DB for OccurrenceId after PATCH skipping ES true excludingEverywhere "null" excludeFromRequest "id,deleted" excludeFromEs "deleted"
     Then The Occurrence response status code should be 200
 
+  @Custom_Queries_For_Occurrence
+  Scenario: To verify that after FindByProjectId For Occurence
+    When FindByProjectId For Occurrence
+    Then The Occurrence response status code should be 200
+
+  @Custom_Queries_For_Occurrence
+  Scenario: To verify that after FindByProjectIdandIsDefault For Occurence
+    When FindByProjectIdandIsDefault For Occurence
+    Then The Occurrence response status code should be 200
+
   @Occurrence
   Scenario: To verify that after Delete request data should get removed from DataBase
     When Delete Occurrence with ID

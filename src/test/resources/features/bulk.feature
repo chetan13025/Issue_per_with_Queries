@@ -1,23 +1,23 @@
 Feature: Bulk API testing
 
 
-  #@Behavior
-  #Scenario: To verify that creating  Bulk Behavior
-   # Given i have Bulk Behavior
-    #When Create New BulkBehavior
-    #Then The Behavior response status code should be 200
-    #Then Validate Bulk Behavior Request Response ES DB
+  @Behavior
+  Scenario: To verify that creating  Bulk Behavior
+    Given i have Bulk Behavior
+    When Create New BulkBehavior
+    Then The Behavior response status code should be 200
+    Then Validate Bulk Behavior Request Response ES DB
 
-  #@Behavior
-  #Scenario: To verify that after PUT request data should get update in DataBase
-   # When Update PUT Bulk Behavior
-    #Then The Behavior response status code should be 200
-    #Then Validate Bulk Behavior Request Response ES DB
+  @Behavior
+  Scenario: To verify that after PUT request data should get update in DataBase
+    When Update PUT Bulk Behavior
+    Then The Behavior response status code should be 200
+    Then Validate Bulk Behavior Request Response ES DB
 
-  #@Behavior
-  #Scenario: To verify that after Delete request data should get removed from DataBase
-   # When Delete Bulk Behavior
-    #Then The Behavior response status code should be 200
+  @Behavior
+  Scenario: To verify that after Delete request data should get removed from DataBase
+    When Delete Bulk Behavior
+    Then The Behavior response status code should be 200
 
   @IssueCollaborator
   Scenario: To verify that creating bulk issueCollaborator
