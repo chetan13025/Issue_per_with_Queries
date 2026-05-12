@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
@@ -39,10 +40,13 @@ import validators.ApiDataValidator;
 import validators.ApiValidators;
 
 public class DependencyType {
-	public static int DependencyTypeId,ProjectId;
+	public static int DependencyTypeId;
+	public static String Label;
+	public static Integer ProjectId;
+	public static Integer Post_ProjectId;      // backup from POST
+	public static String Post_Label;
 	private Response response;
 	private String requestBody;
-	public static String Label;
 	private String RequestBodyForValidation;
 	public List<Integer> DependencyTypeIds;
 	private static String baseUrl = ConfigReader.getProperty("baseUrl");
@@ -195,6 +199,88 @@ public class DependencyType {
 			}
 		}
 	}
+	private void DBConnection(int DependencyTypeId, String action) {
+
+	    ExtentTest current = ExtentCucumberListener.getCurrentScenario();
+
+	    try (Connection conn = DriverManager.getConnection(
+	            "jdbc:mysql://10.10.2.45:3306/issue_persistence_piqa", "root", "dhi123")) {
+
+	        // 🔥 If PATCH failed → use POST values
+	        if (action.toLowerCase().contains("patch") && response.getStatusCode() != 200) {
+
+	            System.out.println("⚠️ PATCH failed → using POST DB values");
+
+	            ProjectId = Post_ProjectId;
+	            Label = Post_Label;
+
+	            if (current != null) {
+	                current.warning("Using POST DB values due to PATCH failure");
+	            }
+
+	            return;
+	        }
+
+	        int retries = 5;
+
+	        ProjectId = null;
+	        Label = null;
+
+	        while (retries-- > 0) {
+
+	            String query = "SELECT projectId, label " +
+	                           "FROM DependencyType " +
+	                           "WHERE id = ? AND deleted = 0 AND projectId IS NOT NULL";
+
+	            PreparedStatement ps = conn.prepareStatement(query);
+	            ps.setInt(1, DependencyTypeId);
+
+	            ResultSet rs = ps.executeQuery();
+
+	            if (rs.next()) {
+
+	                Number ProjectIdTemp = (Number) rs.getObject("projectId");
+	                String LabelTemp = rs.getString("label");
+
+	                if (ProjectIdTemp != null && LabelTemp != null) {
+	                	ProjectId = ProjectIdTemp.intValue();
+	                	Label = LabelTemp;
+
+	                    // ✅ Save POST values only
+	                    if (action.toLowerCase().contains("post")) {
+	                    	Post_ProjectId = ProjectId;
+	                    	Post_Label = Label;
+	                    }
+
+	                    break;
+	                }
+	            }
+
+	            Thread.sleep(1000);
+	        }
+
+	        if (ProjectId == null || Label == null) {
+	            throw new RuntimeException("❌ DB values not updated for DependencyTypeId: " + DependencyTypeId);
+	        }
+
+	        // ✅ Logging
+	        System.out.println("DB ProjectId: " + ProjectId);
+	        System.out.println("DB Label: " + Label);
+
+	        if (current != null) {
+	            current.info("DB Data after: " + action);
+	            current.info("ProjectId: " + ProjectId);
+	            current.info("Label: " + Label);
+	        }
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+
+	        if (current != null) {
+	            current.fail("DB error: " + e.getMessage());
+	        }
+	    }
+	}
 	@Given("I have a DependencyType")
 	public void i_have_a_dependencytype() {
 		requestBody = DataCreate.generateDependencyTypeJson();
@@ -214,6 +300,7 @@ public class DependencyType {
 		System.out.println("Stored DependencyTypeId: " + DependencyTypeId);
 		logToExtent("Create DependencyType Response", requestBody, response);
 		captureDbSnapshot(DependencyTypeId, "Create New DependencyType");
+		DBConnection(DependencyTypeId, "After POST");
 		// captureElasticScreenshot(DependencyTypeId, "Create New DependencyType");
 	}
 	
@@ -274,12 +361,13 @@ public class DependencyType {
 		System.out.println("PATCH Request Body:\n" + newJson);
 		System.out.println("PATCH Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
-		ProjectId=response.jsonPath().getInt("projectId");
-		Label=response.jsonPath().get("label");
+//		ProjectId=response.jsonPath().getInt("projectId");
+//		Label=response.jsonPath().get("label");
 		RequestBodyForValidation = newJson;
 		logToExtent("Update DependencyType (PATCH)", newJson, response);
 		captureDbSnapshot(DependencyTypeId, "Update DependencyType (PATCH)");
 		ApiValidators.validatePathParamToResponse(response, "id", DependencyTypeId);
+		DBConnection(DependencyTypeId, "After PATCH");
 //		ApiValidators.validateRequestToResponse(newJson, response, IssueTypeId, "comments");
 		// captureElasticScreenshot(DependencyTypeId, "Update DependencyType (PATCH)");
 

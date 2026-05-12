@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
@@ -39,12 +40,15 @@ import validators.ApiDataValidator;
 import validators.ApiValidators;
 
 public class Occurrence {
-	public static int OccurrenceId,ProjectId;
+	public static int OccurrenceId;
 	private Response response;
 	private String requestBody;
 	private String RequestBodyForValidation;
 	public List<Integer> OccurrenceIds;
+	public static Integer ProjectId;
 	public static Boolean IsDefault;
+	public static Integer Post_ProjectId;
+	public static Boolean Post_IsDefault;
 	private static String baseUrl = ConfigReader.getProperty("baseUrl");
 	private static String tenantId = ConfigReader.getProperty("tenantId");
 	private static String author = ConfigReader.getProperty("author");
@@ -195,6 +199,88 @@ public class Occurrence {
 			}
 		}
 	}
+	private void DBConnection(int OccurrenceId, String action) {
+
+	    ExtentTest current = ExtentCucumberListener.getCurrentScenario();
+
+	    try (Connection conn = DriverManager.getConnection(
+	            "jdbc:mysql://10.10.2.45:3306/issue_persistence_piqa", "root", "dhi123")) {
+
+	        // 🔥 If PATCH failed → use POST values
+	        if (action.toLowerCase().contains("patch") && response.getStatusCode() != 200) {
+
+	            System.out.println("⚠️ PATCH failed → using POST DB values");
+
+	            ProjectId = Post_ProjectId;
+	            IsDefault = Post_IsDefault;
+
+	            if (current != null) {
+	                current.warning("Using POST DB values due to PATCH failure");
+	            }
+
+	            return;
+	        }
+
+	        int retries = 5;
+
+	        ProjectId = null;
+	        IsDefault = null;
+
+	        while (retries-- > 0) {
+
+	            String query = "SELECT projectId, isDefault " +
+	                           "FROM Occurrence " +
+	                           "WHERE id = ? AND deleted = 0 AND projectId IS NOT NULL";
+
+	            PreparedStatement ps = conn.prepareStatement(query);
+	            ps.setInt(1, OccurrenceId);
+
+	            ResultSet rs = ps.executeQuery();
+
+	            if (rs.next()) {
+
+	                Number projectIdTemp = (Number) rs.getObject("projectId");
+	                Boolean isDefaultTemp = rs.getBoolean("isDefault");
+
+	                if (projectIdTemp != null && isDefaultTemp != null) {
+	                	ProjectId = projectIdTemp.intValue();
+	                	Post_IsDefault = isDefaultTemp;
+
+	                    // ✅ Save POST values only
+	                    if (action.toLowerCase().contains("post")) {
+	                    	Post_ProjectId = ProjectId;
+	                    	Post_IsDefault = IsDefault;
+	                    }
+
+	                    break;
+	                }
+	            }
+
+	            Thread.sleep(1000);
+	        }
+
+	        if (ProjectId == null || IsDefault == null) {
+	            throw new RuntimeException("❌ DB values not updated for OccurrenceId: " + OccurrenceId);
+	        }
+
+	        // ✅ Logging
+	        System.out.println("DB ProjectId: " + ProjectId);
+	        System.out.println("DB IsDefault: " + IsDefault);
+
+	        if (current != null) {
+	            current.info("DB Data after: " + action);
+	            current.info("ProjectId: " + ProjectId);
+	            current.info("IsDefault: " + IsDefault);
+	        }
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+
+	        if (current != null) {
+	            current.fail("DB error: " + e.getMessage());
+	        }
+	    }
+	}
 	@Given("I have a Occurrence")
 	public void i_have_a_occurence() {
 		requestBody = DataCreate.generateOccurrenceJson();
@@ -214,6 +300,7 @@ public class Occurrence {
 		System.out.println("Stored OccurrenceId: " + OccurrenceId);
 		logToExtent("Create Occurrence Response", requestBody, response);
 		captureDbSnapshot(OccurrenceId, "Create New Occurrence");
+//		DBConnection(OccurrenceId, "After POST");
 		// captureElasticScreenshot(OccurrenceId, "Create New Occurrence");
 	}
 	
@@ -277,6 +364,7 @@ public class Occurrence {
 		ProjectId = response.jsonPath().getInt("projectId");
 		IsDefault = response.jsonPath().getBoolean("isDefault");
 		RequestBodyForValidation=newJson;
+//		DBConnection(OccurrenceId, "After PATCh");
 		logToExtent("Update Occurrence (PATCH)", newJson, response);
 		captureDbSnapshot(OccurrenceId, "Update Occurrence (PATCH)");
 		ApiValidators.validatePathParamToResponse(response, "id", OccurrenceId);

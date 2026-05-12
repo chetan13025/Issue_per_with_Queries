@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
@@ -39,7 +40,9 @@ import validators.ApiDataValidator;
 import validators.ApiValidators;
 
 public class ComponentsImpactArea {
-	public static int ComponentImpactAreaId,ImpactAreaId,ComponentId;
+	public static int ComponentImpactAreaId;
+	public static Integer Post_ImpactAreaId,ImpactAreaId,ComponentId;      // backup from POST
+	public static Integer Post_ComponentId;
 	private Response response;
 	private String requestBody;
 	private String RequestBodyForValidation;
@@ -193,6 +196,88 @@ public class ComponentsImpactArea {
 			}
 		}
 	}
+	private void DBConnection(int ComponentImpactAreaId, String action) {
+
+	    ExtentTest current = ExtentCucumberListener.getCurrentScenario();
+
+	    try (Connection conn = DriverManager.getConnection(
+	            "jdbc:mysql://10.10.2.45:3306/issue_persistence_piqa", "root", "dhi123")) {
+
+	        // 🔥 If PATCH failed → use POST values
+	        if (action.toLowerCase().contains("patch") && response.getStatusCode() != 200) {
+
+	            System.out.println("⚠️ PATCH failed → using POST DB values");
+
+	            ImpactAreaId = Post_ImpactAreaId;
+	            ComponentId = Post_ComponentId;
+
+	            if (current != null) {
+	                current.warning("Using POST DB values due to PATCH failure");
+	            }
+
+	            return;
+	        }
+
+	        int retries = 5;
+
+	        ImpactAreaId = null;
+	        ComponentId = null;
+
+	        while (retries-- > 0) {
+
+	            String query = "SELECT impactAreaId, componentId " +
+	                           "FROM ComponentsImpactArea " +
+	                           "WHERE id = ? AND deleted = 0 AND impactAreaId IS NOT NULL";
+
+	            PreparedStatement ps = conn.prepareStatement(query);
+	            ps.setInt(1, ComponentImpactAreaId);
+
+	            ResultSet rs = ps.executeQuery();
+
+	            if (rs.next()) {
+
+	                Number ImpactAreaIdTemp = (Number) rs.getObject("impactAreaId");
+	                Number ComponentIdTemp = (Number) rs.getObject("componentId");
+
+	                if (ImpactAreaIdTemp != null && ComponentIdTemp != null) {
+	                	ImpactAreaId = ImpactAreaIdTemp.intValue();
+	                	ComponentId = ComponentIdTemp.intValue();
+
+	                    // ✅ Save POST values only
+	                    if (action.toLowerCase().contains("post")) {
+	                    	Post_ImpactAreaId = ImpactAreaId;
+	                    	Post_ComponentId = ComponentId;
+	                    }
+
+	                    break;
+	                }
+	            }
+
+	            Thread.sleep(1000);
+	        }
+
+	        if (ImpactAreaId == null || ComponentId == null) {
+	            throw new RuntimeException("❌ DB values not updated for BehaviorId: " + ComponentImpactAreaId);
+	        }
+
+	        // ✅ Logging
+	        System.out.println("DB ImpactAreaId: " + ImpactAreaId);
+	        System.out.println("DB ComponentId: " + ComponentId);
+
+	        if (current != null) {
+	            current.info("DB Data after: " + action);
+	            current.info("ImpactAreaId: " + ImpactAreaId);
+	            current.info("ComponentId: " + ComponentId);
+	        }
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+
+	        if (current != null) {
+	            current.fail("DB error: " + e.getMessage());
+	        }
+	    }
+	}
 	@Given("I have a ComponentImpactArea")
 	public void i_have_a_componentimpactarea() {
 		requestBody = DataCreate.generateComponentImpactAreaJson();
@@ -212,6 +297,7 @@ public class ComponentsImpactArea {
 		System.out.println("Stored ComponentImpactAreaId: " + ComponentImpactAreaId);
 		logToExtent("Create ComponentImpactArea Response", requestBody, response);
 		captureDbSnapshot(ComponentImpactAreaId, "Create New ComponentImpactArea");
+		DBConnection(ComponentImpactAreaId, "After POST");
 		// captureElasticScreenshot(ComponentImpactAreaId, "Create New ComponentImpactArea");
 	}
 	
@@ -272,12 +358,13 @@ public class ComponentsImpactArea {
 		System.out.println("PATCH Request Body:\n" + newJson);
 		System.out.println("PATCH Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
-		ImpactAreaId=response.jsonPath().getInt("impactAreaId");
-		ComponentId=response.jsonPath().getInt("componentId");
+//		ImpactAreaId=response.jsonPath().getInt("impactAreaId");
+//		ComponentId=response.jsonPath().getInt("componentId");
 		RequestBodyForValidation = newJson;
 		logToExtent("Update ComponentImpactArea (PATCH)", newJson, response);
 		captureDbSnapshot(ComponentImpactAreaId, "Update ComponentImpactArea (PATCH)");
 		ApiValidators.validatePathParamToResponse(response, "id", ComponentImpactAreaId);
+		DBConnection(ComponentImpactAreaId, "After PATCH");
 //		ApiValidators.validateRequestToResponse(newJson, response, IssueTypeId, "comments");
 		// captureElasticScreenshot(ComponentImpactAreaId, "Update ComponentImpactArea (PATCH)");
 

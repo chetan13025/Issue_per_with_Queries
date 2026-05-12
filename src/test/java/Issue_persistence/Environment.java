@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
@@ -39,12 +40,15 @@ import validators.ApiDataValidator;
 import validators.ApiValidators;
 
 public class Environment {
-	public static int EnvironmentId,ProjectId;
+	public static int EnvironmentId;
 	private Response response;
 	private String requestBody;
 	private String RequestBodyForValidation;
 	public List<Integer> EnvironmentIds;
 	public static Boolean IsDefault;
+	public static Integer ProjectId;
+	public static Integer Post_ProjectId;      // backup from POST
+	public static Boolean Post_IsDefault;
 	private static String baseUrl = ConfigReader.getProperty("baseUrl");
 	private static String tenantId = ConfigReader.getProperty("tenantId");
 	private static String author = ConfigReader.getProperty("author");
@@ -195,6 +199,89 @@ public class Environment {
 			}
 		}
 	}
+	
+	private void DBConnection(int EnvironmentId, String action) {
+
+	    ExtentTest current = ExtentCucumberListener.getCurrentScenario();
+
+	    try (Connection conn = DriverManager.getConnection(
+	            "jdbc:mysql://10.10.2.45:3306/issue_persistence_piqa", "root", "dhi123")) {
+
+	        // 🔥 If PATCH failed → use POST values
+	        if (action.toLowerCase().contains("patch") && response.getStatusCode() != 200) {
+
+	            System.out.println("⚠️ PATCH failed → using POST DB values");
+
+	            ProjectId = Post_ProjectId;
+	            IsDefault = Post_IsDefault;
+
+	            if (current != null) {
+	                current.warning("Using POST DB values due to PATCH failure");
+	            }
+
+	            return;
+	        }
+
+	        int retries = 5;
+
+	        ProjectId = null;
+	        IsDefault = null;
+
+	        while (retries-- > 0) {
+
+	            String query = "SELECT projectId, isDefault " +
+	                           "FROM Environment " +
+	                           "WHERE id = ? AND deleted = 0 AND projectId IS NOT NULL";
+
+	            PreparedStatement ps = conn.prepareStatement(query);
+	            ps.setInt(1, EnvironmentId);
+
+	            ResultSet rs = ps.executeQuery();
+
+	            if (rs.next()) {
+
+	                Number ProjectIdTemp = (Number) rs.getObject("projectId");
+	                Boolean IsDefaultTemp = rs.getBoolean("isDefault");
+
+	                if (ProjectIdTemp != null && IsDefaultTemp != null) {
+	                	ProjectId = ProjectIdTemp.intValue();
+	                	IsDefault = IsDefaultTemp;
+
+	                    // ✅ Save POST values only
+	                    if (action.toLowerCase().contains("post")) {
+	                    	Post_ProjectId = ProjectId;
+	                    	Post_IsDefault = IsDefault;
+	                    }
+
+	                    break;
+	                }
+	            }
+
+	            Thread.sleep(1000);
+	        }
+
+	        if (ProjectId == null || IsDefault == null) {
+	            throw new RuntimeException("❌ DB values not updated for EnvironmentId: " + EnvironmentId);
+	        }
+
+	        // ✅ Logging
+	        System.out.println("DB ProjectId: " + ProjectId);
+	        System.out.println("DB IsDefault: " + IsDefault);
+
+	        if (current != null) {
+	            current.info("DB Data after: " + action);
+	            current.info("ProjectId: " + ProjectId);
+	            current.info("IsDefault: " + IsDefault);
+	        }
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+
+	        if (current != null) {
+	            current.fail("DB error: " + e.getMessage());
+	        }
+	    }
+	}
 	@Given("I have a Environment")
 	public void i_have_a_environment() {
 		requestBody = DataCreate.generateEnvironmentJson();
@@ -214,6 +301,7 @@ public class Environment {
 		System.out.println("Stored EnvironmentId: " + EnvironmentId);
 		logToExtent("Create Environment Response", requestBody, response);
 		captureDbSnapshot(EnvironmentId, "Create New Environment");
+		DBConnection(EnvironmentId, "After POST");
 		// captureElasticScreenshot(EnvironmentId, "Create New Environment");
 	}
 	
@@ -274,12 +362,13 @@ public class Environment {
 		System.out.println("PATCH Request Body:\n" + newJson);
 		System.out.println("PATCH Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
-		ProjectId=response.jsonPath().getInt("projectId");
-		IsDefault=response.jsonPath().getBoolean("isDefault");
+//		ProjectId=response.jsonPath().getInt("projectId");
+//		IsDefault=response.jsonPath().getBoolean("isDefault");
 		RequestBodyForValidation = newJson;
 		logToExtent("Update Environment (PATCH)", newJson, response);
 		captureDbSnapshot(EnvironmentId, "Update Environment (PATCH)");
 		ApiValidators.validatePathParamToResponse(response, "id", EnvironmentId);
+		DBConnection(EnvironmentId, "After PATCH");
 //		ApiValidators.validateRequestToResponse(newJson, response, IssueTypeId, "comments");
 		// captureElasticScreenshot(EnvironmentId, "Update Environment (PATCH)");
 

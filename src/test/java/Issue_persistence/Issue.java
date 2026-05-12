@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
@@ -39,12 +40,16 @@ import validators.ApiValidator;
 import validators.ApiValidators;
 
 public class Issue {
-	public static int IssueId,SprintId,IssueStatusId,Id;
+	public static int IssueId;
 	private Response response;
 	private String requestBody;
 	private String RequestBodyForValidation;
 	public List<Integer> IssueIds;
+	public static Integer SprintId,Id;
 	public static String Title;
+	public static Integer Post_Id; 
+	public static Integer Post_SprintId;// backup from POST
+	public static String Post_Title;
 	private static String baseUrl = ConfigReader.getProperty("baseUrl");
 	private static String tenantId = ConfigReader.getProperty("tenantId");
 	private static String author = ConfigReader.getProperty("author");
@@ -186,6 +191,96 @@ public class Issue {
 //			}
 //		}
 //	}
+	
+	private void DBConnection(int behaviorId, String action) {
+
+	    ExtentTest current = ExtentCucumberListener.getCurrentScenario();
+
+	    try (Connection conn = DriverManager.getConnection(
+	            "jdbc:mysql://10.10.2.45:3306/issue_persistence_piqa", "root", "dhi123")) {
+
+	        // 🔥 If PATCH failed → use POST values
+	        if (action.toLowerCase().contains("patch") && response.getStatusCode() != 200) {
+
+	            System.out.println("⚠️ PATCH failed → using POST DB values");
+
+	            Id = Post_Id;
+	            SprintId = Post_SprintId;
+	            Title = Post_Title;
+
+	            if (current != null) {
+	                current.warning("Using POST DB values due to PATCH failure");
+	            }
+
+	            return;
+	        }
+
+	        int retries = 5;
+
+	        Id =  null;
+	        SprintId = null;
+	        Title = null;
+
+	        while (retries-- > 0) {
+
+	            String query = "SELECT id, title, sprintId " +
+	                           "FROM Issue " +
+	                           "WHERE id = ? AND deleted = 0 AND id IS NOT NULL";
+
+	            PreparedStatement ps = conn.prepareStatement(query);
+	            ps.setInt(1, behaviorId);
+
+	            ResultSet rs = ps.executeQuery();
+
+	            if (rs.next()) {
+
+	                Number IdTemp = (Number) rs.getObject("id");
+	                Number SprintIdTemp = (Number) rs.getObject("sprintId");
+	                String TitleTemp = rs.getString("title");
+
+	                if (IdTemp != null && SprintIdTemp != null && TitleTemp != null) {
+	                    Id = IdTemp.intValue();
+	                    SprintId = SprintIdTemp.intValue();
+	                    Title = TitleTemp;
+
+	                    // ✅ Save POST values only
+	                    if (action.toLowerCase().contains("post")) {
+	                    	Post_Id = Id;
+	                        Post_SprintId = SprintId;
+	                        Post_Title = Title;
+	                    }
+
+	                    break;
+	                }
+	            }
+
+	            Thread.sleep(1000);
+	        }
+
+	        if (Id == null || SprintId == null || Title == null) {
+	            throw new RuntimeException("❌ DB values not updated for BehaviorId: " + behaviorId);
+	        }
+
+	        // ✅ Logging
+	        System.out.println("DB Id: " + Id);
+	        System.out.println("DB SprintId: " + SprintId);
+	        System.out.println("DB Title: " + Title);
+
+	        if (current != null) {
+	            current.info("DB Data after: " + action);
+	            current.info("Id: " + Id);
+	            current.info("SprintId: " + SprintId);
+	            current.info("Title: " + Title);
+	        }
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+
+	        if (current != null) {
+	            current.fail("DB error: " + e.getMessage());
+	        }
+	    }
+	}
 
 	@Given("I have a Issue")
 	public void i_have_a_issue() {
@@ -208,6 +303,7 @@ public class Issue {
 //		captureElasticScreenshot(IssueId, "Create New Issue");
 //		ApiValidators.captureDbSnapshot(IssueId, "Issue", "Create New Issue");
 		captureDbSnapshot(IssueId, "Create New Issue");
+		DBConnection(IssueId, "After POST");
 //		ApiValidators.captureElasticScreenshot(IssueId, "issue", "Create New Issue");
 //		ApiValidators.validateKeysAcrossResponseEsDb(response, IssueId, "issue","Issue");
 	}
@@ -270,12 +366,11 @@ public class Issue {
 		System.out.println("PATCH Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
 		SprintId = response.jsonPath().getInt("sprintId"); 
-		IssueStatusId = response.jsonPath().getInt("issueStatusId");
-		Id =response.jsonPath().getInt("id");
 		Title = response.jsonPath().get("title");
 		RequestBodyForValidation = newJson;
 		logToExtent("Update Issue (PATCH)", newJson, response);
 		captureDbSnapshot(IssueId, "Update Issue (PATCH)");
+		DBConnection(IssueId, "After PATCH");
 //		ApiValidators.captureElasticScreenshot(IssueId, "issue", "Update Issue (PATCH)");
 
 	}

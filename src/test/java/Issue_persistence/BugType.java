@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
@@ -40,9 +41,11 @@ import validators.ApiDataValidator;
 import validators.ApiValidators;
 
 public class BugType {
-	public static int BugTypeId,ProjectID;
+	public static int BugTypeId;
 	private Response response;
 	private String requestBody;
+	public static Integer Post_ProjectID,ProjectID;      // backup from POST
+	public static Boolean Post_IsDefault;
 	private String RequestBodyForValidation;
 	public static Boolean IsDefault;
 	private static String baseUrl = ConfigReader.getProperty("baseUrl");
@@ -199,6 +202,88 @@ public class BugType {
 			}
 		}
 	}
+	private void DBConnection(int behaviorId, String action) {
+
+	    ExtentTest current = ExtentCucumberListener.getCurrentScenario();
+
+	    try (Connection conn = DriverManager.getConnection(
+	            "jdbc:mysql://10.10.2.45:3306/issue_persistence_piqa", "root", "dhi123")) {
+
+	        // 🔥 If PATCH failed → use POST values
+	        if (action.toLowerCase().contains("patch") && response.getStatusCode() != 200) {
+
+	            System.out.println("⚠️ PATCH failed → using POST DB values");
+
+	            ProjectID = Post_ProjectID;
+	            IsDefault = Post_IsDefault;
+
+	            if (current != null) {
+	                current.warning("Using POST DB values due to PATCH failure");
+	            }
+
+	            return;
+	        }
+
+	        int retries = 5;
+
+	        ProjectID = null;
+	        IsDefault = null;
+
+	        while (retries-- > 0) {
+
+	            String query = "SELECT projectId, isDefault " +
+	                           "FROM BugType " +
+	                           "WHERE id = ? AND deleted = 0 AND projectId IS NOT NULL";
+
+	            PreparedStatement ps = conn.prepareStatement(query);
+	            ps.setInt(1, behaviorId);
+
+	            ResultSet rs = ps.executeQuery();
+
+	            if (rs.next()) {
+
+	                Number ProjectIDTemp = (Number) rs.getObject("projectId");
+	                Boolean IsDefaultTemp = rs.getBoolean("isDefault");
+
+	                if (ProjectIDTemp != null && IsDefaultTemp != null) {
+	                	ProjectID = ProjectIDTemp.intValue();
+	                	IsDefault = IsDefaultTemp;
+
+	                    // ✅ Save POST values only
+	                    if (action.toLowerCase().contains("post")) {
+	                        Post_ProjectID = ProjectID;
+	                        Post_IsDefault = IsDefault;
+	                    }
+
+	                    break;
+	                }
+	            }
+
+	            Thread.sleep(1000);
+	        }
+
+	        if (ProjectID == null || IsDefault == null) {
+	            throw new RuntimeException("❌ DB values not updated for BehaviorId: " + behaviorId);
+	        }
+
+	        // ✅ Logging
+	        System.out.println("DB ProjectID: " + ProjectID);
+	        System.out.println("DB behaviorType: " + IsDefault);
+
+	        if (current != null) {
+	            current.info("DB Data after: " + action);
+	            current.info("IsDefault: " + ProjectID);
+	            current.info("IsDefault: " + IsDefault);
+	        }
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+
+	        if (current != null) {
+	            current.fail("DB error: " + e.getMessage());
+	        }
+	    }
+	}
 	@Given("I have a BugType")
 	public void i_have_a_bugtype() {
 		requestBody = DataCreate.generateBugTypeJson();
@@ -218,6 +303,7 @@ public class BugType {
 		System.out.println("Stored BugTypeId: " + BugTypeId);
 		logToExtent("Create BugType Response", requestBody, response);
 //		captureDbSnapshot(BugTypeId, "Create New BugType");
+		DBConnection(BugTypeId, "After POST");
 		if (response.getStatusCode()==201) {
 			captureDbSnapshot(BugTypeId, "Create New BugType");
 		}
@@ -284,10 +370,11 @@ public class BugType {
 		System.out.println("PATCH Request Body:\n" + newJson);
 		System.out.println("PATCH Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
-		ProjectID=response.jsonPath().getInt("projectId");
-		IsDefault=response.jsonPath().getBoolean("isDefault");
+//		ProjectID=response.jsonPath().getInt("projectId");
+//		IsDefault=response.jsonPath().getBoolean("isDefault");
 		RequestBodyForValidation = newJson;
 		logToExtent("Update BugType (PATCH)", newJson, response);
+		DBConnection(BugTypeId, "After PATCH");
 //		captureDbSnapshot(BugTypeId, "Update BugType (PATCH)");
 		if (response.getStatusCode()==200) {
 			captureDbSnapshot(BugTypeId, "Update BugType (PATCH)");

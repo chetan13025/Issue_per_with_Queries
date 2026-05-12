@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
@@ -40,18 +41,21 @@ import validators.ApiValidators;
 
 public class IssueLinked {
 	
-	public static int IssueLinkedId,RelatedIssueId;
+	public static int IssueLinkedId;
 	private Response response;
 	private String requestBody;
 	private String RequestBodyForValidation;
 	public List<Integer> IssueLinkedIds;
-	public static String Relationship,DependencyType;
+	public static Integer RelatedIssueId,IssueId;
+	public static String Relationship;
+	public static Integer Post_RelatedIssueId,Post_IssueId;
+	public static String Post_Relationship;
 	private static String baseUrl = ConfigReader.getProperty("baseUrl");
 	private static String tenantId = ConfigReader.getProperty("tenantId");
 	private static String author = ConfigReader.getProperty("author");
 	private static String IssueLinked_endpoint = ConfigReader.getProperty("issuelinked_endpoint");
 	private static String IssueLinked_FindByRelationshipandRelatedIssueIdendpoint = ConfigReader.getProperty("issuelinked_findbyrelationandrela");
-	private static String IssueLinked_FindByRelationshipandRelatedIssueIdDependencyTypeendpoint = ConfigReader.getProperty("issuelinked_findbyrelationandrelaanddep");
+	private static String IssueLinked_FindByIssueIdandRelatedIssueIdRelationshipendpoint = ConfigReader.getProperty("issuelinked_findByIssueIdAndRelatedIssueIdAndRela");
 	private static String IssueLinkedBulk_endpoint = ConfigReader.getProperty("issuelinkedbulk_endpoint");
 	private static String IssueLinkedBulkUpdate_endpoint = ConfigReader.getProperty("issuelinkedbulku_endpoint");
 	private static String IssueLinkedBulkDelete_endpoint = ConfigReader.getProperty("issuelinkedbulkd_endpoint");
@@ -197,6 +201,94 @@ public class IssueLinked {
 			}
 		}
 	}
+	private void DBConnection(int IssueLinkedId, String action) {
+
+	    ExtentTest current = ExtentCucumberListener.getCurrentScenario();
+
+	    try (Connection conn = DriverManager.getConnection(
+	            "jdbc:mysql://10.10.2.45:3306/issue_persistence_piqa", "root", "dhi123")) {
+
+	        // 🔥 If PATCH failed → use POST values
+	        if (action.toLowerCase().contains("patch") && response.getStatusCode() != 200) {
+
+	            System.out.println("⚠️ PATCH failed → using POST DB values");
+
+	            IssueId = Post_IssueId;
+	            Relationship = Post_Relationship;
+	            RelatedIssueId = Post_RelatedIssueId;
+
+	            if (current != null) {
+	                current.warning("Using POST DB values due to PATCH failure");
+	            }
+
+	            return;
+	        }
+
+	        int retries = 5;
+
+	        IssueId = null;
+	        Relationship = null;
+	        RelatedIssueId = null;
+
+	        while (retries-- > 0) {
+
+	            String query = "SELECT issueId, relatedIssueId, relationship " +
+	                           "FROM IssueLinked " +
+	                           "WHERE id = ? AND deleted = 0 AND issueId IS NOT NULL";
+
+	            PreparedStatement ps = conn.prepareStatement(query);
+	            ps.setInt(1, IssueLinkedId);
+
+	            ResultSet rs = ps.executeQuery();
+
+	            if (rs.next()) {
+
+	                Number issueIdTemp = (Number) rs.getObject("issueId");
+	                Number relatedissueIdTemp = (Number) rs.getObject("relatedIssueId");
+	                String relationshipTemp = rs.getString("relationship");
+
+	                if (issueIdTemp != null && relatedissueIdTemp != null && relationshipTemp != null) {
+	                    IssueId = issueIdTemp.intValue();
+	                    Relationship = relationshipTemp;
+	                    RelatedIssueId = relatedissueIdTemp.intValue();
+	                    // ✅ Save POST values only
+	                    if (action.toLowerCase().contains("post")) {
+	                        Post_IssueId = IssueId;
+	                        Post_Relationship = Relationship;
+	                        Post_RelatedIssueId = RelatedIssueId;
+	                    }
+
+	                    break;
+	                }
+	            }
+
+	            Thread.sleep(1000);
+	        }
+
+	        if (IssueId == null || Relationship == null || RelatedIssueId == null) {
+	            throw new RuntimeException("❌ DB values not updated for IssueLinkedId: " + IssueLinkedId);
+	        }
+
+	        // ✅ Logging
+	        System.out.println("DB issueId: " + IssueId);
+	        System.out.println("DB Relationship: " + Relationship);
+	        System.out.println("DB RelatedIssueId: " + RelatedIssueId);
+
+	        if (current != null) {
+	            current.info("DB Data after: " + action);
+	            current.info("issueId: " + IssueId);
+	            current.info("Relationship: " + Relationship);
+	            current.info("RelatedIssueId: " + RelatedIssueId);
+	        }
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+
+	        if (current != null) {
+	            current.fail("DB error: " + e.getMessage());
+	        }
+	    }
+	}
 
 	@Given("I have a IssueLinked")
 	public void i_have_a_issuelinked() {
@@ -217,7 +309,7 @@ public class IssueLinked {
 		System.out.println("Stored IssueLinkedId: " + IssueLinkedId);
 		logToExtent("Create IssueLinked Response", requestBody, response);
 		captureDbSnapshot(IssueLinkedId, "Create New IssueLinked");
-
+		DBConnection(IssueLinkedId, "After POST");
 		// captureElasticScreenshot(IssueLinkedId, "Create IssueLinked");
 
 //		captureElasticScreenshot(IssueLinkedId, "Create IssueLinked");
@@ -284,9 +376,10 @@ public class IssueLinked {
 		System.out.println("PATCH Request Body:\n" + newJson);
 		System.out.println("PATCH Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
-		Relationship = response.jsonPath().get("relationship");
-		RelatedIssueId = response.jsonPath().getInt("relatedIssueId");
-		DependencyType = response.jsonPath().get("dependencyType");
+//		Relationship = response.jsonPath().get("relationship");
+//		RelatedIssueId = response.jsonPath().getInt("relatedIssueId");
+//		IssueId = response.jsonPath().getInt("issueId");
+		DBConnection(IssueLinkedId, "After PATCH");
 		RequestBodyForValidation=newJson;
 		logToExtent("Update IssueLinked (PATCH)", newJson, response);
 		captureDbSnapshot(IssueLinkedId, "Update IssueLinked (PATCH)");
@@ -313,19 +406,21 @@ public class IssueLinked {
 		ApiValidators.validateQueryParamsInList(response,"_embedded.issueLinkeds",params);
 	}
 	
-	@When("FindByRelatedIssueIdInAndRelationshipAndDependencyTypeIn")
-	public void findByRelatedIssueIdInAndRelationshipAndDependencyTypeIn() {
+	@When("FindByIssueIdAndRelatedIssueIdAndRelationship")
+	public void findByIssueIdAndRelatedIssueIdAndRelationship() {
 		response = given().header("Content-Type", "application/json").header("Accept", "application/hal+json").header("X-TENANT-ID", tenantId)
-				.header("Author", author).queryParam("relatedIssueId", RelatedIssueId).queryParam("relationship", Relationship).queryParam("dependencyType", DependencyType).when().get(baseUrl + IssueLinked_FindByRelationshipandRelatedIssueIdDependencyTypeendpoint).then()
+				.header("Author", author)
+				.queryParam("issueId", IssueId).queryParam("relationship", Relationship)
+				.queryParam("relatedIssueId", RelatedIssueId).when().get(baseUrl + IssueLinked_FindByIssueIdandRelatedIssueIdRelationshipendpoint).then()
 				.extract().response();
 
 		System.out.println("Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
 		logToExtent("Fetch IssueLinked by ID", null, response);
 		Map<String, Object> params = new HashMap<>();
-		params.put("relationship", Relationship);
+		params.put("issueId", IssueId);
 		params.put("relatedIssueId", RelatedIssueId);
-		params.put("dependencyType", DependencyType);
+		params.put("relationship", Relationship);
 		ApiValidators.validateQueryParamsInList(response,"_embedded.issueLinkeds",params);
 	}
 

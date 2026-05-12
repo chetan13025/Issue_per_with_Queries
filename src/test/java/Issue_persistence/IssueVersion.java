@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
@@ -39,12 +40,15 @@ import validators.ApiDataValidator;
 import validators.ApiValidators;
 
 public class IssueVersion {
-	public static int IssueVersionId,ProjectVersionId,IssueId;
+	public static int IssueVersionId;
 	private Response response;
 	private String requestBody;
 	private String RequestBodyForValidation;
 	public List<Integer> IssueVersionIds;
+	public static Integer ProjectVersionId,IssueId;
 	public static String Type;
+	public static Integer Post_ProjectVersionId,Post_IssueId;
+	public static String Post_Type;
 	private static String baseUrl = ConfigReader.getProperty("baseUrl");
 	private static String tenantId = ConfigReader.getProperty("tenantId");
 	private static String author = ConfigReader.getProperty("author");
@@ -195,6 +199,95 @@ public class IssueVersion {
 			}
 		}
 	}
+	private void DBConnection(int IssueVersionId, String action) {
+
+	    ExtentTest current = ExtentCucumberListener.getCurrentScenario();
+
+	    try (Connection conn = DriverManager.getConnection(
+	            "jdbc:mysql://10.10.2.45:3306/issue_persistence_piqa", "root", "dhi123")) {
+
+	        // 🔥 If PATCH failed → use POST values
+	        if (action.toLowerCase().contains("patch") && response.getStatusCode() != 200) {
+
+	            System.out.println("⚠️ PATCH failed → using POST DB values");
+
+	            IssueId = Post_IssueId;
+	            ProjectVersionId = Post_ProjectVersionId;
+	            Type = Post_Type;
+
+	            if (current != null) {
+	                current.warning("Using POST DB values due to PATCH failure");
+	            }
+
+	            return;
+	        }
+
+	        int retries = 5;
+
+	        IssueId = null;
+	        ProjectVersionId = null;
+	        Type = null;
+
+	        while (retries-- > 0) {
+
+	            String query = "SELECT projectVersionId, issueId, type " +
+	                           "FROM IssueVersion " +
+	                           "WHERE id = ? AND deleted = 0 AND issueId IS NOT NULL";
+
+	            PreparedStatement ps = conn.prepareStatement(query);
+	            ps.setInt(1, IssueVersionId);
+
+	            ResultSet rs = ps.executeQuery();
+
+	            if (rs.next()) {
+
+	                Number issueIdTemp = (Number) rs.getObject("issueId");
+	                Number projectVersionIdTemp = (Number) rs.getObject("projectVersionId");
+	                String typeTemp = rs.getString("type");
+
+	                if (issueIdTemp != null && typeTemp != null) {
+	                    IssueId = issueIdTemp.intValue();
+	                    ProjectVersionId = projectVersionIdTemp.intValue();
+	                    Type = typeTemp;
+
+	                    // ✅ Save POST values only
+	                    if (action.toLowerCase().contains("post")) {
+	                        Post_IssueId = IssueId;
+	                        Post_ProjectVersionId = ProjectVersionId;
+	                        Post_Type = Type;
+	                    }
+
+	                    break;
+	                }
+	            }
+
+	            Thread.sleep(1000);
+	        }
+
+	        if (IssueId == null || Type == null || ProjectVersionId == null) {
+	            throw new RuntimeException("❌ DB values not updated for IssueVersionId: " + IssueVersionId);
+	        }
+
+	        // ✅ Logging
+	        System.out.println("DB issueId: " + IssueId);
+	        System.out.println("DB projectversionId: " + ProjectVersionId);
+	        System.out.println("DB Type: " + Type);
+
+	        if (current != null) {
+	            current.info("DB Data after: " + action);
+	            current.info("issueId: " + IssueId);
+	            current.info("projectversionId: " + ProjectVersionId);
+	            current.info("Type: " + Type);
+	        }
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+
+	        if (current != null) {
+	            current.fail("DB error: " + e.getMessage());
+	        }
+	    }
+	}
 	@Given("I have a IssueVersion")
 	public void i_have_a_issueversion() {
 		requestBody = DataCreate.generateIssueVersionJson();
@@ -214,6 +307,7 @@ public class IssueVersion {
 		System.out.println("Stored IssueVersionId: " + IssueVersionId);
 		logToExtent("Create IssueVersion Response", requestBody, response);
 		captureDbSnapshot(IssueVersionId, "Create New IssueVersion");
+		DBConnection(IssueVersionId, "After POST");
 		// captureElasticScreenshot(IssueVersionId, "Create New IssueVersion");
 	}
 	
@@ -273,9 +367,10 @@ public class IssueVersion {
 		System.out.println("PATCH Request Body:\n" + newJson);
 		System.out.println("PATCH Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
-		ProjectVersionId = response.jsonPath().getInt("projectVersionId");
-		IssueId = response.jsonPath().getInt("issueId");
-		Type = response.jsonPath().get("type");
+//		ProjectVersionId = response.jsonPath().getInt("projectVersionId");
+//		IssueId = response.jsonPath().getInt("issueId");
+//		Type = response.jsonPath().get("type");
+		DBConnection(IssueVersionId, "After PATCH");
 		RequestBodyForValidation=newJson;
 		logToExtent("Update IssueVersion (PATCH)", newJson, response);
 		captureDbSnapshot(IssueVersionId, "Update IssueVersion (PATCH)");

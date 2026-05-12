@@ -36,8 +36,8 @@ Feature: IssueLinked API testing
     Then The IssueLinked response status code should be 200
 
   @Custom_Queries_for_IssueLinked
-  Scenario: To verify that after GET request FindByRelatedIssueIdInAndRelationshipAndDependencyTypeIn
-    When FindByRelatedIssueIdInAndRelationshipAndDependencyTypeIn
+  Scenario: To verify that after GET request FindByIssueIdAndRelatedIssueIdAndRelationship
+    When FindByIssueIdAndRelatedIssueIdAndRelationship
     Then The IssueLinked response status code should be 200
 
   @IssueLinked

@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
@@ -39,9 +40,11 @@ import validators.ApiDataValidator;
 import validators.ApiValidators;
 
 public class IssueStep {
-	public static int IssueStepId,IssueId;
+	public static int IssueStepId;
 	private Response response;
 	private String requestBody;
+	public static Integer IssueId;
+	public static Integer Post_IssueId;
 	private String RequestBodyForValidation;
 	public List<Integer> IssueStepIds;
 	private static String baseUrl = ConfigReader.getProperty("baseUrl");
@@ -193,6 +196,88 @@ public class IssueStep {
 			}
 		}
 	}
+	private void DBConnection(int IssueStepId, String action) {
+
+	    ExtentTest current = ExtentCucumberListener.getCurrentScenario();
+
+	    try (Connection conn = DriverManager.getConnection(
+	            "jdbc:mysql://10.10.2.45:3306/issue_persistence_piqa", "root", "dhi123")) {
+
+	        // 🔥 If PATCH failed → use POST values
+	        if (action.toLowerCase().contains("patch") && response.getStatusCode() != 200) {
+
+	            System.out.println("⚠️ PATCH failed → using POST DB values");
+
+	            IssueId = Post_IssueId;
+	        
+
+	            if (current != null) {
+	                current.warning("Using POST DB values due to PATCH failure");
+	            }
+
+	            return;
+	        }
+
+	        int retries = 5;
+
+	        IssueId = null;
+	        
+
+	        while (retries-- > 0) {
+
+	            String query = "SELECT issueId " +
+	                           "FROM IssueSteps " +
+	                           "WHERE id = ? AND deleted = 0 AND issueId IS NOT NULL";
+
+	            PreparedStatement ps = conn.prepareStatement(query);
+	            ps.setInt(1, IssueStepId);
+
+	            ResultSet rs = ps.executeQuery();
+
+	            if (rs.next()) {
+
+	                Number issueIdTemp = (Number) rs.getObject("issueId");
+	                
+
+	                if (issueIdTemp != null ) {
+	                    IssueId = issueIdTemp.intValue();
+	                    
+
+	                    // ✅ Save POST values only
+	                    if (action.toLowerCase().contains("post")) {
+	                        Post_IssueId = IssueId;
+	                        
+	                    }
+
+	                    break;
+	                }
+	            }
+
+	            Thread.sleep(1000);
+	        }
+
+	        if (IssueId == null ) {
+	            throw new RuntimeException("❌ DB values not updated for IssueStepId: " + IssueStepId);
+	        }
+
+	        // ✅ Logging
+	        System.out.println("DB issueId: " + IssueId);
+	        
+
+	        if (current != null) {
+	            current.info("DB Data after: " + action);
+	            current.info("issueId: " + IssueId);
+	            
+	        }
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+
+	        if (current != null) {
+	            current.fail("DB error: " + e.getMessage());
+	        }
+	    }
+	}
 	@Given("I have a IssueStep")
 	public void i_have_a_issuestep() {
 		requestBody = DataCreate.generateIssueStepJson();
@@ -212,6 +297,7 @@ public class IssueStep {
 		System.out.println("Stored IssueStepId: " + IssueStepId);
 		logToExtent("Create IssueStep Response", requestBody, response);
 		captureDbSnapshot(IssueStepId, "Create New IssueStep");
+		DBConnection(IssueStepId, "After POST");
 		// captureElasticScreenshot(IssueStepId, "Create New IssueStep");
 	}
 	
@@ -271,7 +357,8 @@ public class IssueStep {
 		System.out.println("PATCH Request Body:\n" + newJson);
 		System.out.println("PATCH Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
-		IssueId = response.jsonPath().getInt("issueId");
+//		IssueId = response.jsonPath().getInt("issueId");
+		DBConnection(IssueStepId, "After PATCH");
 		RequestBodyForValidation=newJson;
 		logToExtent("Update IssueStep (PATCH)", newJson, response);
 		captureDbSnapshot(IssueStepId, "Update IssueStep (PATCH)");

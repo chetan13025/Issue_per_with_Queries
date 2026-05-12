@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 import java.security.PublicKey;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
@@ -45,7 +46,10 @@ import validators.ApiValidator;
 import validators.ApiValidators;
 
 public class Behavior {
-	public static int BehaviorId,IssueId;
+	public static int BehaviorId;
+	public static Integer IssueId;           
+	public static Integer Post_IssueId;      
+	public static String Post_BehaviorType;
 	private Response response;
 	private String requestBody;
 	public static String BehaviorType;
@@ -203,6 +207,88 @@ public class Behavior {
 			}
 		}
 	}
+	private void DBConnection(int behaviorId, String action) {
+
+	    ExtentTest current = ExtentCucumberListener.getCurrentScenario();
+
+	    try (Connection conn = DriverManager.getConnection(
+	            "jdbc:mysql://10.10.2.45:3306/issue_persistence_piqa", "root", "dhi123")) {
+
+	        // 🔥 If PATCH failed → use POST values
+	        if (action.toLowerCase().contains("patch") && response.getStatusCode() != 200) {
+
+	            System.out.println("⚠️ PATCH failed → using POST DB values");
+
+	            IssueId = Post_IssueId;
+	            BehaviorType = Post_BehaviorType;
+
+	            if (current != null) {
+	                current.warning("Using POST DB values due to PATCH failure");
+	            }
+
+	            return;
+	        }
+
+	        int retries = 5;
+
+	        IssueId = null;
+	        BehaviorType = null;
+
+	        while (retries-- > 0) {
+
+	            String query = "SELECT issueId, behaviorType " +
+	                           "FROM Behavior " +
+	                           "WHERE id = ? AND deleted = 0 AND issueId IS NOT NULL";
+
+	            PreparedStatement ps = conn.prepareStatement(query);
+	            ps.setInt(1, behaviorId);
+
+	            ResultSet rs = ps.executeQuery();
+
+	            if (rs.next()) {
+
+	                Number issueIdTemp = (Number) rs.getObject("issueId");
+	                String behaviorTypeTemp = rs.getString("behaviorType");
+
+	                if (issueIdTemp != null && behaviorTypeTemp != null) {
+	                    IssueId = issueIdTemp.intValue();
+	                    BehaviorType = behaviorTypeTemp;
+
+	                    // ✅ Save POST values only
+	                    if (action.toLowerCase().contains("post")) {
+	                        Post_IssueId = IssueId;
+	                        Post_BehaviorType = BehaviorType;
+	                    }
+
+	                    break;
+	                }
+	            }
+
+	            Thread.sleep(1000);
+	        }
+
+	        if (IssueId == null || BehaviorType == null) {
+	            throw new RuntimeException("❌ DB values not updated for BehaviorId: " + behaviorId);
+	        }
+
+	        // ✅ Logging
+	        System.out.println("DB issueId: " + IssueId);
+	        System.out.println("DB behaviorType: " + BehaviorType);
+
+	        if (current != null) {
+	            current.info("DB Data after: " + action);
+	            current.info("issueId: " + IssueId);
+	            current.info("behaviorType: " + BehaviorType);
+	        }
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+
+	        if (current != null) {
+	            current.fail("DB error: " + e.getMessage());
+	        }
+	    }
+	}
 
 	@Given("I have a Behavior")
 	public void i_have_a_behavior() {
@@ -223,7 +309,7 @@ public class Behavior {
 		System.out.println("Stored BehaviorId: " + BehaviorId);
 //		System.out.println(IssueId);
 		logToExtent("Create Behavior Response", requestBody, response);
-		
+		DBConnection(BehaviorId, "After POST");
 //		captureDbSnapshot(BehaviorId, "Create New Behavior");
 		if (response.getStatusCode()==201) {
 			captureDbSnapshot(BehaviorId, "Create New Behavior");
@@ -312,11 +398,12 @@ public class Behavior {
 		System.out.println("PATCH Request Body:\n" + newJson);
 		System.out.println("PATCH Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
-		IssueId = response.jsonPath().getInt("issueId");
-		BehaviorType=response.jsonPath().get("behaviorType");
-		System.out.println(BehaviorType);
+//		IssueId = response.jsonPath().getInt("issueId");
+//		BehaviorType=response.jsonPath().get("behaviorType");
+//		System.out.println(BehaviorType);
 		RequestBodyForValidation = newJson;
 		logToExtent("Update Behavior (PATCH)", newJson, response);
+		DBConnection(BehaviorId, "After PATCH");
 //		captureDbSnapshot(BehaviorId, "Update Behavior (PATCH)");
 		if (response.getStatusCode()==200) {
 			captureDbSnapshot(BehaviorId, "Update Behavior (PATCH)");

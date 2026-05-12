@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
@@ -39,11 +40,13 @@ import validators.ApiDataValidator;
 import validators.ApiValidators;
 
 public class Resolution {
-	public static int ResolutionId,ProjectId;
+	public static int ResolutionId;
 	private Response response;
 	private String requestBody;
 	private String RequestBodyForValidation;
 	public List<Integer> ResolutionIds;
+	public static Integer ProjectId;
+	public static Integer Post_ProjectId;
 	private static String baseUrl = ConfigReader.getProperty("baseUrl");
 	private static String tenantId = ConfigReader.getProperty("tenantId");
 	private static String author = ConfigReader.getProperty("author");
@@ -193,6 +196,88 @@ public class Resolution {
 			}
 		}
 	}
+	private void DBConnection(int ResolutionId, String action) {
+
+	    ExtentTest current = ExtentCucumberListener.getCurrentScenario();
+
+	    try (Connection conn = DriverManager.getConnection(
+	            "jdbc:mysql://10.10.2.45:3306/issue_persistence_piqa", "root", "dhi123")) {
+
+	        // 🔥 If PATCH failed → use POST values
+	        if (action.toLowerCase().contains("patch") && response.getStatusCode() != 200) {
+
+	            System.out.println("⚠️ PATCH failed → using POST DB values");
+
+	            ProjectId = Post_ProjectId;
+	            
+
+	            if (current != null) {
+	                current.warning("Using POST DB values due to PATCH failure");
+	            }
+
+	            return;
+	        }
+
+	        int retries = 5;
+
+	        ProjectId = null;
+	        
+
+	        while (retries-- > 0) {
+
+	            String query = "SELECT projectId " +
+	                           "FROM Resolution " +
+	                           "WHERE id = ? AND deleted = 0 AND projectId IS NOT NULL";
+
+	            PreparedStatement ps = conn.prepareStatement(query);
+	            ps.setInt(1, ResolutionId);
+
+	            ResultSet rs = ps.executeQuery();
+
+	            if (rs.next()) {
+
+	                Number projectIdTemp = (Number) rs.getObject("projectId");
+	                
+
+	                if (projectIdTemp != null ) {
+	                	ProjectId = projectIdTemp.intValue();
+	                   
+
+	                    // ✅ Save POST values only
+	                    if (action.toLowerCase().contains("post")) {
+	                        Post_ProjectId = ProjectId;
+	                        
+	                    }
+
+	                    break;
+	                }
+	            }
+
+	            Thread.sleep(1000);
+	        }
+
+	        if (ProjectId == null ) {
+	            throw new RuntimeException("❌ DB values not updated for ResolutionId: " + ResolutionId);
+	        }
+
+	        // ✅ Logging
+	        System.out.println("DB ProjectId: " + ProjectId);
+	        
+
+	        if (current != null) {
+	            current.info("DB Data after: " + action);
+	            current.info("ProjectId: " + ProjectId);
+	            
+	        }
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+
+	        if (current != null) {
+	            current.fail("DB error: " + e.getMessage());
+	        }
+	    }
+	}
 	@Given("I have a Resolution")
 	public void i_have_a_resolution() {
 		requestBody = DataCreate.generateResolutionJson();
@@ -212,6 +297,7 @@ public class Resolution {
 		System.out.println("Stored ResolutionId: " + ResolutionId);
 		logToExtent("Create Resolution Response", requestBody, response);
 		captureDbSnapshot(ResolutionId, "Create New Resolution");
+		DBConnection(ResolutionId, "After POST");
 		// captureElasticScreenshot(ResolutionId, "Create New Resolution");
 	}
 	
@@ -272,10 +358,11 @@ public class Resolution {
 		System.out.println("PATCH Request Body:\n" + newJson);
 		System.out.println("PATCH Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
-		ProjectId = response.jsonPath().getInt("projectId");
+//		ProjectId = response.jsonPath().getInt("projectId");
 		RequestBodyForValidation=newJson;
 		logToExtent("Update Resolution (PATCH)", newJson, response);
 		captureDbSnapshot(ResolutionId, "Update Resolution (PATCH)");
+		DBConnection(ResolutionId, "After PATCH");
 		ApiValidators.validatePathParamToResponse(response, "id", ResolutionId);
 //		ApiValidators.validateRequestToResponse(newJson, response, IssueTypeId, "comments");
 		// captureElasticScreenshot(ResolutionId, "Update Resolution (PATCH)");

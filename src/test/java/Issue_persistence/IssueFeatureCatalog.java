@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
@@ -39,12 +40,15 @@ import validators.ApiDataValidator;
 import validators.ApiValidators;
 
 public class IssueFeatureCatalog {
-	public static int IssueFeatureCatalogId,ProjctId;
+	public static int IssueFeatureCatalogId;
 	private Response response;
 	private String requestBody;
 	private String RequestBodyForValidation;
 	public List<Integer> IssueFeatureCatalogIds;
-	public String Rulename;
+	public static Integer ProjctId;
+	public static String Rulename;
+	public static Integer Post_ProjctId;      // backup from POST
+	public static String Post_Rulename;
 	private static String baseUrl = ConfigReader.getProperty("baseUrl");
 	private static String tenantId = ConfigReader.getProperty("tenantId");
 	private static String author = ConfigReader.getProperty("author");
@@ -195,6 +199,88 @@ public class IssueFeatureCatalog {
 			}
 		}
 	}
+	private void DBConnection(int IssueFeatureCatalogId, String action) {
+
+	    ExtentTest current = ExtentCucumberListener.getCurrentScenario();
+
+	    try (Connection conn = DriverManager.getConnection(
+	            "jdbc:mysql://10.10.2.45:3306/issue_persistence_piqa", "root", "dhi123")) {
+
+	        // 🔥 If PATCH failed → use POST values
+	        if (action.toLowerCase().contains("patch") && response.getStatusCode() != 200) {
+
+	            System.out.println("⚠️ PATCH failed → using POST DB values");
+
+	            ProjctId = Post_ProjctId;
+	            Rulename = Post_Rulename;
+
+	            if (current != null) {
+	                current.warning("Using POST DB values due to PATCH failure");
+	            }
+
+	            return;
+	        }
+
+	        int retries = 5;
+
+	        ProjctId = null;
+	        Rulename = null;
+
+	        while (retries-- > 0) {
+
+	            String query = "SELECT projectId, ruleName " +
+	                           "FROM IssueFeatureCatalog " +
+	                           "WHERE id = ? AND deleted = 0 AND projectId IS NOT NULL";
+
+	            PreparedStatement ps = conn.prepareStatement(query);
+	            ps.setInt(1, IssueFeatureCatalogId);
+
+	            ResultSet rs = ps.executeQuery();
+
+	            if (rs.next()) {
+
+	                Number ProjctIdTemp = (Number) rs.getObject("projectId");
+	                String RulenameTemp = rs.getString("ruleName");
+
+	                if (ProjctIdTemp != null && RulenameTemp != null) {
+	                	ProjctId = ProjctIdTemp.intValue();
+	                	Rulename = RulenameTemp;
+
+	                    // ✅ Save POST values only
+	                    if (action.toLowerCase().contains("post")) {
+	                        Post_ProjctId = ProjctId;
+	                        Post_Rulename = Rulename;
+	                    }
+
+	                    break;
+	                }
+	            }
+
+	            Thread.sleep(1000);
+	        }
+
+	        if (ProjctId == null || Rulename == null) {
+	            throw new RuntimeException("❌ DB values not updated for IssueFeatureCatalogId: " + IssueFeatureCatalogId);
+	        }
+
+	        // ✅ Logging
+	        System.out.println("DB ProjctId: " + ProjctId);
+	        System.out.println("DB Rulename: " + Rulename);
+
+	        if (current != null) {
+	            current.info("DB Data after: " + action);
+	            current.info("ProjctId: " + ProjctId);
+	            current.info("Rulename: " + Rulename);
+	        }
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+
+	        if (current != null) {
+	            current.fail("DB error: " + e.getMessage());
+	        }
+	    }
+	}
 	@Given("I have a IssueFeatureCatalog")
 	public void i_have_a_issuefeaturecatalog() {
 		requestBody = DataCreate.generateIssueFeatureCatalogJson();
@@ -214,6 +300,7 @@ public class IssueFeatureCatalog {
 		System.out.println("Stored UserId: " + IssueFeatureCatalogId);
 		logToExtent("Create IssueFeatureCatalog Response", requestBody, response);
 		captureDbSnapshot(IssueFeatureCatalogId, "Create New IssueFeatureCatalog");
+		DBConnection(IssueFeatureCatalogId, "After POST");
 		// captureElasticScreenshot(IssueFeatureCatalogId, "Create IssueFeatureCatalog");
 	}
 	
@@ -272,11 +359,12 @@ public class IssueFeatureCatalog {
 		System.out.println("PATCH Request Body:\n" + newJson);
 		System.out.println("PATCH Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
-		Rulename=response.jsonPath().get("ruleName");
-		ProjctId=response.jsonPath().getInt("projectId");
+//		Rulename=response.jsonPath().get("ruleName");
+//		ProjctId=response.jsonPath().getInt("projectId");
 		RequestBodyForValidation=newJson;
 		logToExtent("Update User (PATCH)", newJson, response);
 		captureDbSnapshot(IssueFeatureCatalogId, "Update User (PATCH)");
+		DBConnection(IssueFeatureCatalogId, "After PATCH");
 		// captureElasticScreenshot(IssueFeatureCatalogId, "Update User (PATCH)");
 
 	}

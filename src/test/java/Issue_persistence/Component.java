@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
@@ -40,11 +41,14 @@ import validators.ApiDataValidator;
 import validators.ApiValidators;
 
 public class Component {
-	public static int ComponentId,ProjectId;
+	public static int ComponentId;
 	private Response response;
 	private String requestBody;
-	private String RequestBodyForValidation;
+	public static  Integer ProjectId;
 	public static String Label;
+	public static Integer Post_ProjectId;      // backup from POST
+	public static String Post_Label;
+	private String RequestBodyForValidation;
 	private static String baseUrl = ConfigReader.getProperty("baseUrl");
 	private static String tenantId = ConfigReader.getProperty("tenantId");
 	private static String author = ConfigReader.getProperty("author");
@@ -199,6 +203,89 @@ public class Component {
 			}
 		}
 	}
+	
+	private void DBConnection(int ComponentId, String action) {
+
+	    ExtentTest current = ExtentCucumberListener.getCurrentScenario();
+
+	    try (Connection conn = DriverManager.getConnection(
+	            "jdbc:mysql://10.10.2.45:3306/issue_persistence_piqa", "root", "dhi123")) {
+
+	        // 🔥 If PATCH failed → use POST values
+	        if (action.toLowerCase().contains("patch") && response.getStatusCode() != 200) {
+
+	            System.out.println("⚠️ PATCH failed → using POST DB values");
+
+	            ProjectId = Post_ProjectId;
+	            Label = Post_Label;
+
+	            if (current != null) {
+	                current.warning("Using POST DB values due to PATCH failure");
+	            }
+
+	            return;
+	        }
+
+	        int retries = 5;
+
+	        ProjectId = null;
+	        Label = null;
+
+	        while (retries-- > 0) {
+
+	            String query = "SELECT projectId, label " +
+	                           "FROM Components " +
+	                           "WHERE id = ? AND deleted = 0 AND projectId IS NOT NULL";
+
+	            PreparedStatement ps = conn.prepareStatement(query);
+	            ps.setInt(1, ComponentId);
+
+	            ResultSet rs = ps.executeQuery();
+
+	            if (rs.next()) {
+
+	                Number projectIdTemp = (Number) rs.getInt("projectId");
+	                String labelTemp = rs.getString("label");
+
+	                if (projectIdTemp != null && labelTemp != null) {
+	                	ProjectId = projectIdTemp.intValue();
+	                	Label = labelTemp;
+
+	                    // ✅ Save POST values only
+	                    if (action.toLowerCase().contains("post")) {
+	                    	Post_ProjectId = ProjectId;
+	                    	Post_Label = Label;
+	                    }
+
+	                    break;
+	                }
+	            }
+
+	            Thread.sleep(1000);
+	        }
+
+	        if (ProjectId == null || Label == null) {
+	            throw new RuntimeException("❌ DB values not updated for ComponentId: " + ComponentId);
+	        }
+
+	        // ✅ Logging
+	        System.out.println("DB ProjectId: " + ProjectId);
+	        System.out.println("DB Label: " + Label);
+
+	        if (current != null) {
+	            current.info("DB Data after: " + action);
+	            current.info("ProjectId: " + ProjectId);
+	            current.info("Label: " + Label);
+	        }
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+
+	        if (current != null) {
+	            current.fail("DB error: " + e.getMessage());
+	        }
+	    }
+	}
 	@Given("I have a Component")
 	public void i_have_a_component() {
 		requestBody = DataCreate.generateComponentJson();
@@ -218,6 +305,7 @@ public class Component {
 		System.out.println("Stored ComponentId: " + ComponentId);
 		logToExtent("Create Component Response", requestBody, response);
 		captureDbSnapshot(ComponentId, "Create New Component");
+		DBConnection(ComponentId, "After POST");
 		// captureElasticScreenshot(ComponentId, "Create New Component");
 	}
 	
@@ -278,9 +366,10 @@ public class Component {
 		System.out.println("PATCH Request Body:\n" + newJson);
 		System.out.println("PATCH Response Body:\n" + response.getBody().asString());
 		System.out.println("Status Code: " + response.getStatusCode());
-		Label = response.jsonPath().get("label");
-		ProjectId=response.jsonPath().get("projectId");
+//		Label = response.jsonPath().get("label");
+//		ProjectId=response.jsonPath().get("projectId");
 		RequestBodyForValidation = newJson;
+		DBConnection(ComponentId, "After PATCH");
 		logToExtent("Update Component (PATCH)", newJson, response);
 		captureDbSnapshot(ComponentId, "Update Component (PATCH)");
 		ApiValidators.validatePathParamToResponse(response, "id", ComponentId);
@@ -308,7 +397,7 @@ public class Component {
 	@When("FindByProjectIdOrderByLabelAsc")
 	public void findByProjectIdOrderByLabelAsc() {
 		response = given().header("Content-Type", "application/json").header("X-TENANT-ID", tenantId)
-				.header("Author", author).queryParam("projectId", ProjectId).when().get(baseUrl + Component_FindByProjectIdByLabelendpoint).then()
+				.header("Author", author).queryParam("projectId",ProjectId).when().get(baseUrl + Component_FindByProjectIdByLabelendpoint).then()
 				.extract().response();
 
 		System.out.println("Response Body:\n" + response.getBody().asString());
