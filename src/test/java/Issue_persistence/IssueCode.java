@@ -210,7 +210,7 @@ public class IssueCode {
 		System.out.println("Stored UserId: " + IssueCodeId);
 		logToExtent("Create IssueCode Response", requestBody, response);
 		captureDbSnapshot(IssueCodeId, "Create New IssueCode");
-		captureElasticScreenshot(IssueCodeId, "Create IssueCode");
+//		captureElasticScreenshot(IssueCodeId, "Create IssueCode");
 	}
 	
 	@When("Fetch All IssueCode Details")
