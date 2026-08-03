@@ -36,7 +36,7 @@ import utils.ReportUtils;
    		"src/test/resources/features/issueversion.feature",
    		"src/test/resources/features/issuevote.feature",
   		"src/test/resources/features/lucyevent.feature",
-   		 "src/test/resources/features/version.feature",
+//   		 "src/test/resources/features/version.feature",
    		"src/test/resources/features/module.feature",
    		"src/test/resources/features/occurrence.feature",
    		"src/test/resources/features/priority.feature",

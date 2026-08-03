@@ -451,11 +451,8 @@ public class Behavior {
 		params.put("issueId", IssueId);   // ✅ no parseInt
 		params.put("behaviorType", BehaviorType);
 		ApiValidators.validateQueryParamsInList(response,"_embedded.behaviors",params);
-//		ApiValidators.validatePathParamToResponse(response, "id", BehaviorId);
+
 	}
-	
-	
-	
 	
 
 	@When("Delete Behavior with ID")
