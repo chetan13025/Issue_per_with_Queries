@@ -27,19 +27,21 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Prepare report website
+      - name: Prepare existing report website
         run: |
           mkdir -p public
           cp target/Issue_persistence.html public/index.html
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
+        with:
+          enablement: true
 
-      - name: Upload report
+      - name: Upload existing report
         uses: actions/upload-pages-artifact@v3
         with:
           path: public
 
-      - name: Deploy report
+      - name: Deploy existing report
         id: deployment
         uses: actions/deploy-pages@v4
